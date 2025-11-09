@@ -1,0 +1,56 @@
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.compare-table th,
+.compare-table td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.compare-table thead tr {
+  background-color: #f4f4f4;
+  border-bottom: 2px solid #333;
+}
+
+.compare-table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.compare-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.compare-table .spec-label {
+  font-weight: bold;
+  color: #555;
+}
+
+.type-tag {
+  display: block;
+  font-size: 12px;
+  font-weight: normal;
+  margin-top: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.type-tag.cpu {
+  background-color: #e0f0ff;
+  color: #007bff;
+}
+
+.type-tag.gpu {
+  background-color: #e0ffe8;
+  color: #28a745;
+}
+
+.type-tag.telephone {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
