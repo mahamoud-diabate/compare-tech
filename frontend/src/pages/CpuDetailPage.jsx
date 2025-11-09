@@ -6,7 +6,7 @@ function CpuDetailPage() {
   const [cpu, setCpu] = useState(null);
 
   useEffect(() => {
-    fetch(`https://mahamoud-compare-tech-api.onrender.com${id}`)
+    fetch(`https://mahamoud-compare-tech-api.onrender.com/api/cpus/${id}`)
       .then(response => response.json())
       .then(data => {
         setCpu(data);

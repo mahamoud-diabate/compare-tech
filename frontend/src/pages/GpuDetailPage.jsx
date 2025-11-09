@@ -5,7 +5,7 @@ function GpuDetailPage(){
     const {id}=useParams();
     const[gpu,setGpu]=useState(null);
     useEffect(()=>{
-        fetch(`https://mahamoud-compare-tech-api.onrender.com${id}`)
+        fetch(`https://mahamoud-compare-tech-api.onrender.com/api/gpus/${id}`)
         .then(response=>response.json())
         .then(data=>{
             setGpu(data);

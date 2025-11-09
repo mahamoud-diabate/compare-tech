@@ -6,7 +6,7 @@ function TelephoneDetailPage() {
   const [telephone, setTelephone] = useState(null);
 
   useEffect(() => {
-    fetch(`https://mahamoud-compare-tech-api.onrender.com${id}`)
+    fetch(`https://mahamoud-compare-tech-api.onrender.com/api/telephones/${id}`)
       .then(response => response.json())
       .then(data => {
         setTelephone(data);

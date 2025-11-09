@@ -10,7 +10,7 @@ function LaptopPage(){
     const{compareList, onCompareToggle}=useOutletContext();
 
     useEffect(()=>{
-        fetch('https://mahamoud-compare-tech-api.onrender.com')
+        fetch('https://mahamoud-compare-tech-api.onrender.com/api/laptops')
         .then(response=>response.json())
         .then(data=>setLaptops(data))
         .catch(error=>console.error("Erreur:",error));
