@@ -10,7 +10,7 @@ function Homepage(){
     const {compareList,onCompareToggle}=useOutletContext('');
 
     useEffect(()=>{
-        fetch(`http://localhost:3001/api/cpus`)
+        fetch(`https://mahamoud-compare-tech-api.onrender.com`)
         .then(response=>response.json())
         .then(data=>setCpus(data))
         .catch(error=>console.error("Erreur:",error));

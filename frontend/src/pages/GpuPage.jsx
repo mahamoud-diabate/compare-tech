@@ -10,7 +10,7 @@ function GpuPage(){
     const{compareList, onCompareToggle}=useOutletContext();
 
     useEffect(()=>{
-        fetch('http://localhost:3001/api/gpus')
+        fetch('https://mahamoud-compare-tech-api.onrender.com')
         .then(response=>response.json())
         .then(data=>setGpus(data))
         .catch(error=>console.error("Error:",error));

@@ -10,7 +10,7 @@ function TelephonePage(){
     const{compareList, onCompareToggle}=useOutletContext();
 
     useEffect(()=>{
-        fetch('http://localhost:3001/api/telephones')
+        fetch('https://mahamoud-compare-tech-api.onrender.com')
         .then(response=>response.json())
         .then(data=>setTelephones(data))
         .catch(error=>console.error("Erreur:",error));

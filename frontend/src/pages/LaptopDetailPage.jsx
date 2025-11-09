@@ -6,7 +6,7 @@ function LaptopDetailPage() {
   const [laptop, setLaptop] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/laptops/${id}`)
+    fetch(`https://mahamoud-compare-tech-api.onrender.com${id}`)
       .then(response => response.json())
       .then(data => {
         setLaptop(data);
