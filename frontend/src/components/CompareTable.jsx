@@ -39,16 +39,12 @@ const SPEC_MAP = {
   telephone: TELEPHONE_SPECS,
 };
 
-// Fonction d'aide pour vérifier si une ligne est identique
 const areValuesIdentical = (products, key) => {
-    // 1. On prend la valeur du premier produit
     const firstValue = products[0][key] || 'N/A';
-    // 2. On vérifie si TOUS les autres produits ont EXACTEMENT la même valeur
     return products.every(product => (product[key] || 'N/A') === firstValue);
 };
 
 
-// Le composant reçoit "showDifferencesOnly" en prop
 function CompareTable({ products, showDifferencesOnly }) {
 
   const productType = products[0]?.productType || 'cpu'; 
@@ -57,17 +53,14 @@ function CompareTable({ products, showDifferencesOnly }) {
   return (
     <table className="compare-table">
       <thead>
-        {/* ... (En-tête du tableau) ... */}
       </thead>
       <tbody>
-        {/* On filtre ici AVANT d'afficher la ligne */}
         {allSpecRows.map(row => {
-          // On vérifie si la ligne est identique (TRUE ou FALSE)
+        
           const isIdentical = areValuesIdentical(products, row.key);
 
-          // Si on est en mode "Différences seulement" ET que la ligne est identique, on la cache
           if (showDifferencesOnly && isIdentical) {
-            return null; // N'affiche rien (ligne cachée)
+            return null; 
           }
 
           return (
