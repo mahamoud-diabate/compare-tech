@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -11,9 +11,6 @@ import {
   Legend,
 } from 'chart.js';
 import CompareTable from '../components/CompareTable';
-import Container from 'react-bootstrap/Container';
-import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form'; // <-- 1. IMPORTER
 
 ChartJS.register(
   CategoryScale,
@@ -27,8 +24,6 @@ ChartJS.register(
 function ComparePage() {
   const [searchParams] = useSearchParams();
   const [products, setProducts] = React.useState([]);
-  // 2. NOUVEL ÉTAT : Gérer l'état du bouton "Différences seulement"
-  const [showDifferencesOnly, setShowDifferencesOnly] = useState(false);
   const productType = searchParams.get('type');
   const idsString = searchParams.get('ids');
 
@@ -53,10 +48,10 @@ function ComparePage() {
 
   if (products.length === 0) {
     return (
-      <Container className="my-5">
+      <main style={{ padding: '40px' }}>
         <h1>Comparaison des Produits</h1>
         <p>Chargement ou aucun produit sélectionné...</p>
-      </Container>
+      </main>
     );
   }
 
@@ -94,34 +89,17 @@ function ComparePage() {
   };
 
   return (
-    <Container className="my-5">
-      <h1 className="mb-4">Comparaison des {productType}s</h1>
+    <main style={{ padding: '40px' }}>
+      <h1>Comparaison des {productType}s</h1>
       
-      {/* Affichage du graphique */}
-      <Card className="shadow-sm mb-5">
-        <Card.Body>
-          <Card.Title>Scores de Performance</Card.Title>
-          <div style={{ maxWidth: '800px', margin: 'auto' }}>
-            <Bar options={options} data={data} />
-          </div>
-        </Card.Body>
-      </Card>
-      
-      {/* 3. CONTRÔLEUR DES DIFFÉRENCES */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="mb-0">Spécifications Détaillées</h2>
-        <Form.Check 
-          type="switch"
-          id="diff-switch"
-          label="Montrer les différences seulement"
-          checked={showDifferencesOnly}
-          onChange={() => setShowDifferencesOnly(!showDifferencesOnly)}
-        />
+      <div style={{ maxWidth: '800px', margin: 'auto' }}>
+        <Bar options={options} data={data} />
       </div>
 
-      {/* 4. On passe l'état au tableau */}
-      <CompareTable products={products} showDifferencesOnly={showDifferencesOnly} />
-    </Container>
+      
+      <h2 style={{ marginTop: '40px' }}>Spécifications Détaillées</h2>
+      <CompareTable products={products} />
+    </main>
   );
 }
 
