@@ -29,7 +29,7 @@ const telephoneSchema= new Schema({
     battery_mah:{
         type:Number,
         required:false
-    }
+    },
     score: { type: Number, 
     required: false }
 });

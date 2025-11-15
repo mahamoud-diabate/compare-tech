@@ -25,7 +25,7 @@ const cpuSchema = new Schema({
     base_freq_ghz:{
         type:String,
         required:false
-    }
+    },
     score: { type: Number, 
     required: false }
 });

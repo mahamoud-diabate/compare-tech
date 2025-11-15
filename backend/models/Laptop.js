@@ -25,7 +25,7 @@ const laptopSchema = new Schema({
     storage_gb: {
         type: Number,
         required: false
-    }
+    },
     score: { type: Number, 
     required: false }
 });

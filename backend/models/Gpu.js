@@ -20,7 +20,7 @@ const gpuSchema = new Schema({
     memory_type:{
         type:String,
         required:false
-    }
+    },
     score: { type: Number, 
     required: false }
 });
