@@ -2,12 +2,24 @@ import react, {useState, useEffect} from 'react';
 import {useOutletContext} from 'react-router-dom';
 import Hero from '../components/Hero';
 import ProductList from '../components/ProductList';
+import CompareBar from '../components/CompareBar';   
 
 function Homepage(){
     const[searchTerm,setSearchTerm]=useState('');
     const[cpus, setCpus]=useState([]);
 
-    const {compareList,onCompareToggle}=useOutletContext('');
+    const [compareList, setCompareList] = useState([]);
+    const handleCompareToggle = (product) => {
+    setCompareList(prevList => {
+      const isSelected = prevList.some(item => item._id === product._id);
+
+      if (isSelected) {
+        return prevList.filter(item => item._id !== product._id);
+      } else {
+        return [...prevList, { ...product, productType: 'cpu' }];
+      }
+    });
+  };
 
     useEffect(()=>{
         fetch(`https://mahamoud-compare-tech-api.onrender.com/api/cpus`)
@@ -34,10 +46,14 @@ function Homepage(){
         <ProductList 
             cpus={filteredCpus}
             compareList={compareIds}
-            onCompareToggle={onCompareToggle}
+            onCompareToggle={handleCompareToggle}
             productType="cpu"
+            compareType="cpu"
         />
     </main>
+    {compareList.length > 0 && (
+        <CompareBar selectedItems={compareList} productType="cpu" />
+    )}
     </>
 );
 }

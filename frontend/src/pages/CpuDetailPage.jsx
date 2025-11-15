@@ -1,60 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Alert from 'react-bootstrap/Alert';
+
 function CpuDetailPage() {
   const { id } = useParams(); 
   const [cpu, setCpu] = useState(null);
+  const [error, setError]=useState(null);
 
   useEffect(() => {
     fetch(`https://mahamoud-compare-tech-api.onrender.com/api/cpus/${id}`)
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Produit non trouvé');
+        }
+        return response.json();
+      })
       .then(data => {
         setCpu(data);
       })
-      .catch(error => console.error("Erreur:", error));
+      .catch(error => {
+        console.error("Erreur:", error);
+        setError(error.message);
+      });
   }, [id]);
 
-  if (!cpu) {
-    return <div>Chargement...</div>;
+  if (error) {
+    return (
+      <Container className="my-5">
+        <Alert variant="danger">Erreur : {error}</Alert>
+      </Container>
+    );
   }
 
+  if (!cpu) {
+    return (
+      <Container className="my-5">
+        <div>Chargement...</div>
+      </Container>
+    );
+  }
   return (
-    <main style={{ padding: '40px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>{cpu.name}</h1>
-      
-      <div style={{ maxWidth: '400px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', padding: '8px 0' }}>
-          <strong>Marque :</strong>
-          <span>{cpu.brand}</span>
-        </div>
+   <Container className="my-5">
+      <Row>
+        <Col md={8}>
+          <h1>{cpu.name}</h1>
+          <p className="lead">Spécifications techniques</p>
+
+          <ListGroup variant="flush">
+            <ListGroup.Item>
+              <strong>Marque :</strong> {cpu.brand}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <strong>Cœurs :</strong> {cpu.cores}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <strong>Threads :</strong> {cpu.threads || 'N/A'}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <strong>Fréquence Max :</strong> {cpu.max_freq_ghz || 'N/A'}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <strong>Fréquence de Base :</strong> {cpu.base_freq_ghz || 'N/A'}
+            </ListGroup.Item>
+          </ListGroup>
+        </Col>
         
-        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', padding: '8px 0' }}>
-          <strong>Cœurs :</strong>
-          <span>{cpu.cores}</span>
-        </div>
-
-        {cpu.threads && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', padding: '8px 0' }}>
-            <strong>Threads :</strong>
-            <span>{cpu.threads}</span>
-          </div>
-        )}
-
-        {cpu.max_freq_ghz && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', padding: '8px 0' }}>
-            <strong>Fréquence Max :</strong>
-            <span>{cpu.max_freq_ghz}</span>
-          </div>
-        )}
-
-        {cpu.base_freq_ghz && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', padding: '8px 0' }}>
-            <strong>Fréquence de Base :</strong>
-            <span>{cpu.base_freq_ghz}</span>
-          </div>
-        )}
-      </div>
-    </main>
+        <Col md={4}>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

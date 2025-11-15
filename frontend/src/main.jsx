@@ -1,6 +1,7 @@
 import React from 'react'
-import ReactDom from 'react-dom/client';
+import ReactDOM from 'react-dom/client';
 import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App.jsx';
 import Homepage from './pages/Homepage.jsx';
 import CpuDetailPage from './pages/CpuDetailPage.jsx';
@@ -11,6 +12,7 @@ import LaptopPage from'./pages/LaptopPage.jsx';
 import LaptopDetailPage from'./pages/LaptopDetailPage.jsx';
 import TelephonePage from './pages/TelephonePage.jsx';
 import TelephoneDetailPage from './pages/TelephoneDetailPage.jsx';
+
 
 import'./index.css';
 
@@ -27,7 +29,7 @@ const router= createBrowserRouter([
       {path:"/gpus",
         element:<GpuPage/>,
       },
-      {path:"laptops",
+      {path:"/laptops",
         element:<LaptopPage/>,
       },
        {
@@ -57,7 +59,7 @@ const router= createBrowserRouter([
   }
 ]);
 
-ReactDom.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router}/>
   </React.StrictMode>

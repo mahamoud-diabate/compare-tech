@@ -1,55 +1,102 @@
 import React from 'react';
-import './CompareTable.css';
+import { useSearchParams } from 'react-router-dom';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
-const ALL_SPECS = [
-  { label: 'Marque', key: 'brand' },
-  { label: 'Cœurs', key: 'cores' },
-  { label: 'Threads', key: 'threads' },
-  { label: 'Fréq. Max', key: 'max_freq_ghz' },
-  { label: 'Fréq. Base', key: 'base_freq_ghz' },
-  { label: 'Mémoire (GB)', key: 'memory_gb' },
-  { label: 'Type Mémoire', key: 'memory_type' },
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-  { label: 'Processeur', key: 'cpu_name' },
-  { label: 'Carte Graphique', key: 'gpu_name' },
-  { label: 'RAM (GB)', key: 'ram_gb' },
-  { label: 'Stockage (GB)', key: 'storage_gb' },
+function ComparePage() {
+  const [searchParams] = useSearchParams();
+  const [products, setProducts] = React.useState([]);
+  const productType = searchParams.get('type');
+  const idsString = searchParams.get('ids');
 
-  { label: 'Écran', key: 'display_size' },
-  { label: 'Batterie (mAh)', key: 'battery_mah' },
-];
+  React.useEffect(() => {
+    if (idsString && productType) {
+      const idsArray = idsString.split(',');
+      const apiUrl = `https://mahamoud-compare-tech-api.onrender.com/api/${productType}s/compare`;
 
-function CompareTable({products}){
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: idsArray })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const typedData = data.map(item => ({ ...item, productType }));
+        setProducts(typedData);
+      })
+      .catch(error => console.error("Erreur:", error));
+    }
+  }, [searchParams, productType, idsString]);
+
+  if (products.length === 0) {
     return (
-    <table className="compare-table">
-      <thead>
-        <tr>
-          <th className="spec-label">Caractéristique</th>
-          {products.map(product => (
-            <th key={product._id}>
-              {product.name}
-              <span className={`type-tag ${product.productType}`}>
-                {product.productType}
-              </span>
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {ALL_SPECS.map(row => (
-          <tr key={row.key}>
-            <td className="spec-label">{row.label}</td>
-            
-            {products.map(product => (
-              <td key={product._id}>
-                {product[row.key] || 'N/A'}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      <main style={{ padding: '40px' }}>
+        <h1>Comparaison des Produits</h1>
+        <p>Chargement ou aucun produit sélectionné...</p>
+      </main>
+    );
+  }
+
+  const chartLabels = products.map(p => p.name);
+  const chartDataPoints = products.map(p => p.score || 0);
+
+  const data = {
+    labels: chartLabels,
+    datasets: [
+      {
+        label: 'Score CompareTech (sur 100)',
+        data: chartDataPoints,
+        backgroundColor: 'rgba(0, 123, 255, 0.5)',
+        borderColor: 'rgba(0, 123, 255, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    indexAxis: 'y',
+    scales: {
+      x: {
+        beginAtZero: true,
+        max: 100
+      }
+    },
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: `Comparaison des Scores (${productType}s)`,
+      },
+    },
+  };
+
+  return (
+    <main style={{ padding: '40px' }}>
+      <h1>Comparaison des {productType}s</h1>
+      
+      <div style={{ maxWidth: '800px', margin: 'auto' }}>
+        <Bar options={options} data={data} />
+      </div>
+    </main>
   );
 }
 
-export default CompareTable;
+export default ComparePage;

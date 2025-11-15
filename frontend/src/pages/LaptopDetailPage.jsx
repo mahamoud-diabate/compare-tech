@@ -1,61 +1,80 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Alert from 'react-bootstrap/Alert';
 
 function LaptopDetailPage() {
   const { id } = useParams(); 
   const [laptop, setLaptop] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch(`https://mahamoud-compare-tech-api.onrender.com/api/laptops/${id}`)
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Produit non trouvé');
+        }
+        return response.json();
+      })
       .then(data => {
         setLaptop(data);
       })
-      .catch(error => console.error("Erreur:", error));
+      .catch(error => {
+        console.error("Erreur:", error);
+        setError(error.message);
+      });
   }, [id]);
 
-  if (!laptop) {
-    return <div>Chargement...</div>;
+  if (error) {
+    return (
+      <Container className="my-5">
+        <Alert variant="danger">Erreur : {error}</Alert>
+      </Container>
+    );
   }
+
+  if (!laptop) {
+    return (
+      <Container className="my-5">
+        <div>Chargement...</div>
+      </Container>
+    );
+  }
+
   return (
-    <main style={{ padding: '40px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>{laptop.name}</h1>
-      
-      <div style={{ maxWidth: '400px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', padding: '8px 0' }}>
-          <strong>Marque :</strong>
-          <span>{laptop.brand}</span>
-        </div>
+    <Container className="my-5">
+      <Row>
+        <Col md={8}>
+          <h1>{laptop.name}</h1>
+          <p className="lead">Spécifications techniques</p>
+
+          <ListGroup variant="flush">
+            <ListGroup.Item>
+              <strong>Marque :</strong> {laptop.brand}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <strong>Processeur :</strong> {laptop.cpu_name || 'N/A'}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <strong>Carte Graphique :</strong> {laptop.gpu_name || 'N/A'}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <strong>RAM :</strong> {laptop.ram_gb ? `${laptop.ram_gb} GB` : 'N/A'}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <strong>Stockage :</strong> {laptop.storage_gb ? `${laptop.storage_gb} GB` : 'N/A'}
+            </ListGroup.Item>
+          </ListGroup>
+        </Col>
         
-        {laptop.cpu_name && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', padding: '8px 0' }}>
-            <strong>Processeur :</strong>
-            <span>{laptop.cpu_name}</span>
-          </div>
-        )}
-
-        {laptop.gpu_name && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', padding: '8px 0' }}>
-            <strong>Carte Graphique :</strong>
-            <span>{laptop.gpu_name}</span>
-          </div>
-        )}
-
-        {laptop.ram_gb && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', padding: '8px 0' }}>
-            <strong>RAM :</strong>
-            <span>{laptop.ram_gb} GB</span>
-          </div>
-        )}
-
-        {laptop.storage_gb && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', padding: '8px 0' }}>
-            <strong>Stockage :</strong>
-            <span>{laptop.storage_gb} GB</span>
-          </div>
-        )}
-      </div>
-    </main>
+        <Col md={4}>
+          
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

@@ -1,49 +1,78 @@
-import React, {useState,useEffect} from 'react';
-import{useParams} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Alert from 'react-bootstrap/Alert';
 
-function GpuDetailPage(){
-    const {id}=useParams();
-    const[gpu,setGpu]=useState(null);
-    useEffect(()=>{
-        fetch(`https://mahamoud-compare-tech-api.onrender.com/api/gpus/${id}`)
-        .then(response=>response.json())
-        .then(data=>{
-            setGpu(data);
-        })
-        .catch(error=>console.error("Erreur:",error));
-    },[id]); 
-    if(!gpu){
-        return<div>Chargement...</div>;
-    }
-    return(
-        <main style={{padding:'40px',fontFamily:'Arial, sans-serif'}}>
-            <h1>{gpu.name}</h1>
-            <div style={{maxWidth:'400px'}}>
-                <div style={{display:'flex',justifyContent:'space-between',borderBottom:'1px solid #eee',padding:'8px 0'}}>
-                    <strong>Marque:</strong>
-                    <span>{gpu.brand}</span>
-                </div>
-                {gpu.cores &&(
-                    <div style={{display:'flex',justifyContent:'space-between',borderBottom:'1px solid #eee',padding:'8px 0'}}>
-                        <strong>Cœurs CUDA/Stream:</strong>
-                        <span>{gpu.cores}</span>
-                    </div>
-                )}
-                {gpu.memory_gb &&(
-                    <div style={{display:'flex',justifyContent:'space-between',borderBottom:'1px solid #eee',padding:'8px 0'}}>
-                        <strong>Mémoire :</strong>
-                        <span>{gpu.memory_type}</span>
-                    </div>
-                )}
-                {gpu.mermory_type &&(
-                    <div Style={{display:'flex', justifyContent:'space-between',borderBottom:'1px solid #eee',padding:'8px 0'}}>
-                        <strong>Type Mémoire :</strong>
-                        <span>{gpu.memory_type}</span>
-                    </div>
-                )}
-            </div>
-        </main>
+function GpuDetailPage() {
+  const { id } = useParams(); 
+  const [gpu, setGpu] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch(`https://mahamoud-compare-tech-api.onrender.com/api/gpus/${id}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Produit non trouvé');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setGpu(data);
+      })
+      .catch(error => {
+        console.error("Erreur:", error);
+        setError(error.message);
+      });
+  }, [id]);
+
+  if (error) {
+    return (
+      <Container className="my-5">
+        <Alert variant="danger">Erreur : {error}</Alert>
+      </Container>
     );
+  }
 
-    }
-    export default GpuDetailPage;
+  if (!gpu) {
+    return (
+      <Container className="my-5">
+        <div>Chargement...</div>
+      </Container>
+    );
+  }
+
+  return (
+    <Container className="my-5">
+      <Row>
+        <Col md={8}>
+          <h1>{gpu.name}</h1>
+          <p className="lead">Spécifications techniques</p>
+
+          <ListGroup variant="flush">
+            <ListGroup.Item>
+              <strong>Marque :</strong> {gpu.brand}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <strong>Cœurs CUDA/Stream :</strong> {gpu.cores || 'N/A'}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <strong>Mémoire :</strong> {gpu.memory_gb ? `${gpu.memory_gb} GB` : 'N/A'}
+            </ListGroup.Item>
+            <ListGroup.Item>
+              <strong>Type Mémoire :</strong> {gpu.memory_type || 'N/A'}
+            </ListGroup.Item>
+          </ListGroup>
+        </Col>
+        
+        <Col md={4}>
+          [Image of {gpu.name}]
+        </Col>
+      </Row>
+    </Container>
+  );
+}
+
+export default GpuDetailPage;
