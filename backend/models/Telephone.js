@@ -30,6 +30,8 @@ const telephoneSchema= new Schema({
         type:Number,
         required:false
     }
+    score: { type: Number, 
+    required: false }
 });
 
 const Telephone=mongoose.model('Telephone',telephoneSchema);

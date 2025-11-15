@@ -21,6 +21,8 @@ const gpuSchema = new Schema({
         type:String,
         required:false
     }
+    score: { type: Number, 
+    required: false }
 });
 
 const Gpu= mongoose.model('Gpu', gpuSchema);

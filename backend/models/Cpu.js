@@ -26,6 +26,8 @@ const cpuSchema = new Schema({
         type:String,
         required:false
     }
+    score: { type: Number, 
+    required: false }
 });
 
 const Cpu = mongoose.model('Cpu', cpuSchema);

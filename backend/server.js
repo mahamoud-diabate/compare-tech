@@ -10,7 +10,7 @@ const Telephone=require('./models/Telephone');
 app.use(express.json());
 app.use(cors());
 
-const dbURI = process.env.DB_URI;
+const dbURI = process.env.DB_URI || "mongodb+srv://KING2MO:104766Dia-@king2mocomparetechclust.go2fdac.mongodb.net/?appName=KING2MOCOMPARETECHCLUSTER";
 mongoose.connect(dbURI)
   .then((result) => {
     console.log('Connecté avec succès à MongoDB:');

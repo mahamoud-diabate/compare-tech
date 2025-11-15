@@ -26,6 +26,8 @@ const laptopSchema = new Schema({
         type: Number,
         required: false
     }
+    score: { type: Number, 
+    required: false }
 });
 
 const Laptop = mongoose.model('Laptop', laptopSchema);
