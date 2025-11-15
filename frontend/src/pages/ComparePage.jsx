@@ -84,7 +84,6 @@ function ComparePage() {
       legend: { display: false },
       title: {
         display: false,
-        text: `Comparaison des Scores (${productType}s)`,
       },
     },
   };
@@ -96,6 +95,8 @@ function ComparePage() {
       <div style={{ maxWidth: '800px', margin: 'auto' }}>
         <Bar options={options} data={data} />
       </div>
+
+      
       <h2 style={{ marginTop: '40px' }}>Spécifications Détaillées</h2>
       <CompareTable products={products} />
     </main>
