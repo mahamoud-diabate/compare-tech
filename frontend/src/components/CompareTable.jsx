@@ -21,6 +21,7 @@ const LAPTOP_SPECS = [
   { label: 'Processeur', key: 'cpu_name' },
   { label: 'Carte Graphique', key: 'gpu_name' },
   { label: 'RAM (GB)', key: 'ram_gb' },
+  { label: 'Stockage (GB)', key: 'storage_gb' },
   { label: 'Score', key: 'score' },
 ];
 const TELEPHONE_SPECS = [
@@ -38,40 +39,49 @@ const SPEC_MAP = {
   telephone: TELEPHONE_SPECS,
 };
 
-function CompareTable({ products }) {
+// Fonction d'aide pour vérifier si une ligne est identique
+const areValuesIdentical = (products, key) => {
+    // 1. On prend la valeur du premier produit
+    const firstValue = products[0][key] || 'N/A';
+    // 2. On vérifie si TOUS les autres produits ont EXACTEMENT la même valeur
+    return products.every(product => (product[key] || 'N/A') === firstValue);
+};
+
+
+// Le composant reçoit "showDifferencesOnly" en prop
+function CompareTable({ products, showDifferencesOnly }) {
 
   const productType = products[0]?.productType || 'cpu'; 
-  const specRows = SPEC_MAP[productType];
+  const allSpecRows = SPEC_MAP[productType];
 
   return (
     <table className="compare-table">
       <thead>
-        <tr>
-          <th className="spec-label">Caractéristique</th>
-          {products.map(product => (
-            <th key={product._id}>
-              {product.name}
-              {product.productType && (
-                <span className={`type-tag ${product.productType}`}>
-                  {product.productType}
-                </span>
-              )}
-            </th>
-          ))}
-        </tr>
+        {/* ... (En-tête du tableau) ... */}
       </thead>
       <tbody>
-        {specRows.map(row => (
-          <tr key={row.key}>
-            <td className="spec-label">{row.label}</td>
-            
-            {products.map(product => (
-              <td key={product._id}>
-                {product[row.key] || 'N/A'}
-              </td>
-            ))}
-          </tr>
-        ))}
+        {/* On filtre ici AVANT d'afficher la ligne */}
+        {allSpecRows.map(row => {
+          // On vérifie si la ligne est identique (TRUE ou FALSE)
+          const isIdentical = areValuesIdentical(products, row.key);
+
+          // Si on est en mode "Différences seulement" ET que la ligne est identique, on la cache
+          if (showDifferencesOnly && isIdentical) {
+            return null; // N'affiche rien (ligne cachée)
+          }
+
+          return (
+            <tr key={row.key}>
+              <td className="spec-label">{row.label}</td>
+              
+              {products.map(product => (
+                <td key={product._id}>
+                  {product[row.key] || 'N/A'}
+                </td>
+              ))}
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
