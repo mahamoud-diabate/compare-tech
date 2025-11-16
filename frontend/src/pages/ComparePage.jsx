@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -24,20 +24,10 @@ ChartJS.register(
   Legend
 );
 
-const calculateCpuScore = (cpu) => {
-  if (!cpu.geekbench_single || !cpu.geekbench_multi) {
-    return 0;
-  }
-  const multiScore = (cpu.geekbench_multi / 22000) * 100;
-  const singleScore = (cpu.geekbench_single / 3000) * 100;
-  const finalScore = (multiScore * 0.7) + (singleScore * 0.3);
-  return finalScore;
-};
-
 function ComparePage() {
   const [searchParams] = useSearchParams();
   const [products, setProducts] = React.useState([]);
-  const [showDifferencesOnly, setShowDifferencesOnly] = React.useState(false);
+  const [showDifferencesOnly, setShowDifferencesOnly] = useState(false);
   const productType = searchParams.get('type');
   const idsString = searchParams.get('ids');
 
@@ -70,10 +60,14 @@ function ComparePage() {
   }
 
   const chartLabels = products.map(p => p.name);
-  
   let chartDataPoints = [];
+  
   if (productType === 'cpu') {
-    chartDataPoints = products.map(p => calculateCpuScore(p));
+    chartDataPoints = products.map(p => (p.geekbench_single && p.geekbench_multi) ? ((p.geekbench_multi / 22000) * 100 * 0.7) + ((p.geekbench_single / 3000) * 100 * 0.3) : 0);
+  } else if (productType === 'gpu') {
+    chartDataPoints = products.map(p => (p.benchmark_3dmark / 30000) * 100 || 0);
+  } else if (productType === 'telephone') {
+    chartDataPoints = products.map(p => (p.antutu_score / 2500000) * 100 || 0);
   } else {
     chartDataPoints = products.map(p => p.score || 0);
   }
