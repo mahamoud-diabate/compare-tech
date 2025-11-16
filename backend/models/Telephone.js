@@ -30,7 +30,7 @@ const telephoneSchema= new Schema({
         type:Number,
         required:false
     },
-    score: { type: Number, 
+    antutu_score: { type: Number, 
     required: false }
 });
 

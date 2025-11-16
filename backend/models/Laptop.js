@@ -26,7 +26,7 @@ const laptopSchema = new Schema({
         type: Number,
         required: false
     },
-    score: { type: Number, 
+    geekbench_multi: { type: Number,
     required: false }
 });
 

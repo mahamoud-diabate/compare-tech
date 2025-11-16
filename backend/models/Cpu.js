@@ -27,7 +27,15 @@ const cpuSchema = new Schema({
         required:false
     },
     score: { type: Number, 
-    required: false }
+    required: false 
+    },
+    geekbench_single:{type:Number,
+    required:false
+    },
+    geekbench_multi:{type:Number,
+    required:false
+    }
+
 });
 
 const Cpu = mongoose.model('Cpu', cpuSchema);

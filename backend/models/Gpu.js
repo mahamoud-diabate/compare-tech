@@ -21,7 +21,7 @@ const gpuSchema = new Schema({
         type:String,
         required:false
     },
-    score: { type: Number, 
+    benchmark_3dmark: { type: Number,
     required: false }
 });
 
