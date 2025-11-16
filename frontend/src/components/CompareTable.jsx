@@ -6,8 +6,8 @@ const CPU_SPECS = [
   { label: 'Cœurs', key: 'cores' },
   { label: 'Threads', key: 'threads' },
   { label: 'Fréq. Max', key: 'max_freq_ghz' },
-  { label: 'Fréq. Base', key: 'base_freq_ghz' },
-  { label: 'Score', key: 'score' },
+  { label: 'Geekbench (Single)', key: 'geekbench_single' },
+  { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
 ];
 const GPU_SPECS = [
   { label: 'Marque', key: 'brand' },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -13,7 +13,7 @@ import {
 import CompareTable from '../components/CompareTable';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form'; // <-- 1. IMPORTER
+import Form from 'react-bootstrap/Form';
 
 ChartJS.register(
   CategoryScale,
@@ -24,11 +24,20 @@ ChartJS.register(
   Legend
 );
 
+const calculateCpuScore = (cpu) => {
+  if (!cpu.geekbench_single || !cpu.geekbench_multi) {
+    return 0;
+  }
+  const multiScore = (cpu.geekbench_multi / 22000) * 100;
+  const singleScore = (cpu.geekbench_single / 3000) * 100;
+  const finalScore = (multiScore * 0.7) + (singleScore * 0.3);
+  return finalScore;
+};
+
 function ComparePage() {
   const [searchParams] = useSearchParams();
   const [products, setProducts] = React.useState([]);
-  // 2. NOUVEL ÉTAT : Gérer l'état du bouton "Différences seulement"
-  const [showDifferencesOnly, setShowDifferencesOnly] = useState(false);
+  const [showDifferencesOnly, setShowDifferencesOnly] = React.useState(false);
   const productType = searchParams.get('type');
   const idsString = searchParams.get('ids');
 
@@ -61,13 +70,19 @@ function ComparePage() {
   }
 
   const chartLabels = products.map(p => p.name);
-  const chartDataPoints = products.map(p => p.score || 0);
+  
+  let chartDataPoints = [];
+  if (productType === 'cpu') {
+    chartDataPoints = products.map(p => calculateCpuScore(p));
+  } else {
+    chartDataPoints = products.map(p => p.score || 0);
+  }
 
   const data = {
     labels: chartLabels,
     datasets: [
       {
-        label: 'Score CompareTech (sur 100)',
+        label: 'Score CompareTech (calculé)',
         data: chartDataPoints,
         backgroundColor: 'rgba(0, 123, 255, 0.5)',
         borderColor: 'rgba(0, 123, 255, 1)',
@@ -97,7 +112,6 @@ function ComparePage() {
     <Container className="my-5">
       <h1 className="mb-4">Comparaison des {productType}s</h1>
       
-      {/* Affichage du graphique */}
       <Card className="shadow-sm mb-5">
         <Card.Body>
           <Card.Title>Scores de Performance</Card.Title>
@@ -107,7 +121,6 @@ function ComparePage() {
         </Card.Body>
       </Card>
       
-      {/* 3. CONTRÔLEUR DES DIFFÉRENCES */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 className="mb-0">Spécifications Détaillées</h2>
         <Form.Check 
@@ -119,7 +132,6 @@ function ComparePage() {
         />
       </div>
 
-      {/* 4. On passe l'état au tableau */}
       <CompareTable products={products} showDifferencesOnly={showDifferencesOnly} />
     </Container>
   );
