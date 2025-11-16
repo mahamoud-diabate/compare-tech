@@ -11,7 +11,7 @@ return(
     <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
         <Container>
             <LinkContainer to="/">
-                <Navbar.Brand>CompareTech</Navbar.Brand>
+                <Navbar.Brand>KING2MO CompareTech</Navbar.Brand>
             </LinkContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav"/>
         <Navbar.Collapse id="basic-navbar-nav">
