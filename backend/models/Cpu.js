@@ -35,6 +35,8 @@ const cpuSchema = new Schema({
     geekbench_multi:{type:Number,
     required:false
     }
+    pros:[String],
+    cons:[String]
 
 });
 

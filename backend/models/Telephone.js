@@ -31,7 +31,10 @@ const telephoneSchema= new Schema({
         required:false
     },
     antutu_score: { type: Number, 
-    required: false }
+    required: false 
+    },
+    pros:[String],
+    cons:[String]
 });
 
 const Telephone=mongoose.model('Telephone',telephoneSchema);

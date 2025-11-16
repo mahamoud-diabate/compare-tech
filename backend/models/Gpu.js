@@ -22,7 +22,10 @@ const gpuSchema = new Schema({
         required:false
     },
     benchmark_3dmark: { type: Number,
-    required: false }
+    required: false 
+    },
+    pros:[String],
+    cons:[String]
 });
 
 const Gpu= mongoose.model('Gpu', gpuSchema);

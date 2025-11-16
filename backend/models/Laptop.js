@@ -27,7 +27,10 @@ const laptopSchema = new Schema({
         required: false
     },
     geekbench_multi: { type: Number,
-    required: false }
+    required: false 
+    },
+    pros:[String],
+    cons:[String]
 });
 
 const Laptop = mongoose.model('Laptop', laptopSchema);
