@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import './ProductList.css'; // On charge notre nouveau CSS
+import './ProductList.css';
 
 function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, productType = "cpu", compareType }) {
 
@@ -20,7 +20,7 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
 
   return (
     <div className="container my-5">
-      <h2 className="text-center mb-4 display-5 fw-bold">{getTitle()}</h2>
+      <h2 className="text-center mb-4">{getTitle()}</h2>
       
       <Row xs={1} md={2} lg={4} className="g-4">
         {cpus.map(product => {
@@ -29,18 +29,8 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
 
           return (
             <Col key={product._id}>
-              <Card className={`h-100 ${isDisabled ? 'disabled-card' : ''}`}>
-                
-                {product.imageUrl && (
-                  <Card.Img 
-                    variant="top" 
-                    src={product.imageUrl} 
-                    alt={product.name} 
-                    className="product-card-image"
-                  />
-                )}
-
-                <Card.Body className="d-flex flex-column text-center">
+              <Card className={`h-100 shadow-sm ${isDisabled ? 'disabled-card' : ''}`}>
+                <Card.Body className="d-flex flex-column">
                   <Card.Title>{product.name}</Card.Title>
                   
                   <Form.Check 
@@ -50,34 +40,33 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                     checked={isSelected}
                     onChange={() => onCompareToggle(product)}
                     disabled={isDisabled}
-                    className="mb-3"
                   />
                   
-                  <ListGroup variant="flush" className="text-start mb-3">
-                    <ListGroup.Item><strong>Marque:</strong> <span>{product.brand}</span></ListGroup.Item>
+                  <ListGroup variant="flush" className="flex-grow-1 mt-3">
+                    <ListGroup.Item><strong>Marque:</strong> {product.brand}</ListGroup.Item>
                     
                     {productType === 'cpu' && (
                       <>
-                        {product.cores && (<ListGroup.Item><strong>Cœurs:</strong> <span>{product.cores}</span></ListGroup.Item>)}
-                        {product.threads && (<ListGroup.Item><strong>Threads:</strong> <span>{product.threads}</span></ListGroup.Item>)}
+                        {product.cores && (<ListGroup.Item><strong>Cœurs:</strong> {product.cores}</ListGroup.Item>)}
+                        {product.threads && (<ListGroup.Item><strong>Threads:</strong> {product.threads}</ListGroup.Item>)}
                       </>
                     )}
                     {productType === 'gpu' && (
                       <>
-                        {product.cores && (<ListGroup.Item><strong>Cœurs CUDA:</strong> <span>{product.cores}</span></ListGroup.Item>)}
-                        {product.memory_gb && (<ListGroup.Item><strong>Mémoire:</strong> <span>{product.memory_gb} GB</span></ListGroup.Item>)}
+                        {product.cores && (<ListGroup.Item><strong>Cœurs CUDA/Stream:</strong> {product.cores}</ListGroup.Item>)}
+                        {product.memory_gb && (<ListGroup.Item><strong>Mémoire:</strong> {product.memory_gb} GB</ListGroup.Item>)}
                       </>
                     )}
                     {productType === 'laptop' && (
                       <>
-                        {product.cpu_name && (<ListGroup.Item><strong>CPU:</strong> <span>{product.cpu_name}</span></ListGroup.Item>)}
-                        {product.ram_gb && (<ListGroup.Item><strong>RAM:</strong> <span>{product.ram_gb} GB</span></ListGroup.Item>)}
+                        {product.cpu_name && (<ListGroup.Item><strong>CPU:</strong> {product.cpu_name}</ListGroup.Item>)}
+                        {product.ram_gb && (<ListGroup.Item><strong>RAM:</strong> {product.ram_gb} GB</ListGroup.Item>)}
                       </>
                     )}
                     {productType === 'telephone' && (
                       <>
-                        {product.display_size && (<ListGroup.Item><strong>Écran:</strong> <span>{product.display_size}</span></ListGroup.Item>)}
-                        {product.cpu_name && (<ListGroup.Item><strong>CPU:</strong> <span>{product.cpu_name}</span></ListGroup.Item>)}
+                        {product.display_size && (<ListGroup.Item><strong>Écran:</strong> {product.display_size}</ListGroup.Item>)}
+                        {product.cpu_name && (<ListGroup.Item><strong>CPU:</strong> {product.cpu_name}</ListGroup.Item>)}
                       </>
                     )}
                   </ListGroup>
