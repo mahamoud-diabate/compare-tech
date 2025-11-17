@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Hero from '../components/Hero';
 import ProductList from '../components/ProductList';
 import CompareBar from '../components/CompareBar';
+import toast from 'react-hot-toast';
 
 function LaptopPage() {
   const [searchTerm, setSearchTerm] = useState('');

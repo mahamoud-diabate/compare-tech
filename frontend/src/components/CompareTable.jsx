@@ -9,6 +9,8 @@ const CPU_SPECS = [
   { label: 'Fréq. Base', key: 'base_freq_ghz' },
   { label: 'Geekbench (Single)', key: 'geekbench_single' },
   { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
+  {label: 'Avantages', key:'pros', type:'liste'},
+  {label: 'Inconvenients', key:'cons',type:'liste'}
 ];
 const GPU_SPECS = [
   { label: 'Marque', key: 'brand' },
@@ -16,6 +18,8 @@ const GPU_SPECS = [
   { label: 'Mémoire (GB)', key: 'memory_gb' },
   { label: 'Type Mémoire', key: 'memory_type' },
   { label: '3DMark Score', key: 'benchmark_3dmark' },
+  { label: 'Avantages', key: 'pros', type: 'list' },
+  { label: 'Inconvénients', key: 'cons', type: 'list' }
 ];
 const LAPTOP_SPECS = [
   { label: 'Marque', key: 'brand' },
@@ -24,6 +28,8 @@ const LAPTOP_SPECS = [
   { label: 'RAM (GB)', key: 'ram_gb' },
   { label: 'Stockage (GB)', key: 'storage_gb' },
   { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
+  { label: 'Avantages', key: 'pros', type: 'list' },
+  { label: 'Inconvénients', key: 'cons', type: 'list' }
 ];
 const TELEPHONE_SPECS = [
   { label: 'Marque', key: 'brand' },
@@ -31,6 +37,8 @@ const TELEPHONE_SPECS = [
   { label: 'Processeur', key: 'cpu_name' },
   { label: 'Batterie (mAh)', key: 'battery_mah' },
   { label: 'AnTuTu Score', key: 'antutu_score' },
+  { label: 'Avantages', key: 'pros', type: 'list' },
+  { label: 'Inconvénients', key: 'cons', type: 'list' } 
 ];
 
 const SPEC_MAP = {
