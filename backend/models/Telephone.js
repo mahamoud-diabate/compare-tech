@@ -1,42 +1,19 @@
-const mongoose =require('mongoose');
-const Schema=mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const telephoneSchema= new Schema({
-    name:{
-        type:String,
-        required:true
-    },
-    brand:{
-        type:String,
-        required:true
-    },
-    display_size:{
-        type:String,
-        required:false
-    },
-    cpu_name:{
-        type:String,
-        required:false
-    },
-    ram_gb:{
-        type:Number,
-        required:false
-    },
-    storage_gb:{
-        type:Number,
-        required:false
-    },
-    battery_mah:{
-        type:Number,
-        required:false
-    },
-    antutu_score: { type: Number, 
-    required: false 
-    },
-    pros:[String],
-    cons:[String]
+const telephoneSchema = new Schema({
+    name: { type: String, required: true },
+    brand: { type: String, required: true },
+    display_size: { type: String, required: false },
+    cpu_name: { type: String, required: false },
+    ram_gb: { type: Number, required: false },
+    storage_gb: { type: Number, required: false },
+    battery_mah: { type: Number, required: false },
+    imageUrl: { type: String, required: false },
+    antutu_score: { type: Number, required: false },
+    pros: [String],
+    cons: [String]
 });
 
-const Telephone=mongoose.model('Telephone',telephoneSchema);
-
-module.exports=Telephone;
+const Telephone = mongoose.model('Telephone', telephoneSchema);
+module.exports = Telephone;
