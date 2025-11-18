@@ -1,3 +1,9 @@
+.accordion-header button {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
 .spec-row {
   padding: 1rem 0.5rem;
   border-bottom: 1px solid #eee;
