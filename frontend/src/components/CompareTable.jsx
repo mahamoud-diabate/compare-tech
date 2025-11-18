@@ -1,59 +1,62 @@
 import React from 'react';
-import Accordion from  'react-bootstrap/Accordion';
+import Accordion from 'react-bootstrap/Accordion';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './CompareTable.css';
 
 const CPU_SPECS = [
-  {group:'Specifications de Base',
-   spec: [
-  { label: 'Marque', key: 'brand' },
-  { label: 'Cœurs', key: 'cores' },
-  { label: 'Threads', key: 'threads' },
-  { label: 'Fréq. Max', key: 'max_freq_ghz' },
-  { label: 'Fréq. Base', key: 'base_freq_ghz' },
-  {label:'TDP (Watts)', key:'tdp'},
-      ]
-  },
-  {
-    group:'Performance (Benchmarks)',
-    specs:[
-  { label: 'Geekbench (Single)', key: 'geekbench_single' },
-  { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
+  { 
+    group: 'Spécifications de Base', 
+    specs: [
+      { label: 'Marque', key: 'brand' },
+      { label: 'Cœurs', key: 'cores' },
+      { label: 'Threads', key: 'threads' },
+      { label: 'Fréq. Max', key: 'max_freq_ghz' },
+      { label: 'Fréq. Base', key: 'base_freq_ghz' },
+      { label:'TDP (Watts)', key:'tdp'},
     ]
   },
-  {group:'Analyse',
+  {
+    group: 'Performance (Benchmarks)',
     specs:[
-  {label: 'Avantages', key:'pros', type:'liste'},
-  {label: 'Inconvenients', key:'cons',type:'liste'}
+      { label: 'Geekbench (Single)', key: 'geekbench_single' },
+      { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
+    ]
+  },
+  {
+    group: 'Analyse',
+    specs:[
+      { label: 'Avantages', key: 'pros', type: 'list' },
+      { label: 'Inconvénients', key: 'cons', type: 'list' }
     ]
   }
 ];
 
-
 const GPU_SPECS = [
-  {group: 'Specifications de Base',
-   specs: [
-  { label: 'Marque', key: 'brand' },
-  { label: 'Cœurs CUDA/Stream', key: 'cores' },
-  { label: 'Mémoire (GB)', key: 'memory_gb' },
-  { label: 'Type Mémoire', key: 'memory_type' },
-   ]
-  },
-  {group: 'Performance (Benchmarks)',
-    specs:[
-  { label: '3DMark Score', key: 'benchmark_3dmark' },
+  {
+    group: 'Spécifications de Base',
+    specs: [
+      { label: 'Marque', key: 'brand' },
+      { label: 'Cœurs CUDA/Stream', key: 'cores' },
+      { label: 'Mémoire (GB)', key: 'memory_gb' },
+      { label: 'Type Mémoire', key: 'memory_type' },
     ]
   },
-  {group:'Analyse',
+  {
+    group: 'Performance (Benchmarks)',
     specs:[
-  { label: 'Avantages', key: 'pros', type: 'list' },
-  { label: 'Inconvénients', key: 'cons', type: 'list' }
+      { label: '3DMark Score', key: 'benchmark_3dmark' },
+    ]
+  },
+  {
+    group: 'Analyse',
+    specs:[
+      { label: 'Avantages', key: 'pros', type: 'list' },
+      { label: 'Inconvénients', key: 'cons', type: 'list' }
     ]
   }
-  ];
+];
 
-  
 const LAPTOP_SPECS = [
   {
     group: 'Spécifications Principales',
@@ -122,12 +125,6 @@ function CompareTable({ products, showDifferencesOnly }) {
 
   const productType = products[0]?.productType || 'cpu'; 
   const specGroups = SPEC_MAP[productType] || [];
-  
-  const areValueIdentical=(products, key) =>{
-    if (!products || products.length === 0) return true;
-    const firstValue = products[0][key] || 'N/A';
-    return products.every(product=>(product[key]||'N/A')===firstValue);
-  };
 
   return (
     <div>
@@ -141,20 +138,20 @@ function CompareTable({ products, showDifferencesOnly }) {
             </Col>
         ))}
       </Row>
-        
+          
       <Accordion defaultActiveKey="0" alwaysOpen>
         {specGroups.map((group, groupIndex)=>(
           <Accordion.Item eventKey={String(groupIndex)} key={group.group}>
             <Accordion.Header>{group.group}</Accordion.Header>
             <Accordion.Body>
               {group.specs.map(row=>{
-                const isIdentical = areVauluesIdentical(product, row.key);
+                const isIdentical = areValuesIdentical(products, row.key);
                 if (showDifferencesOnly && isIdentical) {
                   return null;
                 }
                 
                 return (
-                  <Row key={Row.key} className= "spec-row">
+                  <Row key={row.key} className="spec-row">
                     <Col xs={12} md={3} className="spec-label">{row.label}</Col>
 
                     {products.map(product=>(
@@ -167,7 +164,7 @@ function CompareTable({ products, showDifferencesOnly }) {
                               </li>
                             ))}
                             </ul>
-                        ):(
+                        ) : (
                           product[row.key] || 'N/A'
                         )}
                       </Col>
@@ -182,4 +179,5 @@ function CompareTable({ products, showDifferencesOnly }) {
     </div>
   );
 }
+
 export default CompareTable;
