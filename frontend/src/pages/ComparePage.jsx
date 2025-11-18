@@ -2,7 +2,7 @@ import React from 'react';
 import Accordion from 'react-bootstrap/Accordion';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import './CompareTable.css';
+import '../CompareTable.css';
 
 const CPU_SPECS = [
   { 
