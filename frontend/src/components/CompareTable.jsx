@@ -94,7 +94,7 @@ function CompareTable({ products, showDifferencesOnly }) {
   const areValueIdentical=(products, key) =>{
     if (!products || products.length === 0) return true;
     const firstValue = products[0][key] || 'N/A';
-    return products.every(product=>(product[key]||'N/A'))===firstValue);
+    return products.every(product=>(product[key]||'N/A')===firstValue);
   };
 
   return (
