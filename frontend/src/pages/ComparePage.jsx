@@ -1,153 +1,183 @@
-import React, { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import CompareTable from '../components/CompareTable';
-import Container from 'react-bootstrap/Container';
-import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form';
+import React from 'react';
+import Accordion from 'react-bootstrap/Accordion';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import './CompareTable.css';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-const calculateCpuScore = (cpu) => {
-  if (!cpu.geekbench_single || !cpu.geekbench_multi) return 0;
-  const multiScore = (cpu.geekbench_multi / 22000) * 100;
-  const singleScore = (cpu.geekbench_single / 3000) * 100;
-  return (multiScore * 0.7) + (singleScore * 0.3);
-};
-
-const calculateGpuScore = (gpu) => {
-  if (!gpu.benchmark_3dmark) return 0;
-  const score = (gpu.benchmark_3dmark / 30000) * 100;
-  return score;
-};
-
-const calculateTelephoneScore = (tel) => {
-  if (!tel.antutu_score) return 0;
-  const score = (tel.antutu_score / 2500000) * 100;
-  return score;
-};
-
-function ComparePage() {
-  const [searchParams] = useSearchParams();
-  const [products, setProducts] = React.useState([]);
-  const [showDifferencesOnly, setShowDifferencesOnly] = useState(false);
-  const productType = searchParams.get('type');
-  const idsString = searchParams.get('ids');
-
-  React.useEffect(() => {
-    if (idsString && productType) {
-      const idsArray = idsString.split(',');
-      const apiUrl = `https://mahamoud-compare-tech-api.onrender.com/api/${productType}s/compare`;
-
-      fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: idsArray })
-      })
-      .then(response => response.json())
-      .then(data => {
-        const typedData = data.map(item => ({ ...item, productType }));
-        setProducts(typedData);
-      })
-      .catch(error => console.error("Erreur:", error));
-    }
-  }, [searchParams, productType, idsString]);
-
-  if (products.length === 0) {
-    return (
-      <Container className="my-5">
-        <h1>Comparaison des Produits</h1>
-        <p>Chargement ou aucun produit sélectionné...</p>
-      </Container>
-    );
+const CPU_SPECS = [
+  { 
+    group: 'Spécifications de Base', 
+    specs: [
+      { label: 'Marque', key: 'brand' },
+      { label: 'Cœurs', key: 'cores' },
+      { label: 'Threads', key: 'threads' },
+      { label: 'Fréq. Max', key: 'max_freq_ghz' },
+      { label: 'Fréq. Base', key: 'base_freq_ghz' },
+      { label:'TDP (Watts)', key:'tdp'},
+    ]
+  },
+  {
+    group: 'Performance (Benchmarks)',
+    specs:[
+      { label: 'Geekbench (Single)', key: 'geekbench_single' },
+      { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
+    ]
+  },
+  {
+    group: 'Analyse',
+    specs:[
+      { label: 'Avantages', key: 'pros', type: 'list' },
+      { label: 'Inconvénients', key: 'cons', type: 'list' }
+    ]
   }
+];
 
-  const chartLabels = products.map(p => p.name);
-  
-  let chartDataPoints = [];
-  if (productType === 'cpu') {
-    chartDataPoints = products.map(p => calculateCpuScore(p));
-  } else if (productType === 'gpu') {
-    chartDataPoints = products.map(p => calculateGpuScore(p));
-  } else if (productType === 'telephone') {
-    chartDataPoints = products.map(p => calculateTelephoneScore(p));
-  } else {
-    chartDataPoints = products.map(p => p.score || 0);
+const GPU_SPECS = [
+  {
+    group: 'Spécifications de Base',
+    specs: [
+      { label: 'Marque', key: 'brand' },
+      { label: 'Cœurs CUDA/Stream', key: 'cores' },
+      { label: 'Mémoire (GB)', key: 'memory_gb' },
+      { label: 'Type Mémoire', key: 'memory_type' },
+    ]
+  },
+  {
+    group: 'Performance (Benchmarks)',
+    specs:[
+      { label: '3DMark Score', key: 'benchmark_3dmark' },
+    ]
+  },
+  {
+    group: 'Analyse',
+    specs:[
+      { label: 'Avantages', key: 'pros', type: 'list' },
+      { label: 'Inconvénients', key: 'cons', type: 'list' }
+    ]
   }
+];
 
-  const data = {
-    labels: chartLabels,
-    datasets: [
-      {
-        label: 'Score CompareTech (calculé)',
-        data: chartDataPoints,
-        backgroundColor: 'rgba(0, 123, 255, 0.5)',
-        borderColor: 'rgba(0, 123, 255, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
+const LAPTOP_SPECS = [
+  {
+    group: 'Spécifications Principales',
+    specs: [
+      { label: 'Marque', key: 'brand' },
+      { label: 'Processeur', key: 'cpu_name' },
+      { label: 'Carte Graphique', key: 'gpu_name' },
+      { label: 'RAM (GB)', key: 'ram_gb' },
+      { label: 'Stockage (GB)', key: 'storage_gb' },
+    ]
+  },
+  {
+    group: 'Performance (Benchmarks)',
+    specs:[
+      { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
+    ]
+  },
+  {
+    group: 'Analyse',
+    specs:[
+      { label: 'Avantages', key: 'pros', type: 'list' },
+      { label: 'Inconvénients', key: 'cons', type: 'list' }
+    ]
+  }
+];
 
-  const options = {
-    indexAxis: 'y',
-    scales: {
-      x: {
-        beginAtZero: true,
-        max: 100
-      }
-    },
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      title: {
-        display: false,
-      },
-    },
-  };
+const TELEPHONE_SPECS = [
+  {
+    group: 'Spécifications Principales',
+    specs: [
+      { label: 'Marque', key: 'brand' },
+      { label: 'Écran', key: 'display_size' },
+      { label: 'Processeur', key: 'cpu_name' },
+      { label: 'Batterie (mAh)', key: 'battery_mah' },
+    ]
+  },
+  {
+    group: 'Performance (Benchmarks)',
+    specs:[
+      { label: 'AnTuTu Score', key: 'antutu_score' },
+    ]
+  },
+  {
+    group: 'Analyse',
+    specs:[
+      { label: 'Avantages', key: 'pros', type: 'list' },
+      { label: 'Inconvénients', key: 'cons', type: 'list' }
+    ]
+  }
+];
+
+const SPEC_MAP = {
+  cpu: CPU_SPECS,
+  gpu: GPU_SPECS,
+  laptop: LAPTOP_SPECS,
+  telephone: TELEPHONE_SPECS,
+};
+
+const areValuesIdentical = (products, key) => {
+    if (!products || products.length === 0) return true;
+    const firstValue = products[0][key] || 'N/A';
+    return products.every(product => (product[key] || 'N/A') === firstValue);
+};
+
+function CompareTable({ products, showDifferencesOnly }) {
+
+  const productType = products[0]?.productType || 'cpu'; 
+  const specGroups = SPEC_MAP[productType] || [];
 
   return (
-    <Container className="my-5">
-      <h1 className="mb-4">Comparaison des {productType}s</h1>
-      
-      <Card className="shadow-sm mb-5">
-        <Card.Body>
-          <Card.Title>Scores de Performance</Card.Title>
-          <div style={{ maxWidth: '800px', margin: 'auto' }}>
-            <Bar options={options} data={data} />
-          </div>
-        </Card.Body>
-      </Card>
-      
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="mb-0">Spécifications Détaillées</h2>
-        <Form.Check 
-          type="switch"
-          id="diff-switch"
-          label="Montrer les différences seulement"
-          checked={showDifferencesOnly}
-          onChange={() => setShowDifferencesOnly(!showDifferencesOnly)}
-        />
-      </div>
+    <div>
+      <Row className="text-center mb-4">
+        {products.map(product=>(
+          <Col key={product._id}>
+            <h3 className="h5">{product.name}</h3>
+            <span className={`type-tag ${product.productType}`}>
+              {product.productType}
+            </span>
+            </Col>
+        ))}
+      </Row>
+          
+      <Accordion defaultActiveKey="0" alwaysOpen>
+        {specGroups.map((group, groupIndex)=>(
+          <Accordion.Item eventKey={String(groupIndex)} key={group.group}>
+            <Accordion.Header>{group.group}</Accordion.Header>
+            <Accordion.Body>
+              {group.specs.map(row=>{
+                const isIdentical = areValuesIdentical(products, row.key);
+                if (showDifferencesOnly && isIdentical) {
+                  return null;
+                }
+                
+                return (
+                  <Row key={row.key} className="spec-row">
+                    <Col xs={12} md={3} className="spec-label">{row.label}</Col>
 
-      <CompareTable products={products} showDifferencesOnly={showDifferencesOnly} />
-    </Container>
+                    {products.map(product=>(
+                      <Col key={product._id} xs={6} md={productType=== 'cpu' ? 4 : 4}>
+                        {row.type === 'list' && product[row.key] ? (
+                          <ul className="spec-list">
+                            {product[row.key].map((item,index)=>(
+                              <li key={index}>
+                                {row.key === 'pros' ? '✅' : '❌'} {item}
+                              </li>
+                            ))}
+                            </ul>
+                        ) : (
+                          product[row.key] || 'N/A'
+                        )}
+                      </Col>
+                    ))}
+                  </Row>
+                );
+              })}
+            </Accordion.Body>
+          </Accordion.Item>
+        ))}
+      </Accordion>
+    </div>
   );
 }
 
-export default ComparePage;
+export default CompareTable;
