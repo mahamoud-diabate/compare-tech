@@ -3,3 +3,9 @@
     font-size: 0.9rem;
     border: none !important;    
 }
+
+.product-card-image {
+  max-height: 180px;
+  object-fit: contain;
+  padding: 10px;
+}
