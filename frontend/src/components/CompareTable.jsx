@@ -1,11 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import Accordion from 'react-bootstrap/Accordion'; // <-- On importe l'Accordéon
+import Accordion from 'react-bootstrap/Accordion';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import './CompareTable.css'; // On aura besoin de CSS personnalisé
+import './CompareTable.css';
 
-// 1. On définit nos specs en GROUPES
 const CPU_SPECS = [
   { 
     group: 'Spécifications de Base', 
@@ -15,19 +13,19 @@ const CPU_SPECS = [
       { label: 'Threads', key: 'threads' },
       { label: 'Fréq. Max', key: 'max_freq_ghz' },
       { label: 'Fréq. Base', key: 'base_freq_ghz' },
-      { label: 'TDP (Watts)', key: 'tdp' },
+      { label:'TDP (Watts)', key:'tdp'},
     ]
   },
   {
     group: 'Performance (Benchmarks)',
-    specs: [
+    specs:[
       { label: 'Geekbench (Single)', key: 'geekbench_single' },
       { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
     ]
   },
   {
     group: 'Analyse',
-    specs: [
+    specs:[
       { label: 'Avantages', key: 'pros', type: 'list' },
       { label: 'Inconvénients', key: 'cons', type: 'list' }
     ]
@@ -46,79 +44,128 @@ const GPU_SPECS = [
   },
   {
     group: 'Performance (Benchmarks)',
-    specs: [
+    specs:[
       { label: '3DMark Score', key: 'benchmark_3dmark' },
     ]
   },
   {
     group: 'Analyse',
-    specs: [
+    specs:[
       { label: 'Avantages', key: 'pros', type: 'list' },
       { label: 'Inconvénients', key: 'cons', type: 'list' }
     ]
   }
 ];
 
-// ... (On devrait faire la même chose pour Laptop et Telephone)
+const LAPTOP_SPECS = [
+  {
+    group: 'Spécifications Principales',
+    specs: [
+      { label: 'Marque', key: 'brand' },
+      { label: 'Processeur', key: 'cpu_name' },
+      { label: 'Carte Graphique', key: 'gpu_name' },
+      { label: 'RAM (GB)', key: 'ram_gb' },
+      { label: 'Stockage (GB)', key: 'storage_gb' },
+    ]
+  },
+  {
+    group: 'Performance (Benchmarks)',
+    specs:[
+      { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
+    ]
+  },
+  {
+    group: 'Analyse',
+    specs:[
+      { label: 'Avantages', key: 'pros', type: 'list' },
+      { label: 'Inconvénients', key: 'cons', type: 'list' }
+    ]
+  }
+];
+
+const TELEPHONE_SPECS = [
+  {
+    group: 'Spécifications Principales',
+    specs: [
+      { label: 'Marque', key: 'brand' },
+      { label: 'Écran', key: 'display_size' },
+      { label: 'Processeur', key: 'cpu_name' },
+      { label: 'Batterie (mAh)', key: 'battery_mah' },
+    ]
+  },
+  {
+    group: 'Performance (Benchmarks)',
+    specs:[
+      { label: 'AnTuTu Score', key: 'antutu_score' },
+    ]
+  },
+  {
+    group: 'Analyse',
+    specs:[
+      { label: 'Avantages', key: 'pros', type: 'list' },
+      { label: 'Inconvénients', key: 'cons', type: 'list' }
+    ]
+  }
+];
 
 const SPEC_MAP = {
   cpu: CPU_SPECS,
   gpu: GPU_SPECS,
-  laptop: [], // À faire plus tard
-  telephone: [], // À faire plus tard
+  laptop: LAPTOP_SPECS,
+  telephone: TELEPHONE_SPECS,
 };
 
-function CompareTable({ products, showDifferencesOnly }) {
-  const productType = products[0]?.productType || 'cpu';
-  const specGroups = SPEC_MAP[productType] || [];
-
-  const areValuesIdentical = (products, key) => {
+const areValuesIdentical = (products, key) => {
     if (!products || products.length === 0) return true;
     const firstValue = products[0][key] || 'N/A';
     return products.every(product => (product[key] || 'N/A') === firstValue);
-  };
+};
+
+function CompareTable({ products, showDifferencesOnly }) {
+
+  const productType = products[0]?.productType || 'cpu'; 
+  const specGroups = SPEC_MAP[productType] || [];
 
   return (
     <div>
-      {/* 2. On affiche les noms des produits en haut */}
       <Row className="text-center mb-4">
-        {products.map(product => (
+        {products.map(product=>(
           <Col key={product._id}>
             <h3 className="h5">{product.name}</h3>
             <span className={`type-tag ${product.productType}`}>
               {product.productType}
             </span>
-          </Col>
+            </Col>
         ))}
       </Row>
-
-      {/* 3. On crée l'Accordéon */}
+          
       <Accordion defaultActiveKey="0" alwaysOpen>
-        {specGroups.map((group, groupIndex) => (
+        {specGroups.map((group, groupIndex)=>(
           <Accordion.Item eventKey={String(groupIndex)} key={group.group}>
-            <Accordion.Header>{group.group}</Accordion.Header>
+            
+            <Accordion.Header as="div" className="fs-5 fw-semibold">{group.group}</Accordion.Header>
+
             <Accordion.Body>
-              {/* On crée une ligne pour chaque spec */}
-              {group.specs.map(row => {
+              {group.specs.map(row=>{
                 const isIdentical = areValuesIdentical(products, row.key);
                 if (showDifferencesOnly && isIdentical) {
                   return null;
                 }
-
+                
                 return (
                   <Row key={row.key} className="spec-row">
                     <Col xs={12} md={3} className="spec-label">{row.label}</Col>
-                    
-                    {products.map(product => (
-                      <Col key={product._id} xs={6} md={productType === 'cpu' ? 4 : 4}>
+
+                    {products.map(product=>(
+                      <Col key={product._id} xs={6} md={productType=== 'cpu' ? 4 : 4}>
                         {row.type === 'list' && product[row.key] ? (
                           <ul className="spec-list">
-                            {product[row.key].map((item, index) => (
+                            {product[row.key].map((item,index)=>(
                               <li key={index}>
                                 {row.key === 'pros' ? '✅' : '❌'} {item}
                               </li>
                             ))}
-                          </ul>
+                            </ul>
                         ) : (
                           product[row.key] || 'N/A'
                         )}
