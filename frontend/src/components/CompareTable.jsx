@@ -53,6 +53,33 @@ const GPU_SPECS = [
   }
   ];
 
+  
+const LAPTOP_SPECS = [
+  {
+    group: 'Spécifications Principales',
+    specs: [
+      { label: 'Marque', key: 'brand' },
+      { label: 'Processeur', key: 'cpu_name' },
+      { label: 'Carte Graphique', key: 'gpu_name' },
+      { label: 'RAM (GB)', key: 'ram_gb' },
+      { label: 'Stockage (GB)', key: 'storage_gb' },
+    ]
+  },
+  {
+    group: 'Performance (Benchmarks)',
+    specs:[
+      { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
+    ]
+  },
+  {
+    group: 'Analyse',
+    specs:[
+      { label: 'Avantages', key: 'pros', type: 'list' },
+      { label: 'Inconvénients', key: 'cons', type: 'list' }
+    ]
+  }
+];
+
 const TELEPHONE_SPECS = [
   {
     group: 'Spécifications Principales',
