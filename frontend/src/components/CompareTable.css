@@ -1,10 +1,4 @@
 .accordion-header button {
-  font-size: 1.15rem !important;
-  font-weight: 600 !important;
-  color: #333;
-}
-
-.accordion-header button {
   font-size: 1.25rem;
   font-weight: 600;
   color: #333;
