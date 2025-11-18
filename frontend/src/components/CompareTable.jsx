@@ -1,5 +1,4 @@
 import React from 'react';
-import {link} from 'react-router-dom';
 import Accordion from  'react-bootstrap/Accordion';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -95,7 +94,7 @@ function CompareTable({ products, showDifferencesOnly }) {
   const areValueIdentical=(products, key) =>{
     if (!products || products.length === 0) return true;
     const firstValue = products[0][key] || 'N/A';
-    return products.every(product=(product[key]||'N/A'))===firstValue);
+    return products.every(product=>(product[key]||'N/A'))===firstValue);
   };
 
   return (
