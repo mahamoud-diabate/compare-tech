@@ -53,24 +53,29 @@ const GPU_SPECS = [
   }
   ];
 
-  const LAPTOP_SPECS = [
-  { label: 'Marque', key: 'brand' },
-  { label: 'Processeur', key: 'cpu_name' },
-  { label: 'Carte Graphique', key: 'gpu_name' },
-  { label: 'RAM (GB)', key: 'ram_gb' },
-  { label: 'Stockage (GB)', key: 'storage_gb' },
-  { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
-  { label: 'Avantages', key: 'pros', type: 'list' },
-  { label: 'Inconvénients', key: 'cons', type: 'list' }
-];
 const TELEPHONE_SPECS = [
-  { label: 'Marque', key: 'brand' },
-  { label: 'Écran', key: 'display_size' },
-  { label: 'Processeur', key: 'cpu_name' },
-  { label: 'Batterie (mAh)', key: 'battery_mah' },
-  { label: 'AnTuTu Score', key: 'antutu_score' },
-  { label: 'Avantages', key: 'pros', type: 'list' },
-  { label: 'Inconvénients', key: 'cons', type: 'list' } 
+  {
+    group: 'Spécifications Principales',
+    specs: [
+      { label: 'Marque', key: 'brand' },
+      { label: 'Écran', key: 'display_size' },
+      { label: 'Processeur', key: 'cpu_name' },
+      { label: 'Batterie (mAh)', key: 'battery_mah' },
+    ]
+  },
+  {
+    group: 'Performance (Benchmarks)',
+    specs:[
+      { label: 'AnTuTu Score', key: 'antutu_score' },
+    ]
+  },
+  {
+    group: 'Analyse',
+    specs:[
+      { label: 'Avantages', key: 'pros', type: 'list' },
+      { label: 'Inconvénients', key: 'cons', type: 'list' }
+    ]
+  }
 ];
 
 const SPEC_MAP = {
