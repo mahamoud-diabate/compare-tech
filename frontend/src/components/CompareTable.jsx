@@ -142,11 +142,7 @@ function CompareTable({ products, showDifferencesOnly }) {
       <Accordion defaultActiveKey="0" alwaysOpen>
         {specGroups.map((group, groupIndex)=>(
           <Accordion.Item eventKey={String(groupIndex)} key={group.group}>
-            
-            {/* --- CORRECTION ICI --- */}
-            {/* On ajoute les classes "fs-5" (Font Size 5) et "fw-semibold" (Semi-Bold) */}
-            <Accordion.Header className="fs-5 fw-semibold">{group.group}</Accordion.Header>
-
+            <Accordion.Header>{group.group}</Accordion.Header>
             <Accordion.Body>
               {group.specs.map(row=>{
                 const isIdentical = areValuesIdentical(products, row.key);
