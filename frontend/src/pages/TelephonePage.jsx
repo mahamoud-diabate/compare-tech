@@ -52,7 +52,8 @@ function TelephonePage() {
       </main>
 
       {compareList.length > 0 && (
-        <CompareBar selectedItems={compareList} productType="telephone" />
+        <CompareBar selectedItems={compareList} productType="telephone" 
+        onClear={() => setCompareList([])}/>
       )}
     </>
   );

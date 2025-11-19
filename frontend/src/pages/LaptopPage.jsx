@@ -53,7 +53,8 @@ function LaptopPage() {
       </main>
 
       {compareList.length > 0 && (
-        <CompareBar selectedItems={compareList} productType="laptop" />
+        <CompareBar selectedItems={compareList} productType="laptop"
+        onClear={() => setCompareList([])} />
       )}
     </>
   );

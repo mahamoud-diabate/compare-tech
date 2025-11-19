@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
 import './CompareBar.css';
 
-function CompareBar({ selectedItems, productType }) {
+function CompareBar({ selectedItems, productType, onClear }) {
   const navigate = useNavigate();
 
   const handleCompareClick = () => {
@@ -19,6 +20,16 @@ function CompareBar({ selectedItems, productType }) {
             {item.name}
           </span>
         ))}
+
+        <Button
+          variant="outline-light"
+          size="sm"
+          onClick={onClear}
+          className="ms-2"
+          style={{fontsize:'0.8rem',padding:'2px 8px'}}
+          >
+            ✕ Effacer
+          </Button>
       </div>
       
       <button 
