@@ -9,20 +9,19 @@ function SimilarProducts({ currentId, category }) {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-  
+    // ↓↓↓ CORRECTION ICI : Utilise des backticks (`), pas des guillemets (') ↓↓↓
     fetch(`https://mahamoud-compare-tech-api.onrender.com/api/${category}`)
       .then(res => res.json())
       .then(data => {
-
+        // On retire le produit qu'on regarde actuellement
         const others = data.filter(p => p._id !== currentId);
-       
+        // On en garde seulement 3
         setProducts(others.slice(0, 3));
       })
       .catch(err => console.error(err));
   }, [category, currentId]);
 
   if (products.length === 0) return null;
-
 
   const typeSingular = category.slice(0, -1); 
 
@@ -33,6 +32,15 @@ function SimilarProducts({ currentId, category }) {
         {products.map(product => (
           <Col key={product._id}>
             <Card className="h-100 shadow-sm border-0">
+              
+              {product.imageUrl && (
+                <Card.Img 
+                  variant="top" 
+                  src={product.imageUrl} 
+                  style={{ maxHeight: '150px', objectFit: 'contain', padding: '10px' }}
+                />
+              )}
+
               <Card.Body className="text-center">
                 <Card.Title style={{ fontSize: '1rem' }}>{product.name}</Card.Title>
                 <Link to={`/${typeSingular}/${product._id}`}>

@@ -3,10 +3,11 @@ import {Link} from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import Button from 'react-bootstrap/Button'
 import {LinkContainer} from 'react-router-bootstrap';
 import './Header.css';
 
-function Header(){
+function Header(toggleTheme,theme){
 return(
     <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
         <Container>
@@ -28,6 +29,14 @@ return(
             <LinkContainer to="/telephones">
               <Nav.Link>Téléphones</Nav.Link>
             </LinkContainer>
+            <Button 
+            variant={theme === 'dark' ? 'outline-light' : 'light'} 
+            onClick={toggleTheme}
+            className="ms-3 rounded-circle"
+            style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              {theme === 'light' ? '🌙' : '☀️'}
+            </Button>
         </Nav>
         </Navbar.Collapse>
       </Container>
