@@ -8,9 +8,7 @@ import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import { getProductScore, getScoreColor } from '../utils/scores';
-import SimilarProducts from '../components/SimilarProducts';
-import DetailSkeleton from '../components/DetailSkeleton';
-
+import SpecBar from '../components/SpecBar';
 function CpuDetailPage() {
   const { id } = useParams(); 
   const [cpu, setCpu] = useState(null);
@@ -27,18 +25,22 @@ function CpuDetailPage() {
   }, [id]);
 
   if (error) return <Container className="my-5"><Alert variant="danger">Erreur : {error}</Alert></Container>;
-  if (!cpu) return <DetailSkeleton />;
+  if (!cpu) return <Container className="my-5"><div>Chargement...</div></Container>;
 
   const score = getProductScore(cpu, 'cpu');
   const scoreColor = getScoreColor(score);
 
   return (
     <Container className="my-5">
+      {/* En-tête */}
       <div className="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-        <h1>{cpu.name}</h1>
+        <div>
+          <h1 className="fw-bold mb-0">{cpu.name}</h1>
+          <span className="text-muted">{cpu.brand} Processor</span>
+        </div>
         <div className="text-center">
-          <h5 className="text-muted mb-0">Score CompareTech</h5>
-          <Badge bg={scoreColor} style={{ fontSize: '2rem', borderRadius: '50px', padding: '10px 25px' }}>
+          <div className="text-uppercase small text-muted fw-bold mb-1">Score Global</div>
+          <Badge bg={scoreColor} style={{ fontSize: '2.5rem', borderRadius: '12px', padding: '15px 30px' }}>
             {score}
           </Badge>
         </div>
@@ -46,72 +48,88 @@ function CpuDetailPage() {
 
       <Row>
         <Col md={4} className="mb-4">
-           <Card className="h-100 border-0 shadow-sm bg-light d-flex align-items-center justify-content-center">
-             <div className="p-5 text-muted">Image du CPU</div>
+           <Card className="h-100 border-0 shadow-sm bg-white d-flex align-items-center justify-content-center overflow-hidden">
+             {cpu.imageUrl ? (
+                <img src={cpu.imageUrl} alt={cpu.name} style={{ maxWidth: '100%', maxHeight: '300px', objectFit: 'contain' }} />
+             ) : (
+                <div className="p-5 text-muted">Pas d'image</div>
+             )}
            </Card>
         </Col>
 
         <Col md={8}>
-          <Card className="shadow-sm">
-            <Card.Header as="h5" className="bg-white fw-bold">Spécifications Techniques</Card.Header>
+          <Card className="shadow-sm border-0">
+            <Card.Header className="bg-white fw-bold border-bottom py-3">Spécifications Techniques</Card.Header>
             <ListGroup variant="flush">
-              <ListGroup.Item className="d-flex justify-content-between">
-                <strong>Marque</strong> <span>{cpu.brand}</span>
+              <ListGroup.Item className="d-flex justify-content-between align-items-center py-3">
+                <span>Cœurs / Threads</span>
+                <span className="fw-bold">{cpu.cores} Cœurs / {cpu.threads} Threads</span>
               </ListGroup.Item>
-              <ListGroup.Item className="d-flex justify-content-between">
-                <strong>Cœurs</strong> <span>{cpu.cores}</span>
+              <ListGroup.Item className="d-flex justify-content-between align-items-center py-3">
+                <span>Fréquence Max</span>
+                <span className="fw-bold">{cpu.max_freq_ghz || 'N/A'}</span>
               </ListGroup.Item>
-              <ListGroup.Item className="d-flex justify-content-between">
-                <strong>Threads</strong> <span>{cpu.threads || 'N/A'}</span>
-              </ListGroup.Item>
-              <ListGroup.Item className="d-flex justify-content-between">
-                <strong>Fréquence Max</strong> <span>{cpu.max_freq_ghz || 'N/A'}</span>
-              </ListGroup.Item>
-              <ListGroup.Item className="d-flex justify-content-between">
-                <strong>TDP</strong> <span>{cpu.tdp ? `${cpu.tdp} W` : 'N/A'}</span>
+              <ListGroup.Item className="d-flex justify-content-between align-items-center py-3">
+                <span>TDP (Consommation)</span>
+                <span className="fw-bold">{cpu.tdp ? `${cpu.tdp} W` : 'N/A'}</span>
               </ListGroup.Item>
               
-              <ListGroup.Item className="bg-light fw-bold mt-2">Benchmarks</ListGroup.Item>
-              <ListGroup.Item className="d-flex justify-content-between">
-                <span>Geekbench (Single-Core)</span> 
-                <span className="fw-bold">{cpu.geekbench_single || 'N/A'}</span>
+             
+              <ListGroup.Item className="bg-light fw-bold mt-3">Performance (Geekbench 6)</ListGroup.Item>
+              
+              <ListGroup.Item className="py-3">
+                <div className="d-flex justify-content-between mb-2">
+                    <span>Single-Core</span>
+                    <strong>{cpu.geekbench_single || 'N/A'}</strong>
+                </div>
+               
+                <SpecBar value={cpu.geekbench_single} maxValue={3000} />
               </ListGroup.Item>
-              <ListGroup.Item className="d-flex justify-content-between">
-                <span>Geekbench (Multi-Core)</span> 
-                <span className="fw-bold">{cpu.geekbench_multi || 'N/A'}</span>
+
+              <ListGroup.Item className="py-3">
+                <div className="d-flex justify-content-between mb-2">
+                    <span>Multi-Core</span>
+                    <strong>{cpu.geekbench_multi || 'N/A'}</strong>
+                </div>
+                <SpecBar value={cpu.geekbench_multi} maxValue={22000} />
               </ListGroup.Item>
+
             </ListGroup>
           </Card>
         </Col>
       </Row>
 
+     
       <Row className="mt-4">
-        <Col md={6}>
-          <Card className="h-100 border-success shadow-sm" style={{borderLeft: '5px solid #198754'}}>
+        <Col md={6} className="mb-3">
+          <Card className="h-100 border-0 shadow-sm" style={{ borderTop: '4px solid #198754' }}>
             <Card.Body>
-              <h4 className="text-success mb-3">✅ Avantages</h4>
-              <ul className="list-unstyled">
+              <h5 className="text-success mb-3 fw-bold">✅ Points Forts</h5>
+              <ul className="list-unstyled mb-0">
                 {cpu.pros && cpu.pros.map((pro, i) => (
-                  <li key={i} className="mb-2">✓ {pro}</li>
+                  <li key={i} className="mb-2 d-flex align-items-start">
+                    <span className="me-2">👍</span> {pro}
+                  </li>
                 ))}
               </ul>
             </Card.Body>
           </Card>
         </Col>
-        <Col md={6} className="mt-3 mt-md-0">
-          <Card className="h-100 border-danger shadow-sm" style={{borderLeft: '5px solid #dc3545'}}>
+        <Col md={6} className="mb-3">
+          <Card className="h-100 border-0 shadow-sm" style={{ borderTop: '4px solid #dc3545' }}>
             <Card.Body>
-              <h4 className="text-danger mb-3">❌ Inconvénients</h4>
-              <ul className="list-unstyled">
+              <h5 className="text-danger mb-3 fw-bold">❌ Points Faibles</h5>
+              <ul className="list-unstyled mb-0">
                 {cpu.cons && cpu.cons.map((con, i) => (
-                  <li key={i} className="mb-2">✕ {con}</li>
+                  <li key={i} className="mb-2 d-flex align-items-start">
+                    <span className="me-2">👎</span> {con}
+                  </li>
                 ))}
               </ul>
             </Card.Body>
           </Card>
         </Col>
       </Row>
-      <SimilarProducts currentId={id} category="cpus" />
     </Container>
   );
 }

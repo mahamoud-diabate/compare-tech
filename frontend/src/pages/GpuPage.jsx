@@ -37,7 +37,6 @@ function GpuPage() {
     return nameMatches || brandMatches;
   });
 
-  // Cette ligne ne plantera plus car "compareList" existe
   const compareIds = compareList.map(item => item._id);
 
   return (
@@ -56,9 +55,9 @@ function GpuPage() {
         />
       </main>
 
-      {/* On affiche la barre (propre aux GPUs) */}
       {compareList.length > 0 && (
-        <CompareBar selectedItems={compareList} productType="gpu" />
+        <CompareBar selectedItems={compareList} productType="gpu"
+        onClear={() => setCompareList([])} />
       )}
     </>
   );
