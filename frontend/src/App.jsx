@@ -1,21 +1,24 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {Outlet} from 'react-router-dom';
 import Header from'./components/Header';
 import Footer from './components/Footer';
 import {Toaster} from 'react-hot-toast';
 
 function App() {
-  const[theme,setTheme]=useState('light');
+  const[theme,setTheme]=useState(()=>{  
+    return localStorage.getItem('theme')||'light';
+});
   const toggleTheme=()=>{
     const newTheme=theme==='light'?'dark':'light';
     setTheme(newTheme);
   };
   useEffect(()=>{
     document.documentElement.setAttribute('data-bs-theme',theme);
+      localStorage.setItem('theme',theme);
   },[theme]);
 
 return (
-    <div className={theme==='dark'? 'bg-dark text-light':'bg-light text-dark'} style={{mineHeight:'100vh',display:'flex',flexDirection:'column'}}>
+    <div className="d-flex flex-column min-vh-100 bg body text-body">
       <Toaster position="top-center" />
       <Header toggleTheme={toggleTheme} theme={theme} />
       <div style={{flex:1}}>

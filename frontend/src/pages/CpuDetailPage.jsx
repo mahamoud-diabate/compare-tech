@@ -9,6 +9,7 @@ import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import { getProductScore, getScoreColor } from '../utils/scores';
 import SimilarProducts from '../components/SimilarProducts';
+import DetailSkeleton from '../components/DetailSkeleton';
 
 function CpuDetailPage() {
   const { id } = useParams(); 
@@ -26,7 +27,7 @@ function CpuDetailPage() {
   }, [id]);
 
   if (error) return <Container className="my-5"><Alert variant="danger">Erreur : {error}</Alert></Container>;
-  if (!cpu) return <Container className="my-5"><div>Chargement...</div></Container>;
+  if (!cpu) return <DetailSkeleton />;
 
   const score = getProductScore(cpu, 'cpu');
   const scoreColor = getScoreColor(score);

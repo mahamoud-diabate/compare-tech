@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button'
 import {LinkContainer} from 'react-router-bootstrap';
 import './Header.css';
 
-function Header(toggleTheme,theme){
+function Header({toggleTheme,theme}){
 return(
     <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
         <Container>
