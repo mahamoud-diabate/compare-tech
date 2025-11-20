@@ -8,6 +8,7 @@ function LaptopPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [laptops, setLaptops] = useState([]);
   const [compareList, setCompareList] = useState([]);
+  const MAX_COMPARE_ITEMS = 3;
 
   const handleCompareToggle = (product) => {
     setCompareList(prevList => {
@@ -15,12 +16,17 @@ function LaptopPage() {
       if (isSelected) {
         return prevList.filter(item => item._id !== product._id);
       } else {
+        if (prevList.length >= MAX_COMPARE_ITEMS) {
+          toast.error(`Limite de ${MAX_COMPARE_ITEMS} produits atteinte.`);
+          return prevList;
+        }
         return [...prevList, { ...product, productType: 'laptop' }];
       }
     });
   };
 
   useEffect(() => {
+    
     fetch('https://mahamoud-compare-tech-api.onrender.com/api/laptops')
       .then(response => response.json())
       .then(data => setLaptops(data))
@@ -48,13 +54,13 @@ function LaptopPage() {
           compareList={compareIds}
           onCompareToggle={handleCompareToggle}
           productType="laptop"
-          compareType="laptop" 
+          compareType="laptop"
+          maxItems={MAX_COMPARE_ITEMS}
         />
       </main>
 
       {compareList.length > 0 && (
-        <CompareBar selectedItems={compareList} productType="laptop"
-        onClear={() => setCompareList([])} />
+        <CompareBar selectedItems={compareList} productType="laptop" onClear={() => setCompareList([])} />
       )}
     </>
   );
