@@ -38,3 +38,14 @@
   list-style-type: none;
   margin-bottom: 5px;
 }
+
+.winner-cell {
+  background-color:#d4edda !important;
+  color: #155724;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.spec-row {
+  transition: background-color 0.2s;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import Verdict from '../components/Verdict';
 import { useSearchParams } from 'react-router-dom';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -24,7 +25,6 @@ ChartJS.register(
   Legend
 );
 
-// --- NOS ALGORITHMES DE SCORE ---
 
 const calculateCpuScore = (cpu) => {
   if (!cpu.geekbench_single || !cpu.geekbench_multi) return 0;
@@ -35,20 +35,16 @@ const calculateCpuScore = (cpu) => {
 
 const calculateGpuScore = (gpu) => {
   if (!gpu.benchmark_3dmark) return 0;
-  // On invente un score max de 30 000 pour le 3DMark TimeSpy
   const score = (gpu.benchmark_3dmark / 30000) * 100;
   return score;
 };
 
 const calculateTelephoneScore = (tel) => {
   if (!tel.antutu_score) return 0;
-  // On invente un score max de 2,500,000 pour AnTuTu
+
   const score = (tel.antutu_score / 2500000) * 100;
   return score;
 };
-
-// --- FIN DES ALGORITHMES ---
-
 
 function ComparePage() {
   const [searchParams] = useSearchParams();
@@ -87,7 +83,7 @@ function ComparePage() {
 
   const chartLabels = products.map(p => p.name);
   
-  // --- CHOIX DU BON CALCULATEUR ---
+  
   let chartDataPoints = [];
   if (productType === 'cpu') {
     chartDataPoints = products.map(p => calculateCpuScore(p));
@@ -96,10 +92,10 @@ function ComparePage() {
   } else if (productType === 'telephone') {
     chartDataPoints = products.map(p => calculateTelephoneScore(p));
   } else {
-    // Pour les Laptops, on n'a pas encore de score
+  
     chartDataPoints = products.map(p => p.score || 0);
   }
-  // --- FIN DU CHOIX ---
+  
 
   const data = {
     labels: chartLabels,
@@ -143,6 +139,8 @@ function ComparePage() {
           </div>
         </Card.Body>
       </Card>
+
+      <Verdict products={products} productType={productType} />
       
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 className="mb-0">Spécifications Détaillées</h2>

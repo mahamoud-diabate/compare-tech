@@ -9,18 +9,18 @@ const CPU_SPECS = [
     group: 'Spécifications de Base', 
     specs: [
       { label: 'Marque', key: 'brand' },
-      { label: 'Cœurs', key: 'cores' },
-      { label: 'Threads', key: 'threads' },
+      { label: 'Cœurs', key: 'cores', isNumeric:true},
+      { label: 'Threads', key: 'threads', isNumeric:true },
       { label: 'Fréq. Max', key: 'max_freq_ghz' },
       { label: 'Fréq. Base', key: 'base_freq_ghz' },
-      { label:'TDP (Watts)', key:'tdp'},
+      { label:'TDP (Watts)', key:'tdp', isNumeric:true, invert:true},
     ]
   },
   {
     group: 'Performance (Benchmarks)',
     specs:[
-      { label: 'Geekbench (Single)', key: 'geekbench_single' },
-      { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
+      { label: 'Geekbench (Single)', key: 'geekbench_single',isNumeric:true },
+      { label: 'Geekbench (Multi)', key: 'geekbench_multi', isNumeric:true },
     ]
   },
   {
@@ -37,15 +37,15 @@ const GPU_SPECS = [
     group: 'Spécifications de Base',
     specs: [
       { label: 'Marque', key: 'brand' },
-      { label: 'Cœurs CUDA/Stream', key: 'cores' },
-      { label: 'Mémoire (GB)', key: 'memory_gb' },
+      { label: 'Cœurs CUDA/Stream', key: 'cores',isNumeric:true },
+      { label: 'Mémoire (GB)', key: 'memory_gb',isNumeric:true },
       { label: 'Type Mémoire', key: 'memory_type' },
     ]
   },
   {
     group: 'Performance (Benchmarks)',
     specs:[
-      { label: '3DMark Score', key: 'benchmark_3dmark' },
+      { label: '3DMark Score', key: 'benchmark_3dmark',isNumeric:true },
     ]
   },
   {
@@ -62,16 +62,16 @@ const LAPTOP_SPECS = [
     group: 'Spécifications Principales',
     specs: [
       { label: 'Marque', key: 'brand' },
-      { label: 'Processeur', key: 'cpu_name' },
+      { label: 'Processeur', key: 'cpu_name'},
       { label: 'Carte Graphique', key: 'gpu_name' },
-      { label: 'RAM (GB)', key: 'ram_gb' },
-      { label: 'Stockage (GB)', key: 'storage_gb' },
+      { label: 'RAM (GB)', key: 'ram_gb',isNumeric:true },
+      { label: 'Stockage (GB)', key: 'storage_gb',isNumeric:true },
     ]
   },
   {
     group: 'Performance (Benchmarks)',
     specs:[
-      { label: 'Geekbench (Multi)', key: 'geekbench_multi' },
+      { label: 'Geekbench (Multi)', key: 'geekbench_multi', isNumeric:true },
     ]
   },
   {
@@ -90,13 +90,13 @@ const TELEPHONE_SPECS = [
       { label: 'Marque', key: 'brand' },
       { label: 'Écran', key: 'display_size' },
       { label: 'Processeur', key: 'cpu_name' },
-      { label: 'Batterie (mAh)', key: 'battery_mah' },
+      { label: 'Batterie (mAh)', key: 'battery_mah',isNumeric:true },
     ]
   },
   {
     group: 'Performance (Benchmarks)',
     specs:[
-      { label: 'AnTuTu Score', key: 'antutu_score' },
+      { label: 'AnTuTu Score', key: 'antutu_score',isNumeric:true },
     ]
   },
   {
@@ -113,6 +113,45 @@ const SPEC_MAP = {
   gpu: GPU_SPECS,
   laptop: LAPTOP_SPECS,
   telephone: TELEPHONE_SPECS,
+};
+
+const parseValue= (val)=>{
+  if (typeof val=='number') return val;
+  if (typeof val =='string') {
+    const match= val.match(/[\d\.]+/);
+    return match ? parseFloat(match[0]):0;
+  }
+  return 0;
+};
+
+const getWinnerId=(products, key, invert= false) => {
+  let bestId= null;
+  let bestValue= invert ? Infinity : -Infinity;
+
+  products.forEach(product=>{
+    const rawVal =product[key];
+    if (rawVal !== undefined && rawVal !== null) {
+      const val=parseValue(rawVal);
+      if (invert) {
+        if (val<bestValue && val > 0){
+          bestValue=val;
+          bestId=product._id;
+      }
+
+    }else {
+        if (val> bestValue) {
+          bestValue =val;
+          bestId = product._id;
+        }
+      }
+    }
+  });
+  
+  const allValues =products.map(p=>parseValue(p[key]));
+  const allEqual =allValues.every(v=>v===allValues[0]);
+  if(allEqual) return null;
+  
+  return bestId;
 };
 
 const areValuesIdentical = (products, key) => {
@@ -151,13 +190,16 @@ function CompareTable({ products, showDifferencesOnly }) {
                 if (showDifferencesOnly && isIdentical) {
                   return null;
                 }
+                const winnerId = row.isNumeric ? getWinnerId(products, row.key, row.invert) : null;
                 
                 return (
                   <Row key={row.key} className="spec-row">
                     <Col xs={12} md={3} className="spec-label">{row.label}</Col>
 
                     {products.map(product=>(
-                      <Col key={product._id} xs={6} md={productType=== 'cpu' ? 4 : 4}>
+                      <Col key={product._id} xs={6} md={productType=== 'cpu' ? 4 : 4}
+                      className={product._id===winnerId?'winner-cell':''}
+                      >
                         {row.type === 'list' && product[row.key] ? (
                           <ul className="spec-list">
                             {product[row.key].map((item,index)=>(
