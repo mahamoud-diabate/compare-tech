@@ -10,7 +10,6 @@ const laptopSchema = new Schema({
     storage_gb: { type: Number, required: false },
     imageUrl: { type: String, required: false },
     geekbench_multi: { type: Number, required: false },
-    geekbench_multi: { type: Number, required: false },
     display_brightness_nits: { type: Number, required: false },
     battery_life_hours: { type: Number, required: false },
     pros: [String],
