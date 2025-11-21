@@ -1,18 +1,30 @@
 import React, { useState, useEffect } from 'react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import toast from 'react-hot-toast';
+
 import Hero from '../components/Hero';
 import ProductList from '../components/ProductList';
 import CompareBar from '../components/CompareBar';
-import toast from 'react-hot-toast';
+import FilterSidebar from '../components/FilterSidebar';
+
+
+const AVAILABLE_BRANDS = ["Dell", "Apple", "Asus", "Lenovo", "HP"];
 
 function LaptopPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [laptops, setLaptops] = useState([]);
+  
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  
   const [compareList, setCompareList] = useState([]);
   const MAX_COMPARE_ITEMS = 3;
 
   const handleCompareToggle = (product) => {
     setCompareList(prevList => {
       const isSelected = prevList.some(item => item._id === product._id);
+
       if (isSelected) {
         return prevList.filter(item => item._id !== product._id);
       } else {
@@ -25,19 +37,33 @@ function LaptopPage() {
     });
   };
 
+  
+  const handleBrandChange = (brand) => {
+    setSelectedBrands(prev => {
+      if (prev.includes(brand)) {
+        return prev.filter(b => b !== brand);
+      } else {
+        return [...prev, brand];
+      }
+    });
+  };
+
   useEffect(() => {
-    
     fetch('https://mahamoud-compare-tech-api.onrender.com/api/laptops')
       .then(response => response.json())
       .then(data => setLaptops(data))
       .catch(error => console.error("Erreur:", error));
   }, []);
 
+  
   const filteredLaptops = laptops.filter(laptop => {
     const searchLower = searchTerm.toLowerCase();
-    const nameMatches = laptop.name.toLowerCase().includes(searchLower);
-    const brandMatches = laptop.brand.toLowerCase().includes(searchLower);
-    return nameMatches || brandMatches;
+    const matchesSearch = laptop.name.toLowerCase().includes(searchLower) || 
+                          laptop.brand.toLowerCase().includes(searchLower);
+    
+    const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(laptop.brand);
+
+    return matchesSearch && matchesBrand;
   });
 
   const compareIds = compareList.map(item => item._id);
@@ -48,19 +74,37 @@ function LaptopPage() {
         searchTerm={searchTerm} 
         onSearchChange={setSearchTerm} 
       />
-      <main>
-        <ProductList 
-          cpus={filteredLaptops} 
-          compareList={compareIds}
-          onCompareToggle={handleCompareToggle}
-          productType="laptop"
-          compareType="laptop"
-          maxItems={MAX_COMPARE_ITEMS}
-        />
-      </main>
+      
+  
+      <Container className="my-5">
+        <Row>
+          <Col md={3}>
+            <FilterSidebar 
+              brands={AVAILABLE_BRANDS}
+              selectedBrands={selectedBrands}
+              onBrandChange={handleBrandChange}
+            />
+          </Col>
+          
+          <Col md={9}>
+            <ProductList 
+              cpus={filteredLaptops} 
+              compareList={compareIds}
+              onCompareToggle={handleCompareToggle}
+              productType="laptop"
+              compareType="laptop"
+              maxItems={MAX_COMPARE_ITEMS}
+            />
+          </Col>
+        </Row>
+      </Container>
 
       {compareList.length > 0 && (
-        <CompareBar selectedItems={compareList} productType="laptop" onClear={() => setCompareList([])} />
+        <CompareBar 
+            selectedItems={compareList} 
+            productType="laptop" 
+            onClear={() => setCompareList([])} 
+        />
       )}
     </>
   );
