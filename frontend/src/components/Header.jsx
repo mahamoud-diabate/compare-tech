@@ -18,9 +18,9 @@ return(
         <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ms-auto">
             <LinkContainer to="/">
-            <Nav.Link>Homepage</Nav.Link>
+            <Nav.Link>HomePage</Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/">
+            <LinkContainer to="/cpus">
             <Nav.Link>CPUs</Nav.Link>
             </LinkContainer>
             <LinkContainer to="/gpus">

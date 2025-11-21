@@ -9,13 +9,13 @@ function SimilarProducts({ currentId, category }) {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // ↓↓↓ CORRECTION ICI : Utilise des backticks (`), pas des guillemets (') ↓↓↓
+   
     fetch(`https://mahamoud-compare-tech-api.onrender.com/api/${category}`)
       .then(res => res.json())
       .then(data => {
-        // On retire le produit qu'on regarde actuellement
+      
         const others = data.filter(p => p._id !== currentId);
-        // On en garde seulement 3
+        
         setProducts(others.slice(0, 3));
       })
       .catch(err => console.error(err));

@@ -8,7 +8,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import Hero from '../components/Hero';
 
 function HomePage() {
-  // Données pour les cartes de catégories
+  
   const categories = [
     { title: "Processeurs (CPUs)", link: "/cpus", desc: "Intel Core vs AMD Ryzen", color: "primary" },
     { title: "Cartes Graphiques (GPUs)", link: "/gpus", desc: "Nvidia RTX vs AMD Radeon", color: "success" },
@@ -18,8 +18,7 @@ function HomePage() {
 
   return (
     <>
-      <Hero searchTerm="" onSearchChange={() => {}} /> {/* Hero simple sans recherche active pour l'instant */}
-      
+      <Hero searchTerm="" onSearchChange={() => {}} />
       <Container className="my-5">
         <div className="text-center mb-5">
           <h2 className="display-5 fw-bold">Bienvenue sur CompareTech</h2>

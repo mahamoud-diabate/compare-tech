@@ -3,6 +3,7 @@ import {Outlet} from 'react-router-dom';
 import Header from'./components/Header';
 import Footer from './components/Footer';
 import {Toaster} from 'react-hot-toast';
+import AppBreadcrumb from './components/AppBreadcrumb';
 
 function App() {
   const[theme,setTheme]=useState(()=>{  
@@ -21,7 +22,8 @@ return (
     <div className="d-flex flex-column min-vh-100 bg body text-body">
       <Toaster position="top-center" />
       <Header toggleTheme={toggleTheme} theme={theme} />
-      <div style={{flex:1}}>
+      <AppBreadcrumb />
+      <div className="flex-grow-1">
       <Outlet /> 
       </div>
       <Footer />
