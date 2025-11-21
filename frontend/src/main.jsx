@@ -4,6 +4,7 @@ import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App.jsx';
 import Homepage from './pages/Homepage.jsx';
+import CpuPage from './pages/CpuPage.jsx';
 import CpuDetailPage from './pages/CpuDetailPage.jsx';
 import ComparePage from './pages/ComparePage.jsx';
 import GpuPage from './pages/GpuPage.jsx';
@@ -22,8 +23,12 @@ const router= createBrowserRouter([
     element:<App/>,
     children:[
       {
-        path: "/",
+        path:"",
         element:<Homepage/>,
+      },
+      {
+        path: "/",
+        element:<CpuPage/>,
 
       },
       {path:"/gpus",
@@ -35,6 +40,9 @@ const router= createBrowserRouter([
        {
         path:"/telephones",
         element:<TelephonePage/>,
+      },
+      {path:"/homepage/:id",
+        element:<Homepage/>
       },
       {
         path:"/cpu/:id",

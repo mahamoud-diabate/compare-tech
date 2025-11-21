@@ -1,5 +1,4 @@
-import React from 'react';
-import Verdict from '../components/Verdict';
+import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -12,44 +11,21 @@ import {
   Legend,
 } from 'chart.js';
 import CompareTable from '../components/CompareTable';
+import Verdict from '../components/Verdict';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Badge from 'react-bootstrap/Badge'; 
+import { getProductScore } from '../utils/scores';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-
-const calculateCpuScore = (cpu) => {
-  if (!cpu.geekbench_single || !cpu.geekbench_multi) return 0;
-  const multiScore = (cpu.geekbench_multi / 22000) * 100;
-  const singleScore = (cpu.geekbench_single / 3000) * 100;
-  return (multiScore * 0.7) + (singleScore * 0.3);
-};
-
-const calculateGpuScore = (gpu) => {
-  if (!gpu.benchmark_3dmark) return 0;
-  const score = (gpu.benchmark_3dmark / 30000) * 100;
-  return score;
-};
-
-const calculateTelephoneScore = (tel) => {
-  if (!tel.antutu_score) return 0;
-
-  const score = (tel.antutu_score / 2500000) * 100;
-  return score;
-};
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function ComparePage() {
   const [searchParams] = useSearchParams();
   const [products, setProducts] = React.useState([]);
-  const [showDifferencesOnly, setShowDifferencesOnly] = React.useState(false);
+  const [showDifferencesOnly, setShowDifferencesOnly] = useState(false);
   const productType = searchParams.get('type');
   const idsString = searchParams.get('ids');
 
@@ -74,80 +50,85 @@ function ComparePage() {
 
   if (products.length === 0) {
     return (
-      <Container className="my-5">
-        <h1>Comparaison des Produits</h1>
-        <p>Chargement ou aucun produit sélectionné...</p>
+      <Container className="my-5 text-center">
+        <div className="spinner-border text-primary" role="status"></div>
+        <p className="mt-2">Chargement du comparatif...</p>
       </Container>
     );
   }
 
   const chartLabels = products.map(p => p.name);
-  
-  
-  let chartDataPoints = [];
-  if (productType === 'cpu') {
-    chartDataPoints = products.map(p => calculateCpuScore(p));
-  } else if (productType === 'gpu') {
-    chartDataPoints = products.map(p => calculateGpuScore(p));
-  } else if (productType === 'telephone') {
-    chartDataPoints = products.map(p => calculateTelephoneScore(p));
-  } else {
-  
-    chartDataPoints = products.map(p => p.score || 0);
-  }
-  
+  const chartDataPoints = products.map(p => getProductScore(p, productType));
 
   const data = {
     labels: chartLabels,
     datasets: [
       {
-        label: 'Score CompareTech (calculé)',
+        label: 'Score Global',
         data: chartDataPoints,
-        backgroundColor: 'rgba(0, 123, 255, 0.5)',
-        borderColor: 'rgba(0, 123, 255, 1)',
-        borderWidth: 1,
+        backgroundColor: 'rgba(13, 110, 253, 0.7)', 
+        borderRadius: 5,
       },
     ],
   };
 
   const options = {
     indexAxis: 'y',
-    scales: {
-      x: {
-        beginAtZero: true,
-        max: 100
-      }
-    },
+    scales: { x: { beginAtZero: true, max: 100 } },
     responsive: true,
-    plugins: {
-      legend: { display: false },
-      title: {
-        display: false,
-      },
-    },
+    plugins: { legend: { display: false } },
   };
 
   return (
     <Container className="my-5">
-      <h1 className="mb-4">Comparaison des {productType}s</h1>
       
-      <Card className="shadow-sm mb-5">
-        <Card.Body>
-          <Card.Title>Scores de Performance</Card.Title>
+      
+      <div className="text-center mb-5">
+        <h4 className="text-muted text-uppercase small fw-bold mb-3">Comparatif {productType}</h4>
+        <Row className="align-items-center justify-content-center">
+          {products.map((p, index) => (
+            <React.Fragment key={p._id}>
+             
+              <Col xs={5} md={4}>
+                <h2 className="fw-bold text-dark">{p.name}</h2>
+                <Badge bg="light" text="dark" className="border mt-2">
+                  {p.brand}
+                </Badge>
+              </Col>
+              
+              
+              {index < products.length - 1 && (
+                <Col xs={2} md={1}>
+                  <div className="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center mx-auto" 
+                       style={{ width: '50px', height: '50px', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                    VS
+                  </div>
+                </Col>
+              )}
+            </React.Fragment>
+          ))}
+        </Row>
+      </div>
+ 
+
+      <Card className="shadow-sm mb-5 border-0">
+        <Card.Body className="p-4">
+          <h3 className="mb-4">Scores de Performance</h3>
           <div style={{ maxWidth: '800px', margin: 'auto' }}>
             <Bar options={options} data={data} />
           </div>
         </Card.Body>
       </Card>
-
-      <Verdict products={products} productType={productType} />
       
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="mb-0">Spécifications Détaillées</h2>
+      <Verdict products={products} productType={productType} />
+
+      <div className="d-flex justify-content-between align-items-center mb-3 mt-5">
+        <h2 className="mb-0">Spécifications Techniques</h2>
         <Form.Check 
           type="switch"
           id="diff-switch"
-          label="Montrer les différences seulement"
+          label="Différences seulement"
+          className="fw-bold"
           checked={showDifferencesOnly}
           onChange={() => setShowDifferencesOnly(!showDifferencesOnly)}
         />
