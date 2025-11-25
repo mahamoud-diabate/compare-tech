@@ -10,9 +10,9 @@ import Hero from '../components/Hero';
 import AnimatedPage from '../components/AnimatedPage';
 
 function HomePage() {
-  // État pour les produits vedettes
+  // Note: Pas de useState pour searchTerm ici, car c'est la page vitrine.
+  
   const [featuredProducts, setFeaturedProducts] = useState([]);
-  // État pour TOUS les produits (pour la recherche)
   const [allProducts, setAllProducts] = useState([]);
 
   const categories = [
@@ -27,7 +27,7 @@ function HomePage() {
     fetch('https://mahamoud-compare-tech-api.onrender.com/api/featured')
       .then(res => res.json())
       .then(data => setFeaturedProducts(data))
-      .catch(err => console.error("Erreur featured:", err));
+      .catch(err => console.error(err));
 
     // 2. Charger TOUS les produits pour la barre de recherche intelligente
     const fetchAll = async () => {
@@ -40,13 +40,11 @@ function HomePage() {
             ];
             const responses = await Promise.all(urls.map(url => fetch(url).then(res => res.json())));
             
-            // On ajoute le type à chaque produit pour savoir où rediriger
             const cpus = responses[0].map(p => ({ ...p, productType: 'cpu' }));
             const gpus = responses[1].map(p => ({ ...p, productType: 'gpu' }));
             const laptops = responses[2].map(p => ({ ...p, productType: 'laptop' }));
             const phones = responses[3].map(p => ({ ...p, productType: 'telephone' }));
 
-            // On combine tout dans une seule liste
             setAllProducts([...cpus, ...gpus, ...laptops, ...phones]);
         } catch (error) {
             console.error("Erreur chargement global:", error);
@@ -57,7 +55,7 @@ function HomePage() {
 
   return (
     <AnimatedPage>
-      {/* On passe la liste complète "allProducts" au Hero */}
+      {/* C'EST ICI QUE C'EST IMPORTANT : on passe des valeurs vides ou la liste globale */}
       <Hero 
         searchTerm="" 
         onSearchChange={() => {}} 
@@ -81,3 +79,51 @@ function HomePage() {
                   <Card.Text>{cat.desc}</Card.Text>
                   <LinkContainer to={cat.link}>
                     <Button variant={`outline-${cat.color}`} className="mt-3 stretched-link">Explorer</Button>
+                  </LinkContainer>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+        
+        {/* Produits Vedettes */}
+        {featuredProducts.length > 0 && (
+            <div className="my-5">
+            <h2 className="text-center mb-4 fw-bold">🏆 Les Champions du Moment</h2>
+            <Row xs={1} md={2} lg={4} className="g-4">
+                {featuredProducts.map((product) => (
+                <Col key={product._id}>
+                    <Card className="h-100 shadow border-0 border-top border-4 border-warning">
+                    {product.imageUrl && (
+                        <Card.Img 
+                        variant="top" 
+                        src={product.imageUrl} 
+                        style={{ height: '180px', objectFit: 'contain', padding: '15px' }} 
+                        />
+                    )}
+                    <Card.Body className="text-center">
+                        <Badge bg="warning" text="dark" className="mb-2">
+                        {product.highlight}
+                        </Badge>
+                        <Card.Title style={{fontSize: '1.1rem'}}>{product.name}</Card.Title>
+                        <LinkContainer to={`/${product.productType}/${product._id}`}>
+                        <Button variant="outline-dark" size="sm" className="mt-2">Voir la fiche</Button>
+                        </LinkContainer>
+                    </Card.Body>
+                    </Card>
+                </Col>
+                ))}
+            </Row>
+            </div>
+        )}
+        
+        <div className="mt-5 p-5 bg-light rounded-3 shadow-sm">
+          <h3>Pourquoi utiliser CompareTech ?</h3>
+          <p>Notre algorithme analyse les benchmarks réels (Geekbench, 3DMark, AnTuTu) pour vous donner un score objectif et impartial.</p>
+        </div>
+      </Container>
+    </AnimatedPage>
+  );
+}
+
+export default HomePage;
