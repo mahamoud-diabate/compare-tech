@@ -32,6 +32,9 @@ return(
             <LinkContainer to="/telephones">
               <Nav.Link>Téléphones</Nav.Link>
             </LinkContainer>
+            <LinkContainer to="/admin">
+              <Nav.Link className="text-warning fw-bold">Admin</Nav.Link>
+            </LinkContainer>
             <Button 
             variant={theme === 'dark' ? 'outline-light' : 'light'} 
             onClick={toggleTheme}

@@ -13,6 +13,7 @@ import LaptopPage from'./pages/LaptopPage.jsx';
 import LaptopDetailPage from'./pages/LaptopDetailPage.jsx';
 import TelephonePage from './pages/TelephonePage.jsx';
 import TelephoneDetailPage from './pages/TelephoneDetailPage.jsx';
+import AdminPage from './pages/AdminPage.jsx';
 
 
 import'./index.css';
@@ -22,6 +23,12 @@ const router= createBrowserRouter([
     path: "/",
     element:<App/>,
     children:[
+
+      {
+        path: "/admin",
+        element: <AdminPage />,
+      },
+      
       {
         path:"/",
         element:<HomePage/>,

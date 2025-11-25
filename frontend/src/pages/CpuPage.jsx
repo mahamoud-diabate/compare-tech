@@ -8,6 +8,7 @@ import Hero from '../components/Hero';
 import ProductList from '../components/ProductList';
 import CompareBar from '../components/CompareBar';
 import FilterSidebar from '../components/FilterSidebar';
+import AnimatedPage from '../components/AnimatedPage';
 
 const AVAILABLE_BRANDS = ["Intel", "AMD"];
 
@@ -64,7 +65,7 @@ function CpuPage() {
   const compareIds = compareList.map(item => item._id);
 
   return (
-    <>
+    <AnimatedPage>
       <Hero 
         searchTerm={searchTerm} 
         onSearchChange={setSearchTerm} 
@@ -101,7 +102,7 @@ function CpuPage() {
         onClear={()=>setCompareList([])}
         />
       )}
-    </>
+    </AnimatedPage>
   );
 }
 

@@ -8,17 +8,18 @@ import Hero from '../components/Hero';
 import ProductList from '../components/ProductList';
 import CompareBar from '../components/CompareBar';
 import FilterSidebar from '../components/FilterSidebar';
+import AnimatedPage from '../components/AnimatedPage';
 
-
+// 1. Marques spécifiques aux téléphones
 const AVAILABLE_BRANDS = ["Apple", "Samsung", "Google", "Xiaomi", "OnePlus"];
 
 function TelephonePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [telephones, setTelephones] = useState([]);
   
-
+  // 2. État pour les filtres
   const [selectedBrands, setSelectedBrands] = useState([]);
-
+  
   const [compareList, setCompareList] = useState([]);
   const MAX_COMPARE_ITEMS = 3;
 
@@ -29,7 +30,6 @@ function TelephonePage() {
       if (isSelected) {
         return prevList.filter(item => item._id !== product._id);
       } else {
-       
         if (prevList.length >= MAX_COMPARE_ITEMS) {
           toast.error(`Limite de ${MAX_COMPARE_ITEMS} produits atteinte.`);
           return prevList;
@@ -56,6 +56,7 @@ function TelephonePage() {
       .catch(error => console.error("Erreur:", error));
   }, []);
 
+  // 3. Logique de filtrage (Recherche + Marque)
   const filteredTelephones = telephones.filter(tel => {
     const searchLower = searchTerm.toLowerCase();
     const matchesSearch = tel.name.toLowerCase().includes(searchLower) || 
@@ -69,7 +70,7 @@ function TelephonePage() {
   const compareIds = compareList.map(item => item._id);
 
   return (
-    <>
+    <AnimatedPage>
       <Hero 
         searchTerm={searchTerm} 
         onSearchChange={setSearchTerm} 
@@ -77,7 +78,7 @@ function TelephonePage() {
       
       <Container className="my-5">
         <Row>
-          
+          {/* Colonne de Gauche : Filtres */}
           <Col md={3}>
             <FilterSidebar 
               brands={AVAILABLE_BRANDS}
@@ -86,7 +87,7 @@ function TelephonePage() {
             />
           </Col>
           
-       
+          {/* Colonne de Droite : Liste des produits */}
           <Col md={9}>
             <main>
               <ProductList 
@@ -109,7 +110,7 @@ function TelephonePage() {
             onClear={() => setCompareList([])}
         />
       )}
-    </>
+    </AnimatedPage>
   );
 }
 

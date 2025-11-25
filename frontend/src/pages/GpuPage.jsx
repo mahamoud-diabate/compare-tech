@@ -4,6 +4,7 @@ import ProductList from '../components/ProductList';
 import CompareBar from '../components/CompareBar';
 import toast from 'react-hot-toast';
 import FilterSidebar from '../components/FilterSidebar';
+import AnimatedPage from '../components/AnimatedPage';
 
 const AVAILABLE_BRANDS = ["Nvidia", "AMD", "Intel"];
 
@@ -63,7 +64,7 @@ function GpuPage() {
   const compareIds = compareList.map(item => item._id);
 
   return (
-    <>
+    <AnimatedPage>
       <Hero 
         searchTerm={searchTerm} 
         onSearchChange={setSearchTerm} 
@@ -101,7 +102,7 @@ function GpuPage() {
           onClear={() => setCompareList([])} 
         />
       )}
-    </>
+    </AnimatedPage>
   );
 }
 

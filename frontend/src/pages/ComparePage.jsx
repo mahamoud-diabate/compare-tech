@@ -17,7 +17,7 @@ import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Badge from 'react-bootstrap/Badge'; 
+import Badge from 'react-bootstrap/Badge';
 import { getProductScore } from '../utils/scores';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -52,69 +52,70 @@ function ComparePage() {
     return (
       <Container className="my-5 text-center">
         <div className="spinner-border text-primary" role="status"></div>
-        <p className="mt-2">Chargement du comparatif...</p>
       </Container>
     );
   }
 
   const chartLabels = products.map(p => p.name);
-  const chartDataPoints = products.map(p => getProductScore(p, productType));
+  let datasets = [];
 
-  const data = {
-    labels: chartLabels,
-    datasets: [
-      {
-        label: 'Score Global',
-        data: chartDataPoints,
-        backgroundColor: 'rgba(13, 110, 253, 0.7)', 
-        borderRadius: 5,
-      },
-    ],
-  };
+  // --- LOGIQUE DE GRAPHIQUE DYNAMIQUE ---
+  if (productType === 'laptop') {
+    // Pour les Laptops : 3 Barres (Performance, Écran, Batterie)
+    const perfData = products.map(p => Math.round((p.geekbench_multi / 22000) * 100));
+    const screenData = products.map(p => Math.round((p.display_brightness_nits / 1600) * 100));
+    const batteryData = products.map(p => Math.round((p.battery_life_hours / 20) * 100));
+
+    datasets = [
+      { label: 'Performance', data: perfData, backgroundColor: 'rgba(13, 110, 253, 0.7)' },
+      { label: 'Écran (Luminosité)', data: screenData, backgroundColor: 'rgba(255, 193, 7, 0.7)' },
+      { label: 'Autonomie', data: batteryData, backgroundColor: 'rgba(25, 135, 84, 0.7)' },
+    ];
+  } else {
+    // Pour les autres : 1 Barre (Score Global)
+    const scoreData = products.map(p => getProductScore(p, productType));
+    datasets = [
+      { label: 'Score Global', data: scoreData, backgroundColor: 'rgba(13, 110, 253, 0.7)', borderRadius: 5 },
+    ];
+  }
+
+  const data = { labels: chartLabels, datasets: datasets };
 
   const options = {
-    indexAxis: 'y',
-    scales: { x: { beginAtZero: true, max: 100 } },
+    indexAxis: productType === 'laptop' ? 'x' : 'y', // Vertical pour laptop, Horizontal pour les autres
+    scales: { x: { beginAtZero: true, max: 100 }, y: { beginAtZero: true, max: 100 } },
     responsive: true,
-    plugins: { legend: { display: false } },
+    plugins: { legend: { display: true } },
   };
 
   return (
     <Container className="my-5">
-      
-      
+      {/* En-tête VS */}
       <div className="text-center mb-5">
         <h4 className="text-muted text-uppercase small fw-bold mb-3">Comparatif {productType}</h4>
         <Row className="align-items-center justify-content-center">
           {products.map((p, index) => (
             <React.Fragment key={p._id}>
-             
               <Col xs={5} md={4}>
                 <h2 className="fw-bold text-dark">{p.name}</h2>
-                <Badge bg="light" text="dark" className="border mt-2">
-                  {p.brand}
-                </Badge>
+                <Badge bg="light" text="dark" className="border mt-2">{p.brand}</Badge>
               </Col>
-              
-              
               {index < products.length - 1 && (
                 <Col xs={2} md={1}>
                   <div className="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center mx-auto" 
-                       style={{ width: '50px', height: '50px', fontWeight: 'bold', fontSize: '1.2rem' }}>
-                    VS
-                  </div>
+                       style={{ width: '50px', height: '50px', fontWeight: 'bold', fontSize: '1.2rem' }}>VS</div>
                 </Col>
               )}
             </React.Fragment>
           ))}
         </Row>
       </div>
- 
 
+      {/* Graphique */}
       <Card className="shadow-sm mb-5 border-0">
         <Card.Body className="p-4">
-          <h3 className="mb-4">Scores de Performance</h3>
-          <div style={{ maxWidth: '800px', margin: 'auto' }}>
+          <h3 className="mb-4 text-center">Analyse des Performances</h3>
+          <div style={{ maxWidth: '800px', height: '400px', margin: 'auto' }}>
             <Bar options={options} data={data} />
           </div>
         </Card.Body>
