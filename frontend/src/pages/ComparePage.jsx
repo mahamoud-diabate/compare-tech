@@ -59,9 +59,7 @@ function ComparePage() {
   const chartLabels = products.map(p => p.name);
   let datasets = [];
 
-  // --- LOGIQUE DE GRAPHIQUE DYNAMIQUE ---
   if (productType === 'laptop') {
-    // Pour les Laptops : 3 Barres (Performance, Écran, Batterie)
     const perfData = products.map(p => Math.round((p.geekbench_multi / 22000) * 100));
     const screenData = products.map(p => Math.round((p.display_brightness_nits / 1600) * 100));
     const batteryData = products.map(p => Math.round((p.battery_life_hours / 20) * 100));
@@ -72,7 +70,6 @@ function ComparePage() {
       { label: 'Autonomie', data: batteryData, backgroundColor: 'rgba(25, 135, 84, 0.7)' },
     ];
   } else {
-    // Pour les autres : 1 Barre (Score Global)
     const scoreData = products.map(p => getProductScore(p, productType));
     datasets = [
       { label: 'Score Global', data: scoreData, backgroundColor: 'rgba(13, 110, 253, 0.7)', borderRadius: 5 },
@@ -82,7 +79,7 @@ function ComparePage() {
   const data = { labels: chartLabels, datasets: datasets };
 
   const options = {
-    indexAxis: productType === 'laptop' ? 'x' : 'y', // Vertical pour laptop, Horizontal pour les autres
+    indexAxis: productType === 'laptop' ? 'x' : 'y',
     scales: { x: { beginAtZero: true, max: 100 }, y: { beginAtZero: true, max: 100 } },
     responsive: true,
     plugins: { legend: { display: true } },
@@ -90,7 +87,6 @@ function ComparePage() {
 
   return (
     <Container className="my-5">
-      {/* En-tête VS */}
       <div className="text-center mb-5">
         <h4 className="text-muted text-uppercase small fw-bold mb-3">Comparatif {productType}</h4>
         <Row className="align-items-center justify-content-center">
@@ -111,7 +107,6 @@ function ComparePage() {
         </Row>
       </div>
 
-      {/* Graphique */}
       <Card className="shadow-sm mb-5 border-0">
         <Card.Body className="p-4">
           <h3 className="mb-4 text-center">Analyse des Performances</h3>

@@ -1,46 +1,52 @@
 import React, { useState, useEffect } from 'react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import toast from 'react-hot-toast';
+
 import Hero from '../components/Hero';
 import ProductList from '../components/ProductList';
 import CompareBar from '../components/CompareBar';
-import toast from 'react-hot-toast';
 import FilterSidebar from '../components/FilterSidebar';
 import AnimatedPage from '../components/AnimatedPage';
-
-const AVAILABLE_BRANDS = ["Nvidia", "AMD", "Intel"];
 
 function GpuPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [gpus, setGpus] = useState([]);
   
+  const [selectedFilters, setSelectedFilters] = useState({
+    brand: [],
+    memory_gb: []
+  });
 
-  const [selectedBrands, setSelectedBrands] = useState([]);
-  
   const [compareList, setCompareList] = useState([]);
   const MAX_COMPARE_ITEMS = 3;
+
+  const filterOptions = [
+    { id: 'brand', label: 'Marque', options: ["Nvidia", "AMD", "Intel"] },
+    { id: 'memory_gb', label: 'VRAM', options: [8, 12, 16, 20, 24], unit: 'GB' }
+  ];
+
+  const handleFilterChange = (groupId, value) => {
+    setSelectedFilters(prev => {
+      const groupFilters = prev[groupId] || [];
+      const newGroupFilters = groupFilters.includes(value)
+        ? groupFilters.filter(item => item !== value)
+        : [...groupFilters, value];
+      
+      return { ...prev, [groupId]: newGroupFilters };
+    });
+  };
 
   const handleCompareToggle = (product) => {
     setCompareList(prevList => {
       const isSelected = prevList.some(item => item._id === product._id);
-
-      if (isSelected) {
-        return prevList.filter(item => item._id !== product._id);
-      } else {
-        if (prevList.length >= MAX_COMPARE_ITEMS) {
+      if (isSelected) return prevList.filter(item => item._id !== product._id);
+      if (prevList.length >= MAX_COMPARE_ITEMS) {
           toast.error(`Limite de ${MAX_COMPARE_ITEMS} produits atteinte.`);
           return prevList;
-        }
-        return [...prevList, { ...product, productType: 'gpu' }];
       }
-    });
-  };
-
-  const handleBrandChange = (brand) => {
-    setSelectedBrands(prev => {
-      if (prev.includes(brand)) {
-        return prev.filter(b => b !== brand);
-      } else {
-        return [...prev, brand];
-      }
+      return [...prevList, { ...product, productType: 'gpu' }];
     });
   };
 
@@ -56,31 +62,29 @@ function GpuPage() {
     const matchesSearch = gpu.name.toLowerCase().includes(searchLower) || 
                           gpu.brand.toLowerCase().includes(searchLower);
     
-    const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(gpu.brand);
+    const matchesBrand = selectedFilters.brand.length === 0 || selectedFilters.brand.includes(gpu.brand);
+    const matchesMemory = selectedFilters.memory_gb.length === 0 || selectedFilters.memory_gb.includes(gpu.memory_gb);
 
-    return matchesSearch && matchesBrand;
+    return matchesSearch && matchesBrand && matchesMemory;
   });
 
   const compareIds = compareList.map(item => item._id);
 
   return (
     <AnimatedPage>
-      <Hero 
-        searchTerm={searchTerm} 
-        onSearchChange={setSearchTerm} 
-      />
+      <Hero searchTerm={searchTerm} onSearchChange={setSearchTerm} />
       
-      <div className="container my-5">
-        <div className="row">
-          <div className="col-md-3">
+      <Container className="my-5">
+        <Row>
+          <Col md={3}>
             <FilterSidebar 
-              brands={AVAILABLE_BRANDS}
-              selectedBrands={selectedBrands}
-              onBrandChange={handleBrandChange}
+              filters={filterOptions}
+              selectedFilters={selectedFilters}
+              onFilterChange={handleFilterChange}
             />
-          </div>
+          </Col>
           
-          <div className="col-md-9">
+          <Col md={9}>
             <main>
               <ProductList 
                 cpus={filteredGpus} 
@@ -91,16 +95,12 @@ function GpuPage() {
                 maxItems={MAX_COMPARE_ITEMS}
               />
             </main>
-          </div>
-        </div>
-      </div>
+          </Col>
+        </Row>
+      </Container>
 
       {compareList.length > 0 && (
-        <CompareBar 
-          selectedItems={compareList} 
-          productType="gpu" 
-          onClear={() => setCompareList([])} 
-        />
+        <CompareBar selectedItems={compareList} productType="gpu" onClear={() => setCompareList([])} />
       )}
     </AnimatedPage>
   );

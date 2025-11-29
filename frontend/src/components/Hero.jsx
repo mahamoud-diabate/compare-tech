@@ -6,7 +6,6 @@ import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-// On ajoute des valeurs par défaut pour éviter les plantages
 function Hero({ searchTerm = "", onSearchChange = () => {}, allProducts = [] }) {
   const [suggestions, setSuggestions] = useState([]);
   const [localTerm, setLocalTerm] = useState(searchTerm || '');
@@ -21,19 +20,17 @@ function Hero({ searchTerm = "", onSearchChange = () => {}, allProducts = [] }) 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setLocalTerm(value);
-    
-    // On prévient le parent si nécessaire
+   
     if (onSearchChange) {
         onSearchChange(value);
     }
 
-    // Logique de filtrage pour les suggestions
     if (value.length > 0 && allProducts && allProducts.length > 0) {
       const matches = allProducts.filter(product => 
         (product.name && product.name.toLowerCase().includes(value.toLowerCase())) ||
         (product.brand && product.brand.toLowerCase().includes(value.toLowerCase()))
       );
-      // On garde les 5 meilleurs résultats
+    
       setSuggestions(matches.slice(0, 5));
     } else {
       setSuggestions([]);
@@ -42,10 +39,9 @@ function Hero({ searchTerm = "", onSearchChange = () => {}, allProducts = [] }) 
 
   const handleSuggestionClick = (product) => {
     const type = product.productType || 'cpu';
-    // Redirection vers la page de détails du produit cliqué
     navigate(`/${type}/${product._id}`);
     setSuggestions([]);
-    setLocalTerm(''); // On vide la barre
+    setLocalTerm(''); 
     if (onSearchChange) onSearchChange('');
   };
 
@@ -53,7 +49,6 @@ function Hero({ searchTerm = "", onSearchChange = () => {}, allProducts = [] }) 
     e.preventDefault();
   };
 
-  // Cache la liste avec un petit délai pour permettre le clic
   const handleBlur = () => {
     setTimeout(() => setSuggestions([]), 200);
   };
@@ -83,7 +78,6 @@ function Hero({ searchTerm = "", onSearchChange = () => {}, allProducts = [] }) 
               </InputGroup>
             </Form>
 
-            {/* La liste flottante des suggestions */}
             {suggestions.length > 0 && (
               <ListGroup 
                 className="position-absolute w-100 shadow text-start" 

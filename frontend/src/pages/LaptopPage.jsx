@@ -10,17 +10,26 @@ import CompareBar from '../components/CompareBar';
 import FilterSidebar from '../components/FilterSidebar';
 import AnimatedPage from '../components/AnimatedPage';
 
-
-const AVAILABLE_BRANDS = ["Dell", "Apple", "Asus", "Lenovo", "HP"];
+const AVAILABLE_BRANDS = ["Dell", "Apple", "Asus", "Lenovo", "HP", "Acer", "MSI","Razer"];
 
 function LaptopPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [laptops, setLaptops] = useState([]);
   
-  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState({
+    brand: [],
+    ram_gb: [],
+    storage_gb: []
+  });
   
   const [compareList, setCompareList] = useState([]);
   const MAX_COMPARE_ITEMS = 3;
+
+  const filterOptions = [
+    { id: 'brand', label: 'Marque', options: AVAILABLE_BRANDS },
+    { id: 'ram_gb', label: 'Mémoire RAM', options: [8, 16, 32, 64], unit: 'GB' },
+    { id: 'storage_gb', label: 'Stockage', options: [256, 512, 1024, 2048], unit: 'GB' }
+  ];
 
   const handleCompareToggle = (product) => {
     setCompareList(prevList => {
@@ -38,14 +47,14 @@ function LaptopPage() {
     });
   };
 
-  
-  const handleBrandChange = (brand) => {
-    setSelectedBrands(prev => {
-      if (prev.includes(brand)) {
-        return prev.filter(b => b !== brand);
-      } else {
-        return [...prev, brand];
-      }
+  const handleFilterChange = (groupId, value) => {
+    setSelectedFilters(prev => {
+      const groupFilters = prev[groupId] || [];
+      const newGroupFilters = groupFilters.includes(value)
+        ? groupFilters.filter(item => item !== value)
+        : [...groupFilters, value];
+      
+      return { ...prev, [groupId]: newGroupFilters };
     });
   };
 
@@ -56,15 +65,16 @@ function LaptopPage() {
       .catch(error => console.error("Erreur:", error));
   }, []);
 
-  
   const filteredLaptops = laptops.filter(laptop => {
     const searchLower = searchTerm.toLowerCase();
     const matchesSearch = laptop.name.toLowerCase().includes(searchLower) || 
                           laptop.brand.toLowerCase().includes(searchLower);
     
-    const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(laptop.brand);
+    const matchesBrand = selectedFilters.brand.length === 0 || selectedFilters.brand.includes(laptop.brand);
+    const matchesRam = selectedFilters.ram_gb.length === 0 || selectedFilters.ram_gb.includes(laptop.ram_gb);
+    const matchesStorage = selectedFilters.storage_gb.length === 0 || selectedFilters.storage_gb.includes(laptop.storage_gb);
 
-    return matchesSearch && matchesBrand;
+    return matchesSearch && matchesBrand && matchesRam && matchesStorage;
   });
 
   const compareIds = compareList.map(item => item._id);
@@ -76,26 +86,27 @@ function LaptopPage() {
         onSearchChange={setSearchTerm} 
       />
       
-  
       <Container className="my-5">
         <Row>
           <Col md={3}>
             <FilterSidebar 
-              brands={AVAILABLE_BRANDS}
-              selectedBrands={selectedBrands}
-              onBrandChange={handleBrandChange}
+              filters={filterOptions}
+              selectedFilters={selectedFilters}
+              onFilterChange={handleFilterChange}
             />
           </Col>
           
           <Col md={9}>
-            <ProductList 
-              cpus={filteredLaptops} 
-              compareList={compareIds}
-              onCompareToggle={handleCompareToggle}
-              productType="laptop"
-              compareType="laptop"
-              maxItems={MAX_COMPARE_ITEMS}
-            />
+            <main>
+              <ProductList 
+                cpus={filteredLaptops} 
+                compareList={compareIds}
+                onCompareToggle={handleCompareToggle}
+                productType="laptop"
+                compareType="laptop"
+                maxItems={MAX_COMPARE_ITEMS}
+              />
+            </main>
           </Col>
         </Row>
       </Container>
@@ -104,7 +115,7 @@ function LaptopPage() {
         <CompareBar 
             selectedItems={compareList} 
             productType="laptop" 
-            onClear={() => setCompareList([])} 
+            onClear={() => setCompareList([])}
         />
       )}
     </AnimatedPage>

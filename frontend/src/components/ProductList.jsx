@@ -9,7 +9,6 @@ import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
 import './ProductList.css';
 
-// --- Algorithmes de score (inchangés) ---
 const calculateCpuScore = (cpu) => {
   if (!cpu.geekbench_single || !cpu.geekbench_multi) return 0;
   const multi = (cpu.geekbench_multi / 22000) * 100;
@@ -57,10 +56,8 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
     return 0;
   };
 
-  // --- NOUVEAU : Logique des Badges d'Usage ---
   const getBadges = (product) => {
     const badges = [];
-    // On s'assure d'avoir le bon type
     const type = product.productType || productType;
 
     if (type === 'cpu') {
@@ -74,7 +71,6 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
         if (product.memory_gb >= 20) badges.push({ label: 'Créateur 🎨', bg: 'warning' });
     }
     else if (type === 'laptop') {
-        // Si le nom du GPU contient "RTX" ou "RX", c'est souvent un PC Gamer
         if (product.gpu_name && (product.gpu_name.includes('RTX') || product.gpu_name.includes('RX'))) {
             badges.push({ label: 'Gamer 🎮', bg: 'danger' });
         }
@@ -89,7 +85,6 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
     return badges;
   };
 
-  // Logique de tri
   const sortedProducts = [...cpus].sort((a, b) => {
     if (sortOption === 'name-asc') return a.name.localeCompare(b.name);
     if (sortOption === 'name-desc') return b.name.localeCompare(a.name);
@@ -125,7 +120,6 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
           const isDisabled = !isSelected && compareType !== null && productType !== compareType;
           const score = getProductScore(product);
           
-          // Calcul des badges
           const badges = getBadges(product);
 
           return (
@@ -152,7 +146,6 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                 <Card.Body className="d-flex flex-column text-center pt-0">
                   <Card.Title className="mb-2">{product.name}</Card.Title>
                   
-                  {/* --- AFFICHAGE DES BADGES --- */}
                   <div className="mb-3" style={{ minHeight: '25px' }}>
                       {badges.map((badge, index) => (
                           <Badge key={index} bg={badge.bg} className="me-1 mb-1">

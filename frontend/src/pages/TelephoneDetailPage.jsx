@@ -7,7 +7,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form'; // Pour le switch
+import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { getProductScore, getScoreColor } from '../utils/scores';
 import SpecBar from '../components/SpecBar';
@@ -17,8 +17,6 @@ function TelephoneDetailPage() {
   const { id } = useParams(); 
   const [telephone, setTelephone] = useState(null);
   const [error, setError] = useState(null);
-  
-  // 1. NOUVEL ÉTAT : Mode Expert (Faux par défaut pour la simplicité)
   const [isExpertMode, setIsExpertMode] = useState(false);
 
   useEffect(() => {
@@ -39,15 +37,13 @@ function TelephoneDetailPage() {
 
   return (
     <Container className="my-5">
-      
-      {/* EN-TÊTE & CONTRÔLE DU MODE */}
+   
       <div className="d-flex justify-content-between align-items-end mb-4 border-bottom pb-3">
         <div>
           <h1 className="fw-bold mb-1">{telephone.name}</h1>
           <span className="text-muted">Smartphone {telephone.brand}</span>
         </div>
         
-        {/* L'Interrupteur Magique */}
         <Form.Check 
           type="switch"
           id="expert-mode-switch"
@@ -59,7 +55,6 @@ function TelephoneDetailPage() {
       </div>
 
       <Row>
-        {/* COLONNE GAUCHE : IMAGE & SCORE (Toujours visible) */}
         <Col md={5} className="mb-4">
            <Card className="h-100 border-0 shadow-sm bg-white d-flex flex-column align-items-center justify-content-center p-3">
              {telephone.imageUrl ? (
@@ -68,7 +63,6 @@ function TelephoneDetailPage() {
                 <div className="p-5 text-muted">Pas d'image</div>
              )}
              
-             {/* Le Score est toujours visible, c'est l'info clé */}
              <div className="text-center mt-4">
                 <Badge bg={scoreColor} style={{ fontSize: '3rem', borderRadius: '50px', padding: '15px 40px' }}>
                   {score}/100
@@ -77,16 +71,12 @@ function TelephoneDetailPage() {
              </div>
            </Card>
         </Col>
-
-        {/* COLONNE DROITE : L'INFORMATION */}
         <Col md={7}>
           
-          {/* --- VUE SIMPLE (Par défaut) --- */}
           {!isExpertMode ? (
             <div className="fade-in">
               <h3 className="mb-4">Ce qu'il faut savoir en bref :</h3>
               
-              {/* Les 3 Points Forts (Arguments Massue) */}
               <Card className="border-0 bg-light mb-4 p-3">
                  {telephone.pros && telephone.pros.slice(0, 3).map((pro, i) => (
                     <div key={i} className="d-flex align-items-center mb-3">
@@ -96,8 +86,6 @@ function TelephoneDetailPage() {
                  ))}
                  {!telephone.pros && <p>Un excellent choix pour sa catégorie.</p>}
               </Card>
-
-              {/* Verdict Rapide */}
               <div className="alert alert-info border-0 shadow-sm">
                 <h5 className="fw-bold">💡 Notre Avis</h5>
                 <p className="mb-0">
@@ -107,7 +95,6 @@ function TelephoneDetailPage() {
                 </p>
               </div>
 
-              {/* Gros Bouton d'Action */}
               <div className="d-grid gap-2 mt-4">
                  <Button variant="success" size="lg" style={{ fontWeight: 'bold', padding: '15px' }}>
                     Voir le meilleur prix
@@ -115,15 +102,12 @@ function TelephoneDetailPage() {
               </div>
             </div>
           ) : (
-            
-            /* --- VUE EXPERT (Si activé) --- */
             <div className="fade-in">
               <Card className="shadow-sm border-0">
                 <Card.Header className="bg-dark text-white fw-bold py-3">
                     ⚙️ Fiche Technique Complète
                 </Card.Header>
                 <ListGroup variant="flush">
-                  {/* Specs Détaillées */}
                   <ListGroup.Item className="d-flex justify-content-between py-3">
                     <span>Écran</span> <strong>{telephone.display_size}</strong>
                   </ListGroup.Item>
@@ -137,7 +121,6 @@ function TelephoneDetailPage() {
                     <span>Batterie</span> <strong>{telephone.battery_mah} mAh</strong>
                   </ListGroup.Item>
                   
-                  {/* Benchmarks avec Barres */}
                   <ListGroup.Item className="bg-light fw-bold mt-3">Benchmarks</ListGroup.Item>
                   <ListGroup.Item className="py-3">
                     <div className="d-flex justify-content-between mb-2">
@@ -149,7 +132,6 @@ function TelephoneDetailPage() {
                 </ListGroup>
               </Card>
 
-              {/* Liste complète des avantages/inconvénients */}
               <Row className="mt-4">
                 <Col md={6}>
                   <Card className="h-100 border-danger shadow-sm">
@@ -164,7 +146,6 @@ function TelephoneDetailPage() {
                   </Card>
                 </Col>
                  <Col md={6}>
-                   {/* On remet les points forts complets ici pour les experts */}
                    <Card className="h-100 border-success shadow-sm">
                     <Card.Header className="bg-success text-white">Points Forts</Card.Header>
                     <Card.Body>

@@ -10,18 +10,35 @@ import CompareBar from '../components/CompareBar';
 import FilterSidebar from '../components/FilterSidebar';
 import AnimatedPage from '../components/AnimatedPage';
 
-
-const AVAILABLE_BRANDS = ["Apple", "Samsung", "Google", "Xiaomi", "OnePlus"];
-
 function TelephonePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [telephones, setTelephones] = useState([]);
   
-
-  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState({
+    brand: [],
+    ram_gb: [],
+    storage_gb: []
+  });
 
   const [compareList, setCompareList] = useState([]);
   const MAX_COMPARE_ITEMS = 3;
+
+  const filterOptions = [
+    { id: 'brand', label: 'Marque', options: ["Apple", "Samsung", "Google", "Xiaomi", "OnePlus"] },
+    { id: 'ram_gb', label: 'Mémoire RAM', options: [6, 8, 12, 16], unit: 'GB' },
+    { id: 'storage_gb', label: 'Stockage', options: [128, 256, 512, 1024], unit: 'GB' }
+  ];
+
+  const handleFilterChange = (groupId, value) => {
+    setSelectedFilters(prev => {
+      const groupFilters = prev[groupId] || [];
+      const newGroupFilters = groupFilters.includes(value)
+        ? groupFilters.filter(item => item !== value)
+        : [...groupFilters, value];
+      
+      return { ...prev, [groupId]: newGroupFilters };
+    });
+  };
 
   const handleCompareToggle = (product) => {
     setCompareList(prevList => {
@@ -30,22 +47,11 @@ function TelephonePage() {
       if (isSelected) {
         return prevList.filter(item => item._id !== product._id);
       } else {
-       
         if (prevList.length >= MAX_COMPARE_ITEMS) {
           toast.error(`Limite de ${MAX_COMPARE_ITEMS} produits atteinte.`);
           return prevList;
         }
         return [...prevList, { ...product, productType: 'telephone' }];
-      }
-    });
-  };
-
-  const handleBrandChange = (brand) => {
-    setSelectedBrands(prev => {
-      if (prev.includes(brand)) {
-        return prev.filter(b => b !== brand);
-      } else {
-        return [...prev, brand];
       }
     });
   };
@@ -62,9 +68,11 @@ function TelephonePage() {
     const matchesSearch = tel.name.toLowerCase().includes(searchLower) || 
                           tel.brand.toLowerCase().includes(searchLower);
     
-    const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(tel.brand);
+    const matchesBrand = selectedFilters.brand.length === 0 || selectedFilters.brand.includes(tel.brand);
+    const matchesRam = selectedFilters.ram_gb.length === 0 || selectedFilters.ram_gb.includes(tel.ram_gb);
+    const matchesStorage = selectedFilters.storage_gb.length === 0 || selectedFilters.storage_gb.includes(tel.storage_gb);
 
-    return matchesSearch && matchesBrand;
+    return matchesSearch && matchesBrand && matchesRam && matchesStorage;
   });
 
   const compareIds = compareList.map(item => item._id);
@@ -78,16 +86,14 @@ function TelephonePage() {
       
       <Container className="my-5">
         <Row>
-          
           <Col md={3}>
             <FilterSidebar 
-              brands={AVAILABLE_BRANDS}
-              selectedBrands={selectedBrands}
-              onBrandChange={handleBrandChange}
+              filters={filterOptions}
+              selectedFilters={selectedFilters}
+              onFilterChange={handleFilterChange}
             />
           </Col>
           
-       
           <Col md={9}>
             <main>
               <ProductList 

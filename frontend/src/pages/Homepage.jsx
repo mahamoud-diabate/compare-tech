@@ -8,10 +8,10 @@ import Badge from 'react-bootstrap/Badge';
 import { LinkContainer } from 'react-router-bootstrap';
 import Hero from '../components/Hero';
 import AnimatedPage from '../components/AnimatedPage';
+import QuickCompare from '../components/QuickCompare';
+import UserProfiles from '../components/UserProfiles';
 
 function HomePage() {
-  // Note: Pas de useState pour searchTerm ici, car c'est la page vitrine.
-  
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
 
@@ -23,13 +23,11 @@ function HomePage() {
   ];
 
   useEffect(() => {
-    // 1. Charger les produits vedettes
     fetch('https://mahamoud-compare-tech-api.onrender.com/api/featured')
       .then(res => res.json())
       .then(data => setFeaturedProducts(data))
       .catch(err => console.error(err));
 
-    // 2. Charger TOUS les produits pour la barre de recherche intelligente
     const fetchAll = async () => {
         try {
             const urls = [
@@ -55,7 +53,6 @@ function HomePage() {
 
   return (
     <AnimatedPage>
-      {/* C'EST ICI QUE C'EST IMPORTANT : on passe des valeurs vides ou la liste globale */}
       <Hero 
         searchTerm="" 
         onSearchChange={() => {}} 
@@ -67,8 +64,13 @@ function HomePage() {
           <h2 className="display-5 fw-bold">Bienvenue sur CompareTech</h2>
           <p className="lead text-muted">Le comparateur technique de référence.</p>
         </div>
+        <QuickCompare allProducts={allProducts}/>
+        </Container>
+        <UserProfiles />
 
-        {/* Catégories */}
+      <Container className="my-5">
+        <h2 className="text-center mb-4 fw-bold">Parcourir par Catégorie</h2>
+
         <Row xs={1} md={2} lg={4} className="g-4 mb-5">
           {categories.map((cat) => (
             <Col key={cat.title}>
@@ -86,7 +88,6 @@ function HomePage() {
           ))}
         </Row>
         
-        {/* Produits Vedettes */}
         {featuredProducts.length > 0 && (
             <div className="my-5">
             <h2 className="text-center mb-4 fw-bold">🏆 Les Champions du Moment</h2>
