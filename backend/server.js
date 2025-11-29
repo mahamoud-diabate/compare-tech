@@ -14,6 +14,26 @@ const dbURI = process.env.DB_URI || "mongodb+srv://KING2MO:104766Dia-@king2mocom
 mongoose.connect(dbURI)
   .then((result) => {
     console.log('Connecté avec succès à MongoDB:');
+    app.get('/api/featured',async(req,res)=>{
+      try{
+        const bestCpu = await Cpu.findOne().sort({ geekbench_multi: -1 });
+        const bestGpu = await Gpu.findOne().sort({ benchmark_3dmark: -1 });
+        const bestLaptop = await Laptop.findOne().sort({ geekbench_multi: -1 });
+        const bestPhone = await Telephone.findOne().sort({ antutu_score: -1 });
+
+        const featuredProducts = [];
+
+        if (bestCpu) featuredProducts.push({ ...bestCpu.toObject(), productType: 'cpu', highlight: 'Top CPU' });
+        if (bestGpu) featuredProducts.push({ ...bestGpu.toObject(), productType: 'gpu', highlight: 'Top GPU' });
+        if (bestLaptop) featuredProducts.push({ ...bestLaptop.toObject(), productType: 'laptop', highlight: 'Top Laptop' });
+        if (bestPhone) featuredProducts.push({ ...bestPhone.toObject(), productType: 'telephone', highlight: 'Top Smartphone' });
+
+        res.json(featuredProducts);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Erreur serveur lors de la récupération des produits vedettes' });
+      }
+    });
     app.listen(port, () => {
       console.log(`serveur démarré sur http://localhost:${port}`);
     });
