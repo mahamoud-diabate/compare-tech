@@ -34,6 +34,59 @@ mongoose.connect(dbURI)
         res.status(500).json({ error: 'Erreur serveur lors de la récupération des produits vedettes' });
       }
     });
+
+
+app.put('/api/cpus/:id', async (req, res) => {
+  try {
+    const updatedProduct = await Cpu.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updatedProduct);
+  } catch (err) { res.status(400).json({ error: err.message }); }
+});
+app.delete('/api/cpus/:id', async (req, res) => {
+  try {
+    await Cpu.findByIdAndDelete(req.params.id);
+    res.json({ message: "Produit supprimé" });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/gpus/:id', async (req, res) => {
+  try {
+    const updatedProduct = await Gpu.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updatedProduct);
+  } catch (err) { res.status(400).json({ error: err.message }); }
+});
+app.delete('/api/gpus/:id', async (req, res) => {
+  try {
+    await Gpu.findByIdAndDelete(req.params.id);
+    res.json({ message: "Produit supprimé" });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/laptops/:id', async (req, res) => {
+  try {
+    const updatedProduct = await Laptop.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updatedProduct);
+  } catch (err) { res.status(400).json({ error: err.message }); }
+});
+app.delete('/api/laptops/:id', async (req, res) => {
+  try {
+    await Laptop.findByIdAndDelete(req.params.id);
+    res.json({ message: "Produit supprimé" });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.put('/api/telephones/:id', async (req, res) => {
+  try {
+    const updatedProduct = await Telephone.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updatedProduct);
+  } catch (err) { res.status(400).json({ error: err.message }); }
+});
+app.delete('/api/telephones/:id', async (req, res) => {
+  try {
+    await Telephone.findByIdAndDelete(req.params.id);
+    res.json({ message: "Produit supprimé" });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
     app.listen(port, () => {
       console.log(`serveur démarré sur http://localhost:${port}`);
     });
