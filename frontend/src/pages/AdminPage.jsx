@@ -48,29 +48,29 @@ function AdminPage() {
   const handleEdit = (product) => {
     setEditingId(product._id);
     const dataToEdit = { ...product };
+    
     if (Array.isArray(dataToEdit.pros)) dataToEdit.pros = dataToEdit.pros.join(', ');
+    
     if (Array.isArray(dataToEdit.cons)) dataToEdit.cons = dataToEdit.cons.join(', ');
-    setFormData({ ...initialFormState, ...dataToEdit }); // Fusion pour garder les champs vides propres
-    window.scrollTo(0, 0); 
+    
+    setFormData({ ...initialFormState, ...dataToEdit });
+    window.scrollTo(0, 0);
     toast('Mode Édition activé', { icon: '✏️' });
   };
 
-
   const handleDelete = async (id) => {
     if (!window.confirm("Es-tu sûr de vouloir supprimer ce produit ?")) return;
-
     try {
       await fetch(`https://mahamoud-compare-tech-api.onrender.com/api/${productType}/${id}`, {
         method: 'DELETE'
       });
       toast.success('Produit supprimé !');
-      fetchProducts(); 
+      fetchProducts();
     } catch (error) {
       toast.error("Erreur lors de la suppression");
     }
   };
 
- 
   const handleCancel = () => {
     setEditingId(null);
     setFormData(initialFormState);
@@ -80,15 +80,19 @@ function AdminPage() {
     e.preventDefault();
     
     const payload = { ...formData };
- 
+    
     ['cores', 'threads', 'ram_gb', 'storage_gb', 'battery_mah', 'price', 
      'geekbench_single', 'geekbench_multi', 'benchmark_3dmark', 'antutu_score', 
      'tdp', 'display_brightness_nits', 'battery_life_hours', 'memory_gb'].forEach(field => {
        if (payload[field]) payload[field] = Number(payload[field]);
     });
 
-    if (typeof payload.pros === 'string') payload.pros = payload.pros.split(',').map(s => s.trim()).filter(s => s);
-    if (typeof payload.cons === 'string') payload.cons = payload.cons.split(',').map(s => s.trim()).filter(s => s);
+    if (typeof payload.pros === 'string') {
+        payload.pros = payload.pros.split(',').map(s => s.trim()).filter(s => s);
+    }
+    if (typeof payload.cons === 'string') {
+        payload.cons = payload.cons.split(',').map(s => s.trim()).filter(s => s);
+    }
 
     try {
       let response;
@@ -99,7 +103,6 @@ function AdminPage() {
           body: JSON.stringify(payload)
         });
       } else {
-       
         response = await fetch(`https://mahamoud-compare-tech-api.onrender.com/api/${productType}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -138,7 +141,7 @@ function AdminPage() {
             <Form.Select 
                 value={productType} 
                 onChange={(e) => setProductType(e.target.value)}
-                disabled={!!editingId} 
+                disabled={!!editingId}
             >
               <option value="cpus">Processeur (CPU)</option>
               <option value="gpus">Carte Graphique (GPU)</option>
@@ -147,7 +150,6 @@ function AdminPage() {
             </Form.Select>
           </Form.Group>
 
-          {/* CHAMPS COMMUNS */}
           <Row className="mb-3">
             <Col><Form.Control placeholder="Nom (ex: iPhone 16)" name="name" value={formData.name} onChange={handleChange} required /></Col>
             <Col><Form.Control placeholder="Marque (ex: Apple)" name="brand" value={formData.brand} onChange={handleChange} required /></Col>
@@ -155,7 +157,6 @@ function AdminPage() {
           <Form.Group className="mb-3">
             <Form.Control placeholder="URL Image (https://...)" name="imageUrl" value={formData.imageUrl} onChange={handleChange} />
           </Form.Group>
-
           <div className="p-3 bg-light rounded mb-3">
             <h6 className="text-muted mb-3">Spécifications Techniques</h6>
             <Row className="g-3">
@@ -179,11 +180,41 @@ function AdminPage() {
                     <Col md={6}><Form.Control type="number" placeholder="AnTuTu Score" name="antutu_score" value={formData.antutu_score} onChange={handleChange} /></Col>
                 </>
                 )}
+                {productType === 'laptops' && (
+                <>
+                    <Col md={6}><Form.Control placeholder="CPU" name="cpu_name" value={formData.cpu_name} onChange={handleChange} /></Col>
+                    <Col md={6}><Form.Control placeholder="GPU" name="gpu_name" value={formData.gpu_name} onChange={handleChange} /></Col>
+                    <Col md={6}><Form.Control type="number" placeholder="RAM (GB)" name="ram_gb" value={formData.ram_gb} onChange={handleChange} /></Col>
+                    <Col md={6}><Form.Control type="number" placeholder="Stockage (GB)" name="storage_gb" value={formData.storage_gb} onChange={handleChange} /></Col>
+                </>
+                )}
             </Row>
           </div>
 
+          <h4 className="mb-3">Analyse (Séparer par des virgules)</h4>
+          
           <Form.Group className="mb-3">
-            <Form.Control as="textarea" rows={2} placeholder="Avantages (séparés par des virgules)" name="pros" value={formData.pros} onChange={handleChange} />
+            <Form.Label className="text-success fw-bold">Avantages (Pros)</Form.Label>
+            <Form.Control 
+                as="textarea" 
+                rows={2} 
+                placeholder="Ex: Écran superbe, Rapide, Pas cher" 
+                name="pros" 
+                value={formData.pros} 
+                onChange={handleChange} 
+            />
+          </Form.Group>
+          
+          <Form.Group className="mb-4">
+            <Form.Label className="text-danger fw-bold">Inconvénients (Cons)</Form.Label>
+            <Form.Control 
+                as="textarea" 
+                rows={2} 
+                placeholder="Ex: Chauffe, Pas de chargeur, Cher" 
+                name="cons" 
+                value={formData.cons} 
+                onChange={handleChange} 
+            />
           </Form.Group>
 
           <div className="d-grid">
