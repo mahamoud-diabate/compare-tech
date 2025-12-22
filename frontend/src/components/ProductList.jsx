@@ -1,97 +1,58 @@
 import React, { useState } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
 import './ProductList.css';
-
-const calculateCpuScore = (cpu) => {
-  if (!cpu.geekbench_single || !cpu.geekbench_multi) return 0;
-  const multi = (cpu.geekbench_multi / 22000) * 100;
-  const single = (cpu.geekbench_single / 3000) * 100;
-  return Math.round((multi * 0.7) + (single * 0.3));
-};
-const calculateGpuScore = (gpu) => {
-  if (!gpu.benchmark_3dmark) return 0;
-  return Math.round((gpu.benchmark_3dmark / 30000) * 100);
-};
-const calculateTelephoneScore = (tel) => {
-  if (!tel.antutu_score) return 0;
-  return Math.round((tel.antutu_score / 2500000) * 100);
-};
-const calculateLaptopScore = (laptop) => {
-  if (!laptop.geekbench_multi) return 0;
-  return Math.round((laptop.geekbench_multi / 22000) * 100);
-};
+// Import des fonctions de calcul corrigées
+import { getProductScore, getScoreColor } from '../utils/scores'; 
 
 function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, productType = "cpu", compareType }) {
   
   const [sortOption, setSortOption] = useState('score-desc');
 
   const getTitle = () => {
-    if (productType === 'gpu') return 'Cartes Graphiques (GPUs)';
-    if (productType === 'laptop') return 'Ordinateurs Portables';
-    if (productType === 'telephone') return 'Téléphones';
+    if (productType === 'gpus') return 'Cartes Graphiques (GPUs)';
+    if (productType === 'laptops') return 'Ordinateurs Portables';
+    if (productType === 'telephones') return 'Téléphones';
     return 'Processeurs (CPUs)';
-  };
-
-  const getScoreColor = (score) => {c
-    if (!score || score === 0) return 'secondary';
-    if (score >= 90) return 'success';
-    if (score >= 70) return 'primary';
-    if (score >= 50) return 'warning';
-    return 'danger';
-  };
-
-  const getProductScore = (product) => {
-    if (product.score) return product.score;
-    if (productType === 'cpu') return calculateCpuScore(product);
-    if (productType === 'gpu') return calculateGpuScore(product);
-    if (productType === 'telephone') return calculateTelephoneScore(product);
-    if (productType === 'laptop') return calculateLaptopScore(product);
-    return 0;
   };
 
   const getBadges = (product) => {
     const badges = [];
     const type = product.productType || productType;
 
-    if (type === 'cpu') {
-        if (product.geekbench_single >= 2800) badges.push({ label: 'Gaming 🎮', bg: 'danger' });
-        if (product.geekbench_multi >= 20000) badges.push({ label: 'Workstation 🏗️', bg: 'info' });
-        if (product.tdp && product.tdp <= 65) badges.push({ label: 'Éco 🌱', bg: 'success' });
+    if (type.includes('cpu')) {
+        if (product.geekbench_single >= 2800) badges.push({ label: 'Gaming', bg: 'danger' });
+        if (product.geekbench_multi >= 20000) badges.push({ label: 'Workstation', bg: 'info' });
+        if (product.tdp && product.tdp <= 65) badges.push({ label: 'Éco', bg: 'success' });
     }
-    else if (type === 'gpu') {
-        if (product.benchmark_3dmark >= 25000) badges.push({ label: '4K Gaming 🖥️', bg: 'danger' });
-        else if (product.benchmark_3dmark >= 15000) badges.push({ label: '1440p Gaming 🎯', bg: 'primary' });
-        if (product.memory_gb >= 20) badges.push({ label: 'Créateur 🎨', bg: 'warning' });
+    else if (type.includes('gpu')) {
+        if (product.benchmark_3dmark >= 25000) badges.push({ label: '4K', bg: 'danger' });
+        else if (product.benchmark_3dmark >= 15000) badges.push({ label: '1440p', bg: 'primary' });
     }
-    else if (type === 'laptop') {
+    else if (type.includes('laptop')) {
         if (product.gpu_name && (product.gpu_name.includes('RTX') || product.gpu_name.includes('RX'))) {
-            badges.push({ label: 'Gamer 🎮', bg: 'danger' });
+            badges.push({ label: 'Gamer', bg: 'danger' });
         }
-        if (product.display_brightness_nits >= 500) badges.push({ label: 'Écran Pro 👁️', bg: 'info' });
-        if (product.battery_life_hours >= 12) badges.push({ label: 'Marathon 🔋', bg: 'success' });
+        if (product.battery_life_hours >= 12) badges.push({ label: 'Marathon', bg: 'success' });
+        if (product.display_brightness_nits >= 500) badges.push({ label: 'Écran Pro', bg: 'info' });
     }
-    else if (type === 'telephone') {
-        if (product.antutu_score >= 1500000) badges.push({ label: 'Flagship 🚀', bg: 'danger' });
-        if (product.battery_mah >= 5000) badges.push({ label: 'Endurance 🔋', bg: 'success' });
+    else if (type.includes('telephone')) {
+        if (product.antutu_score >= 1500000) badges.push({ label: 'Flagship', bg: 'danger' });
+        if (product.battery_mah >= 5000) badges.push({ label: 'Endurance', bg: 'success' });
     }
-    
     return badges;
   };
 
   const sortedProducts = [...cpus].sort((a, b) => {
     if (sortOption === 'name-asc') return a.name.localeCompare(b.name);
     if (sortOption === 'name-desc') return b.name.localeCompare(a.name);
-    
-    const scoreA = getProductScore(a);
-    const scoreB = getProductScore(b);
-
+    const scoreA = getProductScore(a, productType);
+    const scoreB = getProductScore(b, productType);
     if (sortOption === 'score-desc') return scoreB - scoreA;
     if (sortOption === 'score-asc') return scoreA - scoreB;
     return 0;
@@ -114,89 +75,126 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
         </Form.Select>
       </div>
       
-      <Row xs={1} md={2} lg={4} className="g-4">
+      <Row xs={1} md={2} lg={4} className="g-4 align-items-stretch">
         {sortedProducts.map(product => {
           const isSelected = compareList.includes(product._id);
-          const isDisabled = !isSelected && compareType !== null && productType !== compareType;
-          const score = getProductScore(product);
-          
+          const isDisabled = !isSelected && compareType !== null && compareType !== undefined && productType !== compareType;
+          const score = getProductScore(product, productType);
           const badges = getBadges(product);
 
           return (
-            <Col key={product._id}>
-              <Card className={`h-100 ${isDisabled ? 'disabled-card' : ''}`}>
+            <Col key={product._id} className="d-flex">
+              <Card className={`w-100 shadow-sm border-0 d-flex flex-column bg-body-tertiary ${isDisabled ? 'disabled-card' : ''}`} style={{ transition: 'transform 0.2s' }}>
                 
                 {score > 0 && (
                   <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }}>
-                    <Badge bg={getScoreColor(score)} style={{ fontSize: '1.1rem', boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}>
+                    <Badge bg={getScoreColor(score)} pill className="shadow border border-light py-2 px-3 fw-bold" style={{fontSize: '0.9rem'}}>
                       {score}
                     </Badge>
                   </div>
                 )}
 
-                {product.imageUrl && (
-                  <Card.Img 
-                    variant="top" 
-                    src={product.imageUrl} 
-                    alt={product.name} 
-                    className="product-card-image"
-                  />
-                )}
+                <div className="d-flex align-items-center justify-content-center bg-white rounded-top p-3" style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
+                   {product.imageUrl ? (
+                      <img src={product.imageUrl} alt={product.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                   ) : (
+                      <div className="text-muted text-center opacity-50">
+                        <span style={{fontSize: '3rem'}}>📷</span>
+                      </div>
+                   )}
+                </div>
 
-                <Card.Body className="d-flex flex-column text-center pt-0">
-                  <Card.Title className="mb-2">{product.name}</Card.Title>
+                <Card.Body className="d-flex flex-column p-3">
                   
-                  <div className="mb-3" style={{ minHeight: '25px' }}>
-                      {badges.map((badge, index) => (
-                          <Badge key={index} bg={badge.bg} className="me-1 mb-1">
-                              {badge.label}
-                          </Badge>
-                      ))}
+                  <div className="mb-2 d-flex align-items-start gap-1 flex-wrap" style={{ height: '25px', overflow: 'hidden' }}>
+                    {badges.map((b, i) => (
+                        <Badge key={i} bg={b.bg} style={{fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px'}}>{b.label}</Badge>
+                    ))}
                   </div>
 
-                  <Form.Check 
-                    type="checkbox"
-                    id={`compare-${product._id}`}
-                    label="Comparer"
-                    checked={isSelected}
-                    onChange={() => onCompareToggle(product)}
-                    disabled={isDisabled}
-                    className="mb-3 custom-checkbox"
-                  />
+                  <Card.Title 
+                    className="fw-bold mb-1 text-center text-dark" 
+                    style={{ 
+                        height: '50px', 
+                        fontSize: '1.1rem',
+                        display: '-webkit-box', 
+                        WebkitLineClamp: 2, 
+                        WebkitBoxOrient: 'vertical', 
+                        overflow: 'hidden',
+                        lineHeight: '1.2'
+                    }}
+                    title={product.name}
+                  >
+                    {product.name}
+                  </Card.Title>
                   
-                  <ListGroup variant="flush" className="text-start mb-3 small-specs">
-                    <ListGroup.Item><strong>Marque:</strong> <span>{product.brand}</span></ListGroup.Item>
-                    
-                    {productType === 'cpu' && (
-                      <>
-                        {product.cores && (<ListGroup.Item><strong>Cœurs:</strong> <span>{product.cores}</span></ListGroup.Item>)}
-                        {product.threads && (<ListGroup.Item><strong>Threads:</strong> <span>{product.threads}</span></ListGroup.Item>)}
-                      </>
-                    )}
-                    {productType === 'gpu' && (
-                      <>
-                        {product.cores && (<ListGroup.Item><strong>Cœurs:</strong> <span>{product.cores}</span></ListGroup.Item>)}
-                        {product.memory_gb && (<ListGroup.Item><strong>VRAM:</strong> <span>{product.memory_gb} GB</span></ListGroup.Item>)}
-                      </>
-                    )}
-                    {productType === 'laptop' && (
-                      <>
-                        {product.cpu_name && (<ListGroup.Item><strong>CPU:</strong> <span>{product.cpu_name}</span></ListGroup.Item>)}
-                        {product.ram_gb && (<ListGroup.Item><strong>RAM:</strong> <span>{product.ram_gb} GB</span></ListGroup.Item>)}
-                      </>
-                    )}
-                    {productType === 'telephone' && (
-                      <>
-                        {product.display_size && (<ListGroup.Item><strong>Écran:</strong> <span>{product.display_size}</span></ListGroup.Item>)}
-                        {product.battery_mah && (<ListGroup.Item><strong>Batterie:</strong> <span>{product.battery_mah} mAh</span></ListGroup.Item>)}
-                      </>
-                    )}
-                  </ListGroup>
-                  
-                  <LinkContainer to={`/${productType}/${product._id}`} className="mt-auto">
-                    <Button variant="outline-primary">Voir les détails</Button>
-                  </LinkContainer>
+                  <Card.Text className="text-muted small mb-3 text-center text-uppercase fw-bold" style={{ height: '15px', fontSize: '0.75rem' }}>
+                    {product.brand}
+                  </Card.Text>
+
+                  <div className="mb-4 pt-2 border-top border-light-subtle" style={{ height: '65px' }}>
+                     {productType.includes('cpu') && (
+                        <div className="d-flex justify-content-center align-items-center h-100">
+                            <div className="text-center px-3">
+                                <div className="fw-bold fs-5 text-dark">{product.cores}</div>
+                                <div className="text-muted" style={{fontSize: '0.7rem'}}>CŒURS</div>
+                            </div>
+                            <div style={{width: '1px', height: '30px', backgroundColor: '#dee2e6'}}></div>
+                            <div className="text-center px-3">
+                                <div className="fw-bold fs-5 text-dark">{product.max_freq_ghz}</div>
+                                <div className="text-muted" style={{fontSize: '0.7rem'}}>GHZ</div>
+                            </div>
+                        </div>
+                     )}
+
+                     {productType.includes('laptop') && (
+                        <div className="d-flex flex-column justify-content-center align-items-center h-100 small">
+                           <div className="fw-bold text-dark text-truncate w-100 text-center">{product.cpu_name}</div>
+                           <div className="text-muted">{product.ram_gb} GB RAM</div>
+                        </div>
+                     )}
+
+                     {productType.includes('gpu') && (
+                         <div className="d-flex justify-content-center align-items-center h-100">
+                             <div className="text-center px-3">
+                                 <div className="fw-bold fs-5 text-dark">{product.memory_gb}</div>
+                                 <div className="text-muted" style={{fontSize: '0.7rem'}}>GB VRAM</div>
+                             </div>
+                         </div>
+                     )}
+
+                     {productType.includes('telephone') && (
+                         <div className="d-flex justify-content-center align-items-center h-100">
+                            <div className="text-center px-2">
+                                <div className="fw-bold text-dark">{product.storage_gb} <span style={{fontSize: '0.7rem'}}>GB</span></div>
+                            </div>
+                            <div style={{width: '1px', height: '20px', backgroundColor: '#dee2e6'}} className="mx-2"></div>
+                            <div className="text-center px-2">
+                                <div className="fw-bold text-dark">{product.battery_mah} <span style={{fontSize: '0.7rem'}}>mAh</span></div>
+                            </div>
+                         </div>
+                     )}
+                  </div>
+
+                  <div className="mt-auto">
+                    <Form.Check 
+                      type="checkbox"
+                      id={`compare-${product._id}`}
+                      label={isSelected ? "Sélectionné" : "Comparer"}
+                      checked={isSelected}
+                      onChange={() => onCompareToggle(product)}
+                      disabled={isDisabled}
+                      className={`mb-2 small fw-bold d-flex justify-content-center ${isSelected ? "text-primary" : "text-muted"}`}
+                    />
+
+                    <LinkContainer to={`/${productType}/${product._id}`}>
+                       <Button variant={isSelected ? "primary" : "outline-dark"} className="w-100 rounded-2 fw-bold btn-sm py-2">
+                         Voir fiche technique
+                       </Button>
+                    </LinkContainer>
+                  </div>
                 </Card.Body>
+
               </Card>
             </Col>
           );

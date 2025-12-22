@@ -19,6 +19,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
 import { getProductScore } from '../utils/scores';
+import TechRadar from '../components/TechRadar';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -32,7 +33,8 @@ function ComparePage() {
   React.useEffect(() => {
     if (idsString && productType) {
       const idsArray = idsString.split(',');
-      const apiUrl = `https://mahamoud-compare-tech-api.onrender.com/api/${productType}s/compare`;
+      const collectionName = productType.endsWith('s') ? productType : `${productType}s`;
+      const apiUrl = `https://mahamoud-compare-tech-api.onrender.com/api/${collectionName}/compare`;
 
       fetch(apiUrl, {
         method: 'POST',
@@ -56,6 +58,9 @@ function ComparePage() {
     );
   }
 
+  const product1 = products[0];
+  const product2 = products[1]; 
+
   const chartLabels = products.map(p => p.name);
   let datasets = [];
 
@@ -70,7 +75,8 @@ function ComparePage() {
       { label: 'Autonomie', data: batteryData, backgroundColor: 'rgba(25, 135, 84, 0.7)' },
     ];
   } else {
-    const scoreData = products.map(p => getProductScore(p, productType));
+    const scoreData = products.map(p => getProductScore(p, productType)); 
+    
     datasets = [
       { label: 'Score Global', data: scoreData, backgroundColor: 'rgba(13, 110, 253, 0.7)', borderRadius: 5 },
     ];
@@ -82,6 +88,7 @@ function ComparePage() {
     indexAxis: productType === 'laptop' ? 'x' : 'y',
     scales: { x: { beginAtZero: true, max: 100 }, y: { beginAtZero: true, max: 100 } },
     responsive: true,
+    maintainAspectRatio: false,
     plugins: { legend: { display: true } },
   };
 
@@ -89,7 +96,8 @@ function ComparePage() {
     <Container className="my-5">
       <div className="text-center mb-5">
         <h4 className="text-muted text-uppercase small fw-bold mb-3">Comparatif {productType}</h4>
-        <Row className="align-items-center justify-content-center">
+        
+        <Row className="align-items-center justify-content-center mb-5">
           {products.map((p, index) => (
             <React.Fragment key={p._id}>
               <Col xs={5} md={4}>
@@ -105,12 +113,19 @@ function ComparePage() {
             </React.Fragment>
           ))}
         </Row>
+
+        <Card className="mb-5 shadow-sm border-0">
+            <Card.Body>
+                <h3 className="text-center mb-4">Analyse Visuelle (Radar)</h3>
+                <TechRadar product1={product1} product2={product2} />
+            </Card.Body>
+        </Card>
       </div>
 
       <Card className="shadow-sm mb-5 border-0">
         <Card.Body className="p-4">
           <h3 className="mb-4 text-center">Analyse des Performances</h3>
-          <div style={{ maxWidth: '800px', height: '400px', margin: 'auto' }}>
+          <div style={{ maxWidth: '800px', height: '400px', margin: 'auto', position: 'relative' }}>
             <Bar options={options} data={data} />
           </div>
         </Card.Body>

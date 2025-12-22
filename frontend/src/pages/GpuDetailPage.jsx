@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Alert from 'react-bootstrap/Alert';
-import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form';
+import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
-import { getProductScore, getScoreColor } from '../utils/scores';
-import SpecBar from '../components/SpecBar';
+import Alert from 'react-bootstrap/Alert';
+import Form from 'react-bootstrap/Form';
+
+import TechRadar from '../components/TechRadar';
 import SimilarProducts from '../components/SimilarProducts';
+import { getProductScore, getScoreColor } from '../utils/scores';
 
 function GpuDetailPage() {
-  const { id } = useParams(); 
-  const [gpu, setGpu] = useState(null);
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
-  
+  const [loading, setLoading] = useState(true);
   const [isExpertMode, setIsExpertMode] = useState(false);
 
   useEffect(() => {
@@ -26,142 +26,206 @@ function GpuDetailPage() {
         if (!response.ok) throw new Error('Produit non trouvé');
         return response.json();
       })
-      .then(data => setGpu(data))
-      .catch(error => setError(error.message));
+      .then(data => {
+        setProduct({ ...data, productType: 'gpu' });
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, [id]);
 
+  if (loading) return <Container className="my-5 text-center"><div className="spinner-border text-primary"></div></Container>;
   if (error) return <Container className="my-5"><Alert variant="danger">Erreur : {error}</Alert></Container>;
-  if (!gpu) return <Container className="my-5"><div>Chargement...</div></Container>;
+  if (!product) return <Container className="my-5"><Alert variant="warning">Produit introuvable</Alert></Container>;
 
-  const score = getProductScore(gpu, 'gpu');
-  const scoreColor = getScoreColor(score);
+  const score = getProductScore(product, 'gpu');
+  const scoreVariant = getScoreColor(score);
+  
+  const getCircleColor = (variant) => {
+    if (variant === 'success') return '#198754';
+    if (variant === 'primary') return '#0d6efd';
+    if (variant === 'warning') return '#ffc107';
+    return '#dc3545';
+  };
 
   return (
     <Container className="my-5">
-      
-      
-      <div className="d-flex justify-content-between align-items-end mb-4 border-bottom pb-3">
-        <div>
-          <h1 className="fw-bold mb-1">{gpu.name}</h1>
-          <span className="text-muted">Carte Graphique {gpu.brand}</span>
+      <div className="mb-5 border-bottom pb-4">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+            <Link to="/gpus" className="text-decoration-none text-muted small fw-bold">← Retour aux GPU</Link>
+            <Form.Check 
+                type="switch"
+                id="expert-mode-switch"
+                label="Mode Expert"
+                className="fw-bold text-primary"
+                checked={isExpertMode}
+                onChange={() => setIsExpertMode(!isExpertMode)}
+            />
         </div>
-        
-        <Form.Check 
-          type="switch"
-          id="expert-mode-switch"
-          label="Mode Expert"
-          className="fw-bold text-primary"
-          checked={isExpertMode}
-          onChange={() => setIsExpertMode(!isExpertMode)}
-        />
+
+        <div className="d-flex justify-content-between align-items-end mt-3 flex-wrap gap-3">
+            <div>
+                <Badge bg="dark" className="mb-2 text-uppercase">{product.brand}</Badge>
+                <h1 className="fw-bold display-5 mb-0">{product.name}</h1>
+            </div>
+            <div className="text-end">
+                <div className="fs-2 fw-bold text-primary mb-2">
+                    {product.price ? `${product.price} €` : 'Prix N/A'}
+                </div>
+                {product.buyUrl && (
+                    <Button href={product.buyUrl} target="_blank" variant="success" size="lg" className="rounded-pill px-4 fw-bold shadow-sm">
+                        Voir l'offre 🛒
+                    </Button>
+                )}
+            </div>
+        </div>
       </div>
 
-      <Row>
-       
-        <Col md={5} className="mb-4">
-           <Card className="h-100 border-0 shadow-sm bg-white d-flex flex-column align-items-center justify-content-center p-3">
-             {gpu.imageUrl ? (
-                <img src={gpu.imageUrl} alt={gpu.name} style={{ maxWidth: '100%', maxHeight: '350px', objectFit: 'contain' }} />
-             ) : (
-                <div className="p-5 text-muted">Pas d'image</div>
-             )}
-             
-             <div className="text-center mt-4">
-                <Badge bg={scoreColor} style={{ fontSize: '3rem', borderRadius: '50px', padding: '15px 40px' }}>
-                  {score}/100
-                </Badge>
-                <p className="text-muted mt-2 fw-bold">Note Globale</p>
-             </div>
-           </Card>
+      <Row className="g-4 mb-5">
+        <Col lg={5}>
+            <Card className="border-0 shadow-sm mb-4 overflow-hidden">
+                <Card.Body className="p-4 text-center bg-white position-relative">
+                    <div className="position-absolute top-0 end-0 m-3 z-3">
+                        <div className="rounded-circle d-flex flex-column align-items-center justify-content-center text-white shadow"
+                             style={{ width: '90px', height: '90px', backgroundColor: getCircleColor(scoreVariant) }}>
+                            <span className="fw-bold" style={{fontSize: '2rem', lineHeight: '1'}}>{score}</span>
+                            <span style={{fontSize: '0.7rem', opacity: 0.9}}>SUR 100</span>
+                        </div>
+                    </div>
+                    <div style={{ height: '350px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {product.imageUrl ? (
+                            <img src={product.imageUrl} alt={product.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                        ) : (
+                            <div className="text-muted display-1 opacity-25">🎮</div>
+                        )}
+                    </div>
+                </Card.Body>
+            </Card>
+
+            {isExpertMode && (
+                <div className="fade-in">
+                    <Card className="border-0 shadow-sm">
+                        <Card.Header className="bg-white border-bottom-0 pt-4 pb-0 text-center">
+                            <h5 className="fw-bold mb-0">Radar 3D & Gaming</h5>
+                        </Card.Header>
+                        <Card.Body>
+                            <TechRadar product1={product} product2={null} />
+                        </Card.Body>
+                    </Card>
+                </div>
+            )}
         </Col>
 
-        <Col md={7}>
-          
-          {!isExpertMode ? (
-            
-            <div className="fade-in">
-              <h3 className="mb-4">L'essentiel pour le Gaming :</h3>
-              
-              <Card className="border-0 bg-light mb-4 p-3">
-                 {gpu.pros && gpu.pros.slice(0, 3).map((pro, i) => (
-                    <div key={i} className="d-flex align-items-center mb-3">
-                      <span style={{ fontSize: '1.5rem', marginRight: '15px' }}>✅</span>
-                      <span className="fw-bold" style={{ fontSize: '1.1rem' }}>{pro}</span>
-                    </div>
-                 ))}
-                 {!gpu.pros && <p>Une carte graphique puissante pour vos jeux.</p>}
-              </Card>
+        <Col lg={7}>
+            {!isExpertMode ? (
+                <div className="fade-in">
+                    <Card className="border-0 bg-light mb-4 p-4 shadow-sm">
+                        <h4 className="fw-bold mb-3">💡 Analyse Gaming</h4>
+                        <p className="lead mb-4">
+                            Cette carte graphique obtient <strong>{score}/100</strong>.
+                            {product.benchmark_3dmark > 20000 
+                                ? " C'est une carte taillée pour la 4K Ultra et le Ray Tracing avancé." 
+                                : " Elle est parfaite pour jouer en 1080p ou 1440p avec un framerate élevé."}
+                            {product.memory_gb >= 16 && " Sa grande quantité de VRAM est idéale pour la création 3D et l'avenir."}
+                        </p>
+                        <div className="d-grid gap-2">
+                             <Button variant="outline-primary" onClick={() => setIsExpertMode(true)} className="fw-bold">
+                                Voir les scores 3DMark détaillés ⚡
+                             </Button>
+                        </div>
+                    </Card>
 
-              <div className="alert alert-info border-0 shadow-sm">
-                <h5 className="fw-bold">💡 Notre Avis</h5>
-                <p className="mb-0">
-                  La <strong>{gpu.name}</strong> obtient un score de <strong>{score}/100</strong>.
-                  {score > 85 ? " Elle fera tourner tous les jeux modernes en Ultra." : " Un très bon choix pour le gaming 1440p."}
-                </p>
-              </div>
+                    <Row className="g-3">
+                        <Col md={6}>
+                            <Card className="h-100 border-0 shadow-sm border-top border-4 border-success bg-white">
+                                <Card.Body>
+                                    <h5 className="text-success fw-bold mb-3">✅ Points Forts</h5>
+                                    {product.pros && product.pros.length > 0 ? (
+                                        <ul className="list-unstyled mb-0">
+                                            {product.pros.map((pro, i) => <li key={i} className="mb-2">✓ {pro}</li>)}
+                                        </ul>
+                                    ) : <span className="text-muted">Aucun point fort listé.</span>}
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col md={6}>
+                            <Card className="h-100 border-0 shadow-sm border-top border-4 border-danger bg-white">
+                                <Card.Body>
+                                    <h5 className="text-danger fw-bold mb-3">❌ Points Faibles</h5>
+                                    {product.cons && product.cons.length > 0 ? (
+                                        <ul className="list-unstyled mb-0">
+                                            {product.cons.map((con, i) => <li key={i} className="mb-2">⚠️ {con}</li>)}
+                                        </ul>
+                                    ) : <span className="text-muted">R.A.S.</span>}
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </div>
+            ) : (
+                <div className="fade-in">
+                    <Card className="border-0 shadow-sm mb-4">
+                        <Card.Header className="bg-dark text-white pt-3 px-4 d-flex justify-content-between align-items-center">
+                            <h5 className="fw-bold mb-0">⚡ Spécifications Techniques</h5>
+                            <Badge bg="warning" text="dark">EXPERT</Badge>
+                        </Card.Header>
+                        <Card.Body className="px-4 pb-4 pt-4">
+                            <Row xs={1} md={2} className="g-3">
+                                <Col>
+                                    <div className="p-3 bg-body-tertiary rounded h-100">
+                                        <small className="text-muted text-uppercase fw-bold" style={{fontSize: '0.7rem'}}>Mémoire Vidéo (VRAM)</small>
+                                        <div className="fs-5 fw-bold text-dark">{product.memory_gb} GB</div>
+                                    </div>
+                                </Col>
+                                <Col>
+                                    <div className="p-3 bg-body-tertiary rounded h-100">
+                                        <small className="text-muted text-uppercase fw-bold" style={{fontSize: '0.7rem'}}>Type Mémoire</small>
+                                        <div className="fs-5 fw-bold text-dark">GDDR6X</div>
+                                    </div>
+                                </Col>
+                            </Row>
 
-              <div className="d-grid gap-2 mt-4">
-                 <Button variant="success" size="lg" style={{ fontWeight: 'bold', padding: '15px' }}>
-                    Voir les prix
-                 </Button>
-              </div>
-            </div>
-          ) : (
-            
-            <div className="fade-in">
-              <Card className="shadow-sm border-0">
-                <Card.Header className="bg-dark text-white fw-bold py-3">
-                    ⚙️ Fiche Technique
-                </Card.Header>
-                <ListGroup variant="flush">
-                  <ListGroup.Item className="d-flex justify-content-between py-3">
-                    <span>Cœurs CUDA/Stream</span> <strong>{gpu.cores || 'N/A'}</strong>
-                  </ListGroup.Item>
-                  <ListGroup.Item className="d-flex justify-content-between py-3">
-                    <span>Mémoire VRAM</span> <strong>{gpu.memory_gb ? `${gpu.memory_gb} GB` : 'N/A'}</strong>
-                  </ListGroup.Item>
-                  <ListGroup.Item className="d-flex justify-content-between py-3">
-                    <span>Type Mémoire</span> <strong>{gpu.memory_type || 'N/A'}</strong>
-                  </ListGroup.Item>
-                  
-                  <ListGroup.Item className="bg-light fw-bold mt-3">Benchmarks (3DMark)</ListGroup.Item>
-                  <ListGroup.Item className="py-3">
-                    <div className="d-flex justify-content-between mb-2">
-                        <span>TimeSpy Score</span> <strong>{gpu.benchmark_3dmark || 'N/A'}</strong>
-                    </div>
-                    <SpecBar value={gpu.benchmark_3dmark} maxValue={30000} />
-                  </ListGroup.Item>
-                </ListGroup>
-              </Card>
-              
-              <Row className="mt-4">
-                <Col md={6}>
-                   <Card className="h-100 border-success shadow-sm">
-                    <Card.Header className="bg-success text-white">Points Forts</Card.Header>
-                    <Card.Body>
-                      <ul className="mb-0 ps-3">
-                        {gpu.pros && gpu.pros.map((pro, i) => <li key={i}>{pro}</li>)}
-                      </ul>
-                    </Card.Body>
-                  </Card>
-                </Col>
-                <Col md={6}>
-                  <Card className="h-100 border-danger shadow-sm">
-                    <Card.Header className="bg-danger text-white">Points Faibles</Card.Header>
-                    <Card.Body>
-                      <ul className="mb-0 ps-3">
-                        {gpu.cons && gpu.cons.map((con, i) => <li key={i}>{con}</li>)}
-                      </ul>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
-            </div>
-          )}
+                            <div className="mt-4 p-3 border rounded bg-light">
+                                <h6 className="fw-bold mb-3 border-bottom pb-2">Benchmarks Synthétiques</h6>
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Score 3DMark TimeSpy</span>
+                                    <span className="font-monospace fw-bold fs-5 text-primary">{product.benchmark_3dmark ? product.benchmark_3dmark.toLocaleString() : 'N/A'}</span>
+                                </div>
+                            </div>
+                        </Card.Body>
+                    </Card>
+
+                    <Row className="g-3">
+                         <Col md={6}>
+                            <Card className="h-100 border-0 shadow-sm border-start border-4 border-success bg-white">
+                                <Card.Body className="py-2">
+                                    <strong className="text-success">✅ Points Forts :</strong>
+                                    <ul className="mb-0 ps-3 small mt-1">
+                                        {product.pros && product.pros.map((p,i) => <li key={i}>{p}</li>)}
+                                    </ul>
+                                </Card.Body>
+                            </Card>
+                         </Col>
+                         <Col md={6}>
+                            <Card className="h-100 border-0 shadow-sm border-start border-4 border-danger bg-white">
+                                <Card.Body className="py-2">
+                                    <strong className="text-danger">❌ Points Faibles :</strong>
+                                    <ul className="mb-0 ps-3 small mt-1">
+                                        {product.cons && product.cons.map((c,i) => <li key={i}>{c}</li>)}
+                                    </ul>
+                                </Card.Body>
+                            </Card>
+                         </Col>
+                    </Row>
+                </div>
+            )}
         </Col>
       </Row>
-
-      <SimilarProducts currentId={id} category="gpus" />
+      <div className="mt-5 pt-4 border-top">
+        <SimilarProducts currentId={id} category="gpus" />
+      </div>
     </Container>
   );
 }

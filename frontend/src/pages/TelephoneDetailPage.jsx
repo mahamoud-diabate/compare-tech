@@ -1,169 +1,243 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Alert from 'react-bootstrap/Alert';
-import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form';
+import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
-import { getProductScore, getScoreColor } from '../utils/scores';
-import SpecBar from '../components/SpecBar';
+import Alert from 'react-bootstrap/Alert';
+import Form from 'react-bootstrap/Form';
+
+import TechRadar from '../components/TechRadar';
 import SimilarProducts from '../components/SimilarProducts';
+import { getProductScore, getScoreColor } from '../utils/scores';
 
 function TelephoneDetailPage() {
-  const { id } = useParams(); 
-  const [telephone, setTelephone] = useState(null);
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [isExpertMode, setIsExpertMode] = useState(false);
 
   useEffect(() => {
     fetch(`https://mahamoud-compare-tech-api.onrender.com/api/telephones/${id}`)
       .then(response => {
-        if (!response.ok) { throw new Error('Produit non trouvé'); }
+        if (!response.ok) throw new Error('Produit non trouvé');
         return response.json();
       })
-      .then(data => setTelephone(data))
-      .catch(error => setError(error.message));
+      .then(data => {
+        setProduct({ ...data, productType: 'telephone' });
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, [id]);
 
+  if (loading) return <Container className="my-5 text-center"><div className="spinner-border text-primary"></div></Container>;
   if (error) return <Container className="my-5"><Alert variant="danger">Erreur : {error}</Alert></Container>;
-  if (!telephone) return <Container className="my-5"><div>Chargement...</div></Container>;
+  if (!product) return <Container className="my-5"><Alert variant="warning">Produit introuvable</Alert></Container>;
 
-  const score = getProductScore(telephone, 'telephone');
-  const scoreColor = getScoreColor(score);
+  const score = getProductScore(product, 'telephone');
+  const scoreVariant = getScoreColor(score);
+  
+  const getCircleColor = (variant) => {
+    if (variant === 'success') return '#198754';
+    if (variant === 'primary') return '#0d6efd';
+    if (variant === 'warning') return '#ffc107';
+    return '#dc3545';
+  };
 
   return (
     <Container className="my-5">
-   
-      <div className="d-flex justify-content-between align-items-end mb-4 border-bottom pb-3">
-        <div>
-          <h1 className="fw-bold mb-1">{telephone.name}</h1>
-          <span className="text-muted">Smartphone {telephone.brand}</span>
+      <div className="mb-5 border-bottom pb-4">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+            <Link to="/telephones" className="text-decoration-none text-muted small fw-bold">← Retour aux Téléphones</Link>
+            <Form.Check 
+                type="switch"
+                id="expert-mode-switch"
+                label="Mode Expert"
+                className="fw-bold text-primary"
+                checked={isExpertMode}
+                onChange={() => setIsExpertMode(!isExpertMode)}
+            />
         </div>
-        
-        <Form.Check 
-          type="switch"
-          id="expert-mode-switch"
-          label="Mode Expert (Détails Techniques)"
-          className="fw-bold text-primary"
-          checked={isExpertMode}
-          onChange={() => setIsExpertMode(!isExpertMode)}
-        />
+
+        <div className="d-flex justify-content-between align-items-end mt-3 flex-wrap gap-3">
+            <div>
+                <Badge bg="dark" className="mb-2 text-uppercase">{product.brand}</Badge>
+                <h1 className="fw-bold display-5 mb-0">{product.name}</h1>
+            </div>
+            <div className="text-end">
+                <div className="fs-2 fw-bold text-primary mb-2">
+                    {product.price ? `${product.price} €` : 'Prix N/A'}
+                </div>
+                {product.buyUrl && (
+                    <Button href={product.buyUrl} target="_blank" variant="success" size="lg" className="rounded-pill px-4 fw-bold shadow-sm">
+                        Voir l'offre 🛒
+                    </Button>
+                )}
+            </div>
+        </div>
       </div>
 
-      <Row>
-        <Col md={5} className="mb-4">
-           <Card className="h-100 border-0 shadow-sm bg-white d-flex flex-column align-items-center justify-content-center p-3">
-             {telephone.imageUrl ? (
-                <img src={telephone.imageUrl} alt={telephone.name} style={{ maxWidth: '100%', maxHeight: '350px', objectFit: 'contain' }} />
-             ) : (
-                <div className="p-5 text-muted">Pas d'image</div>
-             )}
-             
-             <div className="text-center mt-4">
-                <Badge bg={scoreColor} style={{ fontSize: '3rem', borderRadius: '50px', padding: '15px 40px' }}>
-                  {score}/100
-                </Badge>
-                <p className="text-muted mt-2 fw-bold">Note Globale</p>
-             </div>
-           </Card>
+      <Row className="g-4 mb-5">
+        <Col lg={5}>
+            <Card className="border-0 shadow-sm mb-4 overflow-hidden">
+                <Card.Body className="p-4 text-center bg-white position-relative">
+                    <div className="position-absolute top-0 end-0 m-3 z-3">
+                        <div className="rounded-circle d-flex flex-column align-items-center justify-content-center text-white shadow"
+                             style={{ width: '90px', height: '90px', backgroundColor: getCircleColor(scoreVariant) }}>
+                            <span className="fw-bold" style={{fontSize: '2rem', lineHeight: '1'}}>{score}</span>
+                            <span style={{fontSize: '0.7rem', opacity: 0.9}}>SUR 100</span>
+                        </div>
+                    </div>
+                    <div style={{ height: '350px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {product.imageUrl ? (
+                            <img src={product.imageUrl} alt={product.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                        ) : (
+                            <div className="text-muted display-1 opacity-25">📱</div>
+                        )}
+                    </div>
+                </Card.Body>
+            </Card>
+
+            {isExpertMode && (
+                <div className="fade-in">
+                    <Card className="border-0 shadow-sm">
+                        <Card.Header className="bg-white border-bottom-0 pt-4 pb-0 text-center">
+                            <h5 className="fw-bold mb-0">Radar Technique</h5>
+                        </Card.Header>
+                        <Card.Body>
+                            <TechRadar product1={product} product2={null} />
+                        </Card.Body>
+                    </Card>
+                </div>
+            )}
         </Col>
-        <Col md={7}>
-          
-          {!isExpertMode ? (
-            <div className="fade-in">
-              <h3 className="mb-4">Ce qu'il faut savoir en bref :</h3>
-              
-              <Card className="border-0 bg-light mb-4 p-3">
-                 {telephone.pros && telephone.pros.slice(0, 3).map((pro, i) => (
-                    <div key={i} className="d-flex align-items-center mb-3">
-                      <span style={{ fontSize: '1.5rem', marginRight: '15px' }}>✅</span>
-                      <span className="fw-bold" style={{ fontSize: '1.1rem' }}>{pro}</span>
-                    </div>
-                 ))}
-                 {!telephone.pros && <p>Un excellent choix pour sa catégorie.</p>}
-              </Card>
-              <div className="alert alert-info border-0 shadow-sm">
-                <h5 className="fw-bold">💡 Notre Avis</h5>
-                <p className="mb-0">
-                  Le <strong>{telephone.name}</strong> est idéal pour ceux qui cherchent 
-                  un téléphone puissant de la marque {telephone.brand}. 
-                  Avec son score de <strong>{score}/100</strong>, c'est une valeur sûre.
-                </p>
-              </div>
 
-              <div className="d-grid gap-2 mt-4">
-                 <Button variant="success" size="lg" style={{ fontWeight: 'bold', padding: '15px' }}>
-                    Voir le meilleur prix
-                 </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="fade-in">
-              <Card className="shadow-sm border-0">
-                <Card.Header className="bg-dark text-white fw-bold py-3">
-                    ⚙️ Fiche Technique Complète
-                </Card.Header>
-                <ListGroup variant="flush">
-                  <ListGroup.Item className="d-flex justify-content-between py-3">
-                    <span>Écran</span> <strong>{telephone.display_size}</strong>
-                  </ListGroup.Item>
-                  <ListGroup.Item className="d-flex justify-content-between py-3">
-                    <span>Processeur</span> <strong>{telephone.cpu_name}</strong>
-                  </ListGroup.Item>
-                  <ListGroup.Item className="d-flex justify-content-between py-3">
-                    <span>RAM</span> <strong>{telephone.ram_gb} GB</strong>
-                  </ListGroup.Item>
-                  <ListGroup.Item className="d-flex justify-content-between py-3">
-                    <span>Batterie</span> <strong>{telephone.battery_mah} mAh</strong>
-                  </ListGroup.Item>
-                  
-                  <ListGroup.Item className="bg-light fw-bold mt-3">Benchmarks</ListGroup.Item>
-                  <ListGroup.Item className="py-3">
-                    <div className="d-flex justify-content-between mb-2">
-                        <span>AnTuTu v10</span>
-                        <strong>{telephone.antutu_score || 'N/A'}</strong>
-                    </div>
-                    <SpecBar value={telephone.antutu_score} maxValue={2500000} />
-                  </ListGroup.Item>
-                </ListGroup>
-              </Card>
+        <Col lg={7}>
+            {!isExpertMode ? (
+                <div className="fade-in">
+                    <Card className="border-0 bg-light mb-4 p-4 shadow-sm">
+                        <h4 className="fw-bold mb-3">💡 Notre Verdict</h4>
+                        <p className="lead mb-4">
+                            Le <strong>{product.name}</strong> obtient un score global de <strong>{score}/100</strong>.
+                            {product.antutu_score > 1000000 
+                                ? " C'est un véritable Flagship capable de faire tourner les jeux les plus gourmands." 
+                                : " C'est un excellent choix milieu de gamme, équilibré pour le quotidien."}
+                            {product.battery_mah >= 5000 && " Son autonomie est un gros point fort."}
+                        </p>
+                        <div className="d-grid gap-2">
+                             <Button variant="outline-primary" onClick={() => setIsExpertMode(true)} className="fw-bold">
+                                Voir les scores AnTuTu détaillés ⚡
+                             </Button>
+                        </div>
+                    </Card>
 
-              <Row className="mt-4">
-                <Col md={6}>
-                  <Card className="h-100 border-danger shadow-sm">
-                    <Card.Header className="bg-danger text-white">Points Faibles</Card.Header>
-                    <Card.Body>
-                      <ul className="mb-0 ps-3">
-                        {telephone.cons && telephone.cons.map((con, i) => (
-                          <li key={i}>{con}</li>
-                        ))}
-                      </ul>
-                    </Card.Body>
-                  </Card>
-                </Col>
-                 <Col md={6}>
-                   <Card className="h-100 border-success shadow-sm">
-                    <Card.Header className="bg-success text-white">Points Forts</Card.Header>
-                    <Card.Body>
-                      <ul className="mb-0 ps-3">
-                        {telephone.pros && telephone.pros.map((pro, i) => (
-                          <li key={i}>{pro}</li>
-                        ))}
-                      </ul>
-                    </Card.Body>
-                  </Card>
-                 </Col>
-              </Row>
-            </div>
-          )}
+                    <Row className="g-3">
+                        <Col md={6}>
+                            <Card className="h-100 border-0 shadow-sm border-top border-4 border-success bg-white">
+                                <Card.Body>
+                                    <h5 className="text-success fw-bold mb-3">✅ Points Forts</h5>
+                                    {product.pros && product.pros.length > 0 ? (
+                                        <ul className="list-unstyled mb-0">
+                                            {product.pros.map((pro, i) => <li key={i} className="mb-2">✓ {pro}</li>)}
+                                        </ul>
+                                    ) : <span className="text-muted">Aucun point fort listé.</span>}
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                        <Col md={6}>
+                            <Card className="h-100 border-0 shadow-sm border-top border-4 border-danger bg-white">
+                                <Card.Body>
+                                    <h5 className="text-danger fw-bold mb-3">❌ Points Faibles</h5>
+                                    {product.cons && product.cons.length > 0 ? (
+                                        <ul className="list-unstyled mb-0">
+                                            {product.cons.map((con, i) => <li key={i} className="mb-2">⚠️ {con}</li>)}
+                                        </ul>
+                                    ) : <span className="text-muted">R.A.S.</span>}
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </div>
+            ) : (
+                <div className="fade-in">
+                    <Card className="border-0 shadow-sm mb-4">
+                        <Card.Header className="bg-dark text-white pt-3 px-4 d-flex justify-content-between align-items-center">
+                            <h5 className="fw-bold mb-0">⚡ Spécifications Techniques</h5>
+                            <Badge bg="warning" text="dark">EXPERT</Badge>
+                        </Card.Header>
+                        <Card.Body className="px-4 pb-4 pt-4">
+                            <Row xs={1} md={2} className="g-3">
+                                <Col>
+                                    <div className="p-3 bg-body-tertiary rounded h-100">
+                                        <small className="text-muted text-uppercase fw-bold" style={{fontSize: '0.7rem'}}>Écran</small>
+                                        <div className="fs-5 fw-bold text-dark">{product.display_size || "N/A"}"</div>
+                                    </div>
+                                </Col>
+                                <Col>
+                                    <div className="p-3 bg-body-tertiary rounded h-100">
+                                        <small className="text-muted text-uppercase fw-bold" style={{fontSize: '0.7rem'}}>Stockage</small>
+                                        <div className="fs-5 fw-bold text-dark">{product.storage_gb || "--"} GB</div>
+                                    </div>
+                                </Col>
+                                <Col>
+                                    <div className="p-3 bg-body-tertiary rounded h-100">
+                                        <small className="text-muted text-uppercase fw-bold" style={{fontSize: '0.7rem'}}>RAM</small>
+                                        <div className="fs-5 fw-bold text-dark">{product.ram_gb || "--"} GB</div>
+                                    </div>
+                                </Col>
+                                <Col>
+                                    <div className="p-3 bg-body-tertiary rounded h-100">
+                                        <small className="text-muted text-uppercase fw-bold" style={{fontSize: '0.7rem'}}>Batterie</small>
+                                        <div className="fs-5 fw-bold text-dark">{product.battery_mah || "--"} mAh</div>
+                                    </div>
+                                </Col>
+                            </Row>
+
+                            <div className="mt-4 p-3 border rounded bg-light">
+                                <h6 className="fw-bold mb-3 border-bottom pb-2">Benchmarks Mobiles</h6>
+                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                    <span>Score AnTuTu v10</span>
+                                    <span className="font-monospace fw-bold fs-5 text-primary">{product.antutu_score ? product.antutu_score.toLocaleString() : 'N/A'}</span>
+                                </div>
+                            </div>
+                        </Card.Body>
+                    </Card>
+
+                    <Row className="g-3">
+                         <Col md={6}>
+                            <Card className="h-100 border-0 shadow-sm border-start border-4 border-success bg-white">
+                                <Card.Body className="py-2">
+                                    <strong className="text-success">✅ Points Forts :</strong>
+                                    <ul className="mb-0 ps-3 small mt-1">
+                                        {product.pros && product.pros.map((p,i) => <li key={i}>{p}</li>)}
+                                    </ul>
+                                </Card.Body>
+                            </Card>
+                         </Col>
+                         <Col md={6}>
+                            <Card className="h-100 border-0 shadow-sm border-start border-4 border-danger bg-white">
+                                <Card.Body className="py-2">
+                                    <strong className="text-danger">❌ Points Faibles :</strong>
+                                    <ul className="mb-0 ps-3 small mt-1">
+                                        {product.cons && product.cons.map((c,i) => <li key={i}>{c}</li>)}
+                                    </ul>
+                                </Card.Body>
+                            </Card>
+                         </Col>
+                    </Row>
+                </div>
+            )}
         </Col>
       </Row>
-
-      <SimilarProducts currentId={id} category="telephones" />
+      <div className="mt-5 pt-4 border-top">
+        <SimilarProducts currentId={id} category="telephones" />
+      </div>
     </Container>
   );
 }

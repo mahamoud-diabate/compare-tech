@@ -23,7 +23,7 @@ return (
       <Toaster position="top-center" />
       <Header toggleTheme={toggleTheme} theme={theme} />
       <AppBreadcrumb />
-      <div className="flex-grow-1">
+      <div style={{flex: 1}}>
       <Outlet /> 
       </div>
       <Footer />

@@ -42,7 +42,7 @@ const profiles = [
 
 function UserProfiles() {
   return (
-    <div className="py-5 bg-light">
+    <div className="py-5 bg-body-tertiary">
       <Container>
         <div className="text-center mb-5">
           <h2 className="fw-bold">Quel est votre besoin ?</h2>

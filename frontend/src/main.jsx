@@ -14,6 +14,9 @@ import LaptopDetailPage from'./pages/LaptopDetailPage.jsx';
 import TelephonePage from './pages/TelephonePage.jsx';
 import TelephoneDetailPage from './pages/TelephoneDetailPage.jsx';
 import AdminPage from './pages/AdminPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
 
 
 import'./index.css';
@@ -24,9 +27,14 @@ const router= createBrowserRouter([
     element:<App/>,
     children:[
 
-      {
-        path: "/admin",
-        element: <AdminPage />,
+     { path: "/login", element: <LoginPage /> },
+      { 
+        path: "/admin", 
+        element: (
+          <ProtectedRoute>
+            <AdminPage />
+          </ProtectedRoute>
+        ) 
       },
       
       {
@@ -67,7 +75,10 @@ const router= createBrowserRouter([
       {
         path:'/compare',
         element:<ComparePage/>,
-      }
+      },
+
+      { path: "/login", element: <LoginPage /> },
+      { path: "*", element: <NotFoundPage /> }
     ]
   }
 ]);

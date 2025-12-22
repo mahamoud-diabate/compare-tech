@@ -8,6 +8,8 @@ import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import Badge from 'react-bootstrap/Badge';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+
 
 function AdminPage() {
   const [productType, setProductType] = useState('cpus');
@@ -125,9 +127,22 @@ function AdminPage() {
     }
   };
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+  localStorage.removeItem('isAdmin');
+  toast.success('Déconnecté !');
+  navigate('/login');
+};
+
   return (
     <Container className="my-5">
       <h1 className="mb-4 text-center">Gestion du Catalogue</h1>
+      <div className="d-flex justify-content-end mb-3">
+        <Button variant="outline-danger" onClick={handleLogout}>
+        🔒 Déconnexion
+        </Button>
+      </div>
       
       <Card className="shadow-sm p-4 mb-5 border-0 border-top border-4 border-primary">
         <div className="d-flex justify-content-between align-items-center mb-4">

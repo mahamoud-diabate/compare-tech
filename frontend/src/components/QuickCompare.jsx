@@ -21,7 +21,7 @@ function QuickCompare({allProducts}){
     };
 
     return (
-        <Card className="shadow-sm border-0 mb-5 bg-light">
+        <Card className="shadow-sm border-0 mb-5 bg-body-tertiary">
             <Card.Body className="p-4">
                 <h3 className="text-center mb-4 fw-bold">⚡ Comparateur Rapide</h3>
 

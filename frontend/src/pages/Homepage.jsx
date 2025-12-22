@@ -118,7 +118,7 @@ function HomePage() {
             </div>
         )}
         
-        <div className="mt-5 p-5 bg-light rounded-3 shadow-sm">
+        <div className="mt-5 p-5 bg-body-tertiary rounded-3 shadow-sm">
           <h3>Pourquoi utiliser CompareTech ?</h3>
           <p>Notre algorithme analyse les benchmarks réels (Geekbench, 3DMark, AnTuTu) pour vous donner un score objectif et impartial.</p>
         </div>
