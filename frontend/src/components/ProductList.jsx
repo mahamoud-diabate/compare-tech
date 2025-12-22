@@ -39,7 +39,7 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
     return 'Processeurs (CPUs)';
   };
 
-  const getScoreColor = (score) => {
+  const getScoreColor = (score) => {c
     if (!score || score === 0) return 'secondary';
     if (score >= 90) return 'success';
     if (score >= 70) return 'primary';

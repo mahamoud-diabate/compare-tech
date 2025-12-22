@@ -7,7 +7,7 @@ function Footer() {
       <Container className="text-center">
         <p className="mb-1">&copy; {new Date().getFullYear()} CompareTech.</p>
         <small className="text-white-50">
-          Projet Portfolio - Développé avec le stack MERN (MongoDB, Express, React, Node).
+          Projet KING2MO COMPARETECH- Développé avec le stack MERN (MongoDB, Express, React, Node).
         </small>
       </Container>
     </footer>
