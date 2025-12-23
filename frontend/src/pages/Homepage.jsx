@@ -8,11 +8,12 @@ import Badge from 'react-bootstrap/Badge';
 import { LinkContainer } from 'react-router-bootstrap';
 import Hero from '../components/Hero';
 import AnimatedPage from '../components/AnimatedPage';
-import QuickCompare from '../components/QuickCompare';
-import UserProfiles from '../components/UserProfiles';
 
 function HomePage() {
+  // État pour les produits vedettes
   const [featuredProducts, setFeaturedProducts] = useState([]);
+  
+  // État pour TOUS les produits (nécessaire pour l'autocomplétion du Hero)
   const [allProducts, setAllProducts] = useState([]);
 
   const categories = [
@@ -23,11 +24,13 @@ function HomePage() {
   ];
 
   useEffect(() => {
+    // 1. Charger les produits vedettes
     fetch('https://mahamoud-compare-tech-api.onrender.com/api/featured')
       .then(res => res.json())
       .then(data => setFeaturedProducts(data))
-      .catch(err => console.error(err));
+      .catch(err => console.error("Erreur featured:", err));
 
+    // 2. Charger TOUS les produits pour la barre de recherche intelligente
     const fetchAll = async () => {
         try {
             const urls = [
@@ -38,11 +41,13 @@ function HomePage() {
             ];
             const responses = await Promise.all(urls.map(url => fetch(url).then(res => res.json())));
             
+            // On ajoute le type à chaque produit pour savoir où rediriger
             const cpus = responses[0].map(p => ({ ...p, productType: 'cpu' }));
             const gpus = responses[1].map(p => ({ ...p, productType: 'gpu' }));
             const laptops = responses[2].map(p => ({ ...p, productType: 'laptop' }));
             const phones = responses[3].map(p => ({ ...p, productType: 'telephone' }));
 
+            // On combine tout dans une seule liste
             setAllProducts([...cpus, ...gpus, ...laptops, ...phones]);
         } catch (error) {
             console.error("Erreur chargement global:", error);
@@ -53,6 +58,7 @@ function HomePage() {
 
   return (
     <AnimatedPage>
+      {/* CORRECTION : On passe "searchTerm" vide et une fonction vide, car la HomePage ne filtre rien elle-même */}
       <Hero 
         searchTerm="" 
         onSearchChange={() => {}} 
@@ -64,19 +70,16 @@ function HomePage() {
           <h2 className="display-5 fw-bold">Bienvenue sur CompareTech</h2>
           <p className="lead text-muted">Le comparateur technique de référence.</p>
         </div>
-        <QuickCompare allProducts={allProducts}/>
-        </Container>
-        <UserProfiles />
 
-      <Container className="my-5">
-        <h2 className="text-center mb-4 fw-bold">Parcourir par Catégorie</h2>
-
+        {/* Catégories */}
         <Row xs={1} md={2} lg={4} className="g-4 mb-5">
           {categories.map((cat) => (
             <Col key={cat.title}>
               <Card className="h-100 shadow-sm text-center border-0">
                 <Card.Body className="d-flex flex-column align-items-center justify-content-center p-4">
-                  <div className={`bg-${cat.color} bg-opacity-10 p-3 rounded-circle mb-3 text-${cat.color}`} style={{width: '60px', height: '60px', fontSize: '24px'}}>➜</div>
+                  <div className={`bg-${cat.color} bg-opacity-10 p-3 rounded-circle mb-3 text-${cat.color}`} style={{width: '60px', height: '60px', fontSize: '24px'}}>
+                    ➜
+                  </div>
                   <Card.Title className="fw-bold">{cat.title}</Card.Title>
                   <Card.Text>{cat.desc}</Card.Text>
                   <LinkContainer to={cat.link}>
@@ -88,6 +91,7 @@ function HomePage() {
           ))}
         </Row>
         
+        {/* Produits Vedettes */}
         {featuredProducts.length > 0 && (
             <div className="my-5">
             <h2 className="text-center mb-4 fw-bold">🏆 Les Champions du Moment</h2>
@@ -107,6 +111,10 @@ function HomePage() {
                         {product.highlight}
                         </Badge>
                         <Card.Title style={{fontSize: '1.1rem'}}>{product.name}</Card.Title>
+                        <Card.Text className="text-muted small">
+                        {product.brand}
+                        </Card.Text>
+                        
                         <LinkContainer to={`/${product.productType}/${product._id}`}>
                         <Button variant="outline-dark" size="sm" className="mt-2">Voir la fiche</Button>
                         </LinkContainer>
@@ -118,7 +126,7 @@ function HomePage() {
             </div>
         )}
         
-        <div className="mt-5 p-5 bg-body-tertiary rounded-3 shadow-sm">
+        <div className="mt-5 p-5 bg-light rounded-3 shadow-sm">
           <h3>Pourquoi utiliser CompareTech ?</h3>
           <p>Notre algorithme analyse les benchmarks réels (Geekbench, 3DMark, AnTuTu) pour vous donner un score objectif et impartial.</p>
         </div>

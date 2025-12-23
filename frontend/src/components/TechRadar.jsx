@@ -38,37 +38,35 @@ function TechRadar({ product1, product2 }) {
   if (chartData.length === 0) return <div className="text-center text-muted p-5">Pas de données radar disponibles pour ce type.</div>;
 
   return (
-    // FIX: We set a fixed height on the container AND explicit width/height on the component
-    <div style={{ width: '100%', height: 400, minHeight: 300 }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-          <PolarGrid />
-          <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12 }} />
-          <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} />
-          
-          <Radar
-            name={product1.name}
-            dataKey="A"
-            stroke="#0d6efd"
-            fill="#0d6efd"
-            fillOpacity={0.4}
-          />
-          
-          {product2 && (
-            <Radar
-              name={product2.name}
-              dataKey="B"
-              stroke="#dc3545"
-              fill="#dc3545"
-              fillOpacity={0.4}
-            />
-          )}
-          
-          <Legend />
-        </RadarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
-export default TechRadar;
+          <div style={{ width: '100%', height: '350px', minHeight: '300px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12 }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} />
+                  
+                  <Radar
+                    name={product1.name}
+                    dataKey="A"
+                    stroke="#0d6efd"
+                    fill="#0d6efd"
+                    fillOpacity={0.4}
+                  />
+                  
+                  {product2 && (
+                    <Radar
+                      name={product2.name}
+                      dataKey="B"
+                      stroke="#dc3545"
+                      fill="#dc3545"
+                      fillOpacity={0.4}
+                    />
+                  )}
+                  
+                  <Legend />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          );
+        }
+        export default TechRadar;
