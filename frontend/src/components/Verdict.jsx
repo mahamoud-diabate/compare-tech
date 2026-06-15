@@ -17,7 +17,10 @@ function Verdict({ products, productType }) {
   const askGemini = async () => {
     setLoading(true);
     try {
-     const response = await fetch('http://localhost:3001/api/ai/verdict', {
+      const apiBase = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:3001'
+        : 'https://mahamoud-compare-tech-api.onrender.com';
+      const response = await fetch(`${apiBase}/api/ai/verdict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ product1: p1, product2: p2 })
