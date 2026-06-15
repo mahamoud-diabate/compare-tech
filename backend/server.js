@@ -1,9 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 // Configuration Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "VOTRE_CLE_ICI");
