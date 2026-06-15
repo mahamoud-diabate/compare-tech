@@ -24,6 +24,21 @@ dans une application multi-categories.
 * **Routage Dynamique :** Utilise `react-router-dom` pour les pages de liste (`/gpus`) et de détails (`/cpu/:id`).
 * **Filtrage en direct** sur les pages de catégories.
 
+## Installation Locale
+
+1. Clonez le dépôt.
+2. Installez les dépendances : `npm install`.
+3. Lancez le serveur de développement : `npm run dev`.
+4. Accédez à l'application via `http://localhost:5173`.
+
+*Note : Assurez-vous que le backend est également lancé localement sur le port 3001 pour que les données s'affichent.*
+
+## Architecture du Projet
+
+Le projet est divisé en deux dépôts :
+*   **Backend :** [compare-tech-backend](https://github.com/KING2MO123/compare-tech-backend)
+*   **Frontend :** Ce dépôt.
+
 ## Technologies Utilisées
 
 ### Frontend (Interface)
