@@ -35,9 +35,9 @@ function Verdict({ products, productType }) {
   };
 
   // --- LOGIQUE CLASSIQUE (Maths) ---
-  let mainMetricKey = productType.includes('cpu') ? 'geekbench_multi' : 
-                      productType.includes('gpu') ? 'benchmark_3dmark' : 
-                      productType.includes('laptop') ? 'geekbench_multi' : 'antutu_score';
+  let mainMetricKey = (productType || '').includes('cpu') ? 'geekbench_multi' : 
+                      (productType || '').includes('gpu') ? 'benchmark_3dmark' : 
+                      (productType || '').includes('laptop') ? 'geekbench_multi' : 'antutu_score';
   
   const val1 = Number(p1[mainMetricKey]) || 0;
   const val2 = Number(p2[mainMetricKey]) || 0;
