@@ -1,14 +1,49 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const app = express();
 const port = 3001;
+
+// Configuration Gemini
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "VOTRE_CLE_ICI");
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
 const Cpu = require('./models/Cpu');
 const Gpu = require('./models/Gpu');
 const Laptop=require('./models/Laptop');
 const Telephone=require('./models/Telephone');
 app.use(express.json());
 app.use(cors());
+
+// Route IA pour le verdict
+app.post('/api/ai/verdict', async (req, res) => {
+  try {
+    const { product1, product2 } = req.body;
+
+    if (!product1 || !product2) {
+      return res.status(400).json({ error: "Deux produits sont requis pour la comparaison." });
+    }
+
+    const prompt = `Tu es un expert en matériel informatique ultra-calé. 
+    Compare ces deux produits techniquement et donne un verdict honnête, court et percutant en français.
+    Explique lequel est le meilleur pour quel usage.
+    
+    Produit 1: ${JSON.stringify(product1)}
+    Produit 2: ${JSON.stringify(product2)}
+    
+    Format de réponse : Juste le texte du verdict, pas de blabla inutile.`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    res.json({ aiResponse: text });
+  } catch (error) {
+    console.error("Erreur Gemini:", error);
+    res.status(500).json({ error: "L'IA n'a pas pu générer de réponse.", details: error.message });
+  }
+});
 
 const dbURI = process.env.DB_URI || "mongodb+srv://KING2MO:104766Dia-@king2mocomparetechclust.go2fdac.mongodb.net/?appName=KING2MOCOMPARETECHCLUSTER";
 mongoose.connect(dbURI)
