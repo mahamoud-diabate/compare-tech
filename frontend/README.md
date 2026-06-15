@@ -1,57 +1,43 @@
-# CompareTech-Comparateur de Hardware Full-Stack(MERN)
+# CompareTech Analytics Platform (React Frontend)
 
-![alt text](Animation.gif)
+![Performance Visualization](Animation.gif)
 
-#Projet 
+## 🚀 Project Vision
+CompareTech is a professional-grade hardware analytics dashboard that empowers users to make data-driven decisions when selecting hardware. Built with **React** and **Vite**, it provides a high-performance interface for comparing complex technical specifications across CPUs, GPUs, Laptops, and Smartphones.
 
-compare tech est une application **Full Stack Mern**(MongoDB,Express,React,Node.js) concue pour comparer les 
-specifications techniques de materiel informatique(Cpus,Gpus,Laptops,Telephones). L'utilisateur peut filtrer 
-les listes, selectionner des articles de differentes categories, et voir un tableau de comparaison cote a cote.
+## 🛠️ Tech Stack
+*   **Library:** React 18+
+*   **Build Tool:** Vite
+*   **Routing:** React Router 6
+*   **UI Framework:** React Bootstrap
+*   **Data Visualization:** Chart.js + Radar Charts
+*   **Notifications:** React-Hot-Toast
+*   **Animations:** Framer Motion (Page Transitions)
 
-Ce projet a ete construit de A a Z pour demontrer la maitrise de l'architecture MERN et la gestion d'etat complexe
-dans une application multi-categories.
-**Lien vers le site en direct :
-**Lien vers l'API Backend :
+## 🏗️ Technical Architecture & UX Design
 
-![alt text](image.png)
+### 1. Advanced State Management
+Implemented a **Cross-Category Selection System** using `useOutletContext`. This allows users to persist selections (e.g., choosing a CPU in the "Processors" tab) while continuing to browse other categories, culminating in a unified "Comparison View."
 
-##  Fonctionnalités Clés
+### 2. Data-Driven Visuals
+Instead of raw numbers, I integrated **Chart.js** to visualize performance benchmarks. The "Compare" page uses **Radar Charts** to highlight the relative strengths/weaknesses of hardware side-by-side, providing immediate analytical value.
 
-* **Architecture MERN :** Frontend React et Backend Node.js découplés.
-* **API RESTful complète :** Routes pour `GET` (tous/par ID), `POST` (un/plusieurs) pour 4 modèles de données différents.
-* **Multi-catégories :** Gère les CPUs, GPUs, Laptops et Téléphones avec des modèles et des routes distincts.
-* **Système de Comparaison Global :** L'état de comparaison est géré au niveau `App.jsx` (via `useOutletContext`), permettant de sélectionner un CPU et un GPU et de les comparer sur une page dédiée.
-* **Routage Dynamique :** Utilise `react-router-dom` pour les pages de liste (`/gpus`) et de détails (`/cpu/:id`).
-* **Filtrage en direct** sur les pages de catégories.
+### 3. Professional UX Patterns
+*   **Responsive Grid:** Fully optimized for mobile and desktop using Bootstrap's grid system.
+*   **"Differences Only" Mode:** A specialized feature that toggles the visibility of identical specs, allowing users to focus exclusively on what sets products apart.
+*   **URL-Persistent State:** Comparison views are driven by URL Search Parameters, making specific hardware comparisons shareable and bookmarkable.
 
-## Installation Locale
+## 📁 Repository Structure
+This is the frontend component of a decoupled MERN stack architecture.
+*   **Frontend Repo:** [Compare-Tech-Frontend](https://github.com/KING2MO123/Compare-Tech-Frontend)
+*   **Backend Repo:** [compare-tech-backend](https://github.com/KING2MO123/compare-tech-backend)
 
-1. Clonez le dépôt.
-2. Installez les dépendances : `npm install`.
-3. Lancez le serveur de développement : `npm run dev`.
-4. Accédez à l'application via `http://localhost:5173`.
+## 🛠️ Local Installation
 
-*Note : Assurez-vous que le backend est également lancé localement sur le port 3001 pour que les données s'affichent.*
+1. **Clone the repository.**
+2. **Install dependencies:** `npm install`
+3. **Connect Backend:** By default, the app looks for a local API on `http://localhost:3001`.
+4. **Development Mode:** `npm run dev`
 
-## Architecture du Projet
-
-Le projet est divisé en deux dépôts :
-*   **Backend :** [compare-tech-backend](https://github.com/KING2MO123/compare-tech-backend)
-*   **Frontend :** Ce dépôt.
-
-## Technologies Utilisées
-
-### Frontend (Interface)
-* **React** (Bibliothèque d'interface utilisateur)
-* **React Router** (Pour la navigation multi-pages)
-* **React Hooks** (`useState`, `useEffect`, `useOutletContext`)
-* **CSS** (Pour le style des composants)
-
-### Backend (Serveur & API)
-* **Node.js** (Environnement d'exécution)
-* **Express.js** (Framework pour créer l'API RESTful)
-* **Mongoose** (Modélisation des données pour MongoDB)
-* **CORS** (Pour la communication entre le frontend et le backend)
-
-### Base de Données
-* **MongoDB Atlas** (Base de données NoSQL dans le cloud)
+---
+*Developed by KING2MO - Engineering High-Performance User Experiences.*
