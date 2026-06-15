@@ -9,10 +9,12 @@ import ProductList from '../components/ProductList';
 import CompareBar from '../components/CompareBar';
 import FilterSidebar from '../components/FilterSidebar';
 import AnimatedPage from '../components/AnimatedPage';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function GpuPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [gpus, setGpus] = useState([]);
+  const [loading, setLoading] = useState(true);
   
   const [selectedFilters, setSelectedFilters] = useState({
     brand: [],
@@ -51,10 +53,17 @@ function GpuPage() {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetch('https://mahamoud-compare-tech-api.onrender.com/api/gpus')
       .then(response => response.json())
-      .then(data => setGpus(data))
-      .catch(error => console.error("Erreur:", error));
+      .then(data => {
+        setGpus(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Erreur:", error);
+        setLoading(false);
+      });
   }, []);
 
   const filteredGpus = gpus.filter(gpu => {
@@ -86,14 +95,18 @@ function GpuPage() {
           
           <Col md={9}>
             <main>
-              <ProductList 
-                cpus={filteredGpus} 
-                compareList={compareIds}
-                onCompareToggle={handleCompareToggle}
-                productType="gpu"
-                compareType="gpu"
-                maxItems={MAX_COMPARE_ITEMS}
-              />
+              {loading ? (
+                <LoadingSpinner message="Chargement des unités de calcul graphique..." />
+              ) : (
+                <ProductList 
+                  cpus={filteredGpus} 
+                  compareList={compareIds}
+                  onCompareToggle={handleCompareToggle}
+                  productType="gpu"
+                  compareType="gpu"
+                  maxItems={MAX_COMPARE_ITEMS}
+                />
+              )}
             </main>
           </Col>
         </Row>

@@ -9,12 +9,14 @@ import ProductList from '../components/ProductList';
 import CompareBar from '../components/CompareBar';
 import FilterSidebar from '../components/FilterSidebar';
 import AnimatedPage from '../components/AnimatedPage';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const AVAILABLE_BRANDS = ["Dell", "Apple", "Asus", "Lenovo", "HP", "Acer", "MSI","Razer"];
 
 function LaptopPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [laptops, setLaptops] = useState([]);
+  const [loading, setLoading] = useState(true);
   
   const [selectedFilters, setSelectedFilters] = useState({
     brand: [],
@@ -59,10 +61,17 @@ function LaptopPage() {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetch('https://mahamoud-compare-tech-api.onrender.com/api/laptops')
       .then(response => response.json())
-      .then(data => setLaptops(data))
-      .catch(error => console.error("Erreur:", error));
+      .then(data => {
+        setLaptops(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Erreur:", error);
+        setLoading(false);
+      });
   }, []);
 
   const filteredLaptops = laptops.filter(laptop => {
@@ -98,14 +107,18 @@ function LaptopPage() {
           
           <Col md={9}>
             <main>
-              <ProductList 
-                cpus={filteredLaptops} 
-                compareList={compareIds}
-                onCompareToggle={handleCompareToggle}
-                productType="laptop"
-                compareType="laptop"
-                maxItems={MAX_COMPARE_ITEMS}
-              />
+              {loading ? (
+                <LoadingSpinner message="Recherche des meilleurs ordinateurs portables..." />
+              ) : (
+                <ProductList 
+                  cpus={filteredLaptops} 
+                  compareList={compareIds}
+                  onCompareToggle={handleCompareToggle}
+                  productType="laptop"
+                  compareType="laptop"
+                  maxItems={MAX_COMPARE_ITEMS}
+                />
+              )}
             </main>
           </Col>
         </Row>

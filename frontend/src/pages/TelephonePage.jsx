@@ -9,10 +9,12 @@ import ProductList from '../components/ProductList';
 import CompareBar from '../components/CompareBar';
 import FilterSidebar from '../components/FilterSidebar';
 import AnimatedPage from '../components/AnimatedPage';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function TelephonePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [telephones, setTelephones] = useState([]);
+  const [loading, setLoading] = useState(true);
   
   const [selectedFilters, setSelectedFilters] = useState({
     brand: [],
@@ -57,10 +59,17 @@ function TelephonePage() {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetch('https://mahamoud-compare-tech-api.onrender.com/api/telephones')
       .then(response => response.json())
-      .then(data => setTelephones(data))
-      .catch(error => console.error("Erreur:", error));
+      .then(data => {
+        setTelephones(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Erreur:", error);
+        setLoading(false);
+      });
   }, []);
 
   const filteredTelephones = telephones.filter(tel => {
@@ -96,14 +105,18 @@ function TelephonePage() {
           
           <Col md={9}>
             <main>
-              <ProductList 
-                cpus={filteredTelephones} 
-                compareList={compareIds}
-                onCompareToggle={handleCompareToggle}
-                productType="telephone"
-                compareType="telephone"
-                maxItems={MAX_COMPARE_ITEMS}
-              />
+              {loading ? (
+                <LoadingSpinner message="Comparaison des smartphones de dernière génération..." />
+              ) : (
+                <ProductList 
+                  cpus={filteredTelephones} 
+                  compareList={compareIds}
+                  onCompareToggle={handleCompareToggle}
+                  productType="telephone"
+                  compareType="telephone"
+                  maxItems={MAX_COMPARE_ITEMS}
+                />
+              )}
             </main>
           </Col>
         </Row>

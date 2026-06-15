@@ -9,10 +9,12 @@ import ProductList from '../components/ProductList';
 import CompareBar from '../components/CompareBar';
 import FilterSidebar from '../components/FilterSidebar';
 import AnimatedPage from '../components/AnimatedPage';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function CpuPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [cpus, setCpus] = useState([]);
+  const [loading, setLoading] = useState(true);
   
   const [selectedFilters, setSelectedFilters] = useState({
     brand: [],
@@ -51,10 +53,17 @@ function CpuPage() {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetch('https://mahamoud-compare-tech-api.onrender.com/api/cpus')
       .then(response => response.json())
-      .then(data => setCpus(data))
-      .catch(error => console.error("Erreur:", error));
+      .then(data => {
+        setCpus(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Erreur:", error);
+        setLoading(false);
+      });
   }, []);
 
   const filteredCpus = cpus.filter(cpu => {
@@ -86,14 +95,18 @@ function CpuPage() {
           
           <Col md={9}>
             <main>
-              <ProductList 
-                cpus={filteredCpus} 
-                compareList={compareIds}
-                onCompareToggle={handleCompareToggle}
-                productType="cpu"
-                compareType="cpu"
-                maxItems={MAX_COMPARE_ITEMS}
-              />
+              {loading ? (
+                <LoadingSpinner message="Analyse des processeurs en cours..." />
+              ) : (
+                <ProductList 
+                  cpus={filteredCpus} 
+                  compareList={compareIds}
+                  onCompareToggle={handleCompareToggle}
+                  productType="cpu"
+                  compareType="cpu"
+                  maxItems={MAX_COMPARE_ITEMS}
+                />
+              )}
             </main>
           </Col>
         </Row>
