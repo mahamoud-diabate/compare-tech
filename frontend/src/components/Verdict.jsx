@@ -26,7 +26,11 @@ function Verdict({ products, productType }) {
         body: JSON.stringify({ product1: p1, product2: p2 })
       });
       const data = await response.json();
-      setAiAnalysis(data.aiResponse);
+      if (response.ok && data.aiResponse) {
+        setAiAnalysis(data.aiResponse);
+      } else {
+        setAiAnalysis(data.error || data.details || "Une erreur est survenue sur le serveur IA.");
+      }
     } catch (error) {
       console.error("Erreur IA", error);
       setAiAnalysis("Désolé, je n'arrive pas à joindre le serveur IA.");
