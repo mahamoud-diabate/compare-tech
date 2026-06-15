@@ -29,8 +29,25 @@ Il s'agit du serveur backend (API Restful) pour le projet CompareTech. Il est co
 | `GET` | `/api/telephones` | Récupère la liste de tous les Téléphones. |
 | `GET` | `/api/telephones/:id`| Récupère un seul Téléphone par son ID. |
 
+## Automatisation et Données
+
+Le projet inclut désormais des scripts pour peupler automatiquement la base de données via le web scraping :
+
+*   `node scripts/scrapeCpus.js` : Récupère 100+ CPUs depuis Notebookcheck.
+*   `node scripts/scrapeGpus.js` : Récupère 100+ GPUs depuis Wikipedia.
+*   `node scripts/populateRemaining.js` : Génère 100 Téléphones et 100 Laptops avec des specs réalistes.
+
+## Installation Locale
+
+1. Clonez le dépôt.
+2. Installez les dépendances : `npm install`.
+3. Créez un fichier `.env` à la racine avec :
+    ```env
+    DB_URI=votre_lien_mongodb
+    PORT=3001
+    ```
+4. Lancez le serveur : `npm start` ou `node server.js`.
+
 ## Variables d'Environnement
 
-Pour lancer ce projet, vous aurez besoin de définir la variable d'environnement suivante :
-
-`DB_URI`:`https://cloud.mongodb.com/v2/6906305844d8e15fcd768213#/overview?connectCluster=KING2MOCOMPARETECHCLUSTER`
+Le projet utilise `dotenv` pour gérer les secrets. Assurez-vous que `DB_URI` est défini dans votre environnement ou fichier `.env`.
