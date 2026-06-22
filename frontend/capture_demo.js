@@ -42,7 +42,7 @@ async function captureDemo() {
   await capturePage(page, `${BASE_URL}/laptops`, '04-laptops.png');
 
   // 5. Telephones page
-  await capturePage(page, `${BASE_URL}/phones`, '05-phones.png');
+  await capturePage(page, `${BASE_URL}/telephones`, '05-phones.png');
 
   // 6. Home + recherche RTX
   await capturePage(page, BASE_URL, '06-recherche.png', 500);
