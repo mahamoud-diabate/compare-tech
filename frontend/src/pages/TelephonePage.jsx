@@ -112,8 +112,8 @@ function TelephonePage() {
                   cpus={filteredTelephones} 
                   compareList={compareIds}
                   onCompareToggle={handleCompareToggle}
-                  productType="telephone"
-                  compareType="telephone"
+                  productType="telephones"
+                  compareType="telephones"
                   maxItems={MAX_COMPARE_ITEMS}
                 />
               )}
