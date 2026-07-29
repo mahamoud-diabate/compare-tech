@@ -1,8 +1,214 @@
-/* Blocage theme sombre */
+/* ===== COMPARETECH — DESIGN SYSTEM 2025 ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+    --ct-primary: #2563eb;
+    --ct-primary-light: #3b82f6;
+    --ct-primary-dark: #1d4ed8;
+    --ct-accent: #8b5cf6;
+    --ct-success: #10b981;
+    --ct-warning: #f59e0b;
+    --ct-danger: #ef4444;
+    --ct-dark: #0f172a;
+    --ct-darker: #020617;
+    --ct-card: #1e293b;
+    --ct-surface: #334155;
+    --ct-text: #f1f5f9;
+    --ct-text-secondary: #94a3b8;
+    --ct-border: rgba(255,255,255,0.08);
+    --ct-radius: 12px;
+    --ct-radius-sm: 8px;
+    --ct-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    --ct-shadow-lg: 0 12px 48px rgba(0,0,0,0.4);
+    --ct-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-bs-theme="dark"] {
+    --ct-bg: #0f172a;
+    --ct-text: #f1f5f9;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;  /* Force le blanc */
-  color: #333;                /* Force la couleur */
-  margin: 0;
-  padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0f172a;
+    color: #f1f5f9;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Selection */
+::selection {
+    background: rgba(37, 99, 235, 0.3);
+    color: #fff;
+}
+
+/* Cards globales */
+.card {
+    background: #1e293b !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: var(--ct-radius) !important;
+    transition: var(--ct-transition);
+}
+
+.card:hover {
+    border-color: rgba(37, 99, 235, 0.3) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--ct-shadow-lg);
+}
+
+.card-body {
+    color: var(--ct-text);
+}
+
+/* Badge */
+.badge {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* Buttons */
+.btn {
+    border-radius: var(--ct-radius-sm) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.2px;
+    transition: var(--ct-transition);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--ct-primary), var(--ct-primary-dark)) !important;
+    border: none !important;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--ct-primary-light), var(--ct-primary)) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.btn-outline-primary {
+    border-color: var(--ct-primary) !important;
+    color: var(--ct-primary-light) !important;
+}
+
+/* Form controls */
+.form-control, .form-select {
+    background: #1e293b !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: #f1f5f9 !important;
+    border-radius: var(--ct-radius-sm) !important;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--ct-primary) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2) !important;
+}
+
+/* Text */
+.text-muted {
+    color: #94a3b8 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #f1f5f9;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+/* Links */
+a {
+    color: var(--ct-primary-light);
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: #93c5fd;
+}
+
+/* Skeleton Loader */
+@keyframes ct-skeleton {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.ct-skeleton {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background-size: 200% 100%;
+    animation: ct-skeleton 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+/* Section Headers */
+.ct-section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #fff, #93c5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.ct-section-subtitle {
+    color: #94a3b8;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 1.05rem;
+}
+
+/* Glass card */
+.ct-glass {
+    background: rgba(30, 41, 59, 0.6) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+/* Utility: fade-in animation */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ct-animate-in {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Container tweaks */
+.container {
+    max-width: 1200px;
+}
+
+/* List group */
+.list-group-item {
+    background: #1e293b !important;
+    color: #f1f5f9 !important;
+    border-color: rgba(255,255,255,0.06) !important;
+}
+
+/* Spinner */
+.spinner-border {
+    border-color: rgba(37, 99, 235, 0.2);
+    border-right-color: var(--ct-primary);
 }
