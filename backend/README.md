@@ -15,7 +15,7 @@ This is a high-performance RESTful API built to power the **CompareTech** hardwa
 
 ### 1. Automated Data Engineering (Scraping)
 To move beyond static data, I implemented custom web scraping scripts to maintain a library of **400+ high-fidelity products**.
-*   **Challenges Overcome:** Managed dynamic HTML structures and bypassed bot detection (403 Forbidden) by implementing custom HTTP header rotations and User-Agent spoofing.
+*   **Engineering:** Handled dynamic HTML structures with configurable HTTP headers, rate limiting, retry-on-error, and request delays to respect the source sites' load.
 *   **Scrapers:**
     *   `scrapeCpus.js`: Extracts technical specs from *Notebookcheck*.
     *   `scrapeGpus.js`: Parses massive hardware tables from *Wikipedia*.
