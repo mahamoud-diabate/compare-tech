@@ -1,8 +1,6 @@
 # CompareTech Analytics Platform (React Frontend)
 
-> **Partie d'un projet fullstack.** Frontend : [compare-tech-frontend](https://github.com/mahamoud-diabate/compare-tech-frontend) · Backend : [compare-tech-backend](https://github.com/mahamoud-diabate/compare-tech-backend) · Démo : [compare-tech-frontend.vercel.app](https://compare-tech-frontend.vercel.app)
-
-![Performance Visualization](Animation.gif)
+> **Partie d'un projet fullstack (monorepo `compare-tech`).** Frontend : [`frontend/`](https://github.com/mahamoud-diabate/compare-tech/tree/main/frontend) · Backend : [`backend/`](https://github.com/mahamoud-diabate/compare-tech/tree/main/backend) · Démo : [compare-tech-frontend.vercel.app](https://compare-tech-frontend.vercel.app)
 
 ## 🚀 Project Vision
 CompareTech is a professional-grade hardware analytics dashboard that empowers users to make data-driven decisions when selecting hardware. Built with **React** and **Vite**, it provides a high-performance interface for comparing complex technical specifications across CPUs, GPUs, Laptops, and Smartphones.
