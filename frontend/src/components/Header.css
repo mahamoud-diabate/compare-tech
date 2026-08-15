@@ -1,6 +1,6 @@
 /* ===== HEADER ===== */
 .ct-navbar {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+    background: var(--ct-navbar-grad) !important;
     border-bottom: 1px solid rgba(37, 99, 235, 0.15);
     padding: 0.6rem 0;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
@@ -21,7 +21,7 @@
 }
 
 .ct-brand-text {
-    background: linear-gradient(135deg, #fff, #93c5fd);
+    background: var(--ct-brand-grad);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -44,6 +44,7 @@
 .ct-search-input {
     background: rgba(255,255,255,0.06) !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
+    /* La navbar reste sombre dans les deux themes : texte clair force. */
     color: #e2e8f0 !important;
     font-size: 0.9rem !important;
     padding: 0.55rem 1rem !important;
@@ -58,7 +59,9 @@
 }
 
 .ct-search-input::placeholder {
-    color: #64748b;
+    /* #64748b donnait un contraste de 3.3:1 (sous le minimum WCAG de 4.5:1). */
+    color: #94a3b8;
+    opacity: 1;
 }
 
 .ct-search-dropdown {
@@ -67,7 +70,7 @@
     left: 0;
     right: 0;
     z-index: 1050;
-    background: #1e293b;
+    background: var(--ct-card);
     border: 1px solid rgba(37, 99, 235, 0.2);
     border-radius: 12px;
     overflow: hidden;
@@ -78,8 +81,8 @@
 
 .ct-search-item {
     background: transparent !important;
-    color: #e2e8f0 !important;
-    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+    color: var(--ct-text) !important;
+    border-bottom: 1px solid var(--ct-border) !important;
     padding: 0.75rem 1rem !important;
     cursor: pointer;
     transition: background 0.15s;
@@ -157,4 +160,21 @@
     .ct-search-mobile {
         display: block;
     }
+}
+
+/* ===== HOMEPAGE — cartes "Top Performers" =====
+   Ces classes etaient utilisees dans Homepage.jsx sans etre definies.
+   Minimum vital pour que la vignette (image ou repli) ait une taille stable. */
+.ct-featured-img-wrapper {
+    height: 160px;
+    background: var(--ct-media-bg);
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+}
+
+.ct-featured-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.75rem;
 }

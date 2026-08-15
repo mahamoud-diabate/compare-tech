@@ -11,13 +11,16 @@ import './ProductList.css';
 import { getProductScore, getScoreColor } from '../utils/scores'; 
 
 function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, productType = "cpu", compareType }) {
-  
+
   const [sortOption, setSortOption] = useState('score-desc');
+  // Images dont le chargement a echoue : on bascule sur le visuel de repli.
+  const [failedImages, setFailedImages] = useState({});
 
   const getTitle = () => {
-    if (productType === 'gpus') return 'Cartes Graphiques (GPUs)';
-    if (productType === 'laptops') return 'Ordinateurs Portables';
-    if (productType === 'telephones') return 'Téléphones';
+    const type = productType || '';
+    if (type.includes('gpu')) return 'Cartes Graphiques (GPUs)';
+    if (type.includes('laptop')) return 'Ordinateurs Portables';
+    if (type.includes('telephone')) return 'Téléphones';
     return 'Processeurs (CPUs)';
   };
 
@@ -94,9 +97,15 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                   </div>
                 )}
 
-                <div className="d-flex align-items-center justify-content-center bg-white rounded-top p-3" style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
-                   {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                <div className="ct-card-media d-flex align-items-center justify-content-center rounded-top p-3" style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
+                   {product.imageUrl && !failedImages[product._id] ? (
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        loading="lazy"
+                        onError={() => setFailedImages(prev => ({ ...prev, [product._id]: true }))}
+                        style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                      />
                    ) : (
                       <div className="text-muted text-center opacity-50">
                         <span style={{fontSize: '3rem'}}>📷</span>
@@ -113,7 +122,7 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                   </div>
 
                   <Card.Title 
-                    className="fw-bold mb-1 text-center text-dark" 
+                    className="fw-bold mb-1 text-center text-body" 
                     style={{ 
                         height: '50px', 
                         fontSize: '1.1rem',
@@ -132,16 +141,16 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                     {product.brand}
                   </Card.Text>
 
-                  <div className="mb-4 pt-2 border-top border-light-subtle" style={{ height: '65px' }}>
+                  <div className="mb-4 pt-2 border-top border-secondary-subtle" style={{ height: '65px' }}>
                      {productType.includes('cpu') && (
                         <div className="d-flex justify-content-center align-items-center h-100">
                             <div className="text-center px-3">
-                                <div className="fw-bold fs-5 text-dark">{product.cores}</div>
+                                <div className="fw-bold fs-5 text-body">{product.cores}</div>
                                 <div className="text-muted" style={{fontSize: '0.7rem'}}>CŒURS</div>
                             </div>
-                            <div style={{width: '1px', height: '30px', backgroundColor: '#dee2e6'}}></div>
+                            <div className="ct-spec-divider"></div>
                             <div className="text-center px-3">
-                                <div className="fw-bold fs-5 text-dark">{product.max_freq_ghz}</div>
+                                <div className="fw-bold fs-5 text-body">{product.max_freq_ghz}</div>
                                 <div className="text-muted" style={{fontSize: '0.7rem'}}>GHZ</div>
                             </div>
                         </div>
@@ -149,7 +158,7 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
 
                      {productType.includes('laptop') && (
                         <div className="d-flex flex-column justify-content-center align-items-center h-100 small">
-                           <div className="fw-bold text-dark text-truncate w-100 text-center">{product.cpu_name}</div>
+                           <div className="fw-bold text-body text-truncate w-100 text-center">{product.cpu_name}</div>
                            <div className="text-muted">{product.ram_gb} GB RAM</div>
                         </div>
                      )}
@@ -157,7 +166,7 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                      {productType.includes('gpu') && (
                          <div className="d-flex justify-content-center align-items-center h-100">
                              <div className="text-center px-3">
-                                 <div className="fw-bold fs-5 text-dark">{product.memory_gb}</div>
+                                 <div className="fw-bold fs-5 text-body">{product.memory_gb}</div>
                                  <div className="text-muted" style={{fontSize: '0.7rem'}}>GB VRAM</div>
                              </div>
                          </div>
@@ -166,11 +175,11 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                      {productType.includes('telephone') && (
                          <div className="d-flex justify-content-center align-items-center h-100">
                             <div className="text-center px-2">
-                                <div className="fw-bold text-dark">{product.storage_gb} <span style={{fontSize: '0.7rem'}}>GB</span></div>
+                                <div className="fw-bold text-body">{product.storage_gb} <span style={{fontSize: '0.7rem'}}>GB</span></div>
                             </div>
-                            <div style={{width: '1px', height: '20px', backgroundColor: '#dee2e6'}} className="mx-2"></div>
+                            <div className="ct-spec-divider-sm mx-2"></div>
                             <div className="text-center px-2">
-                                <div className="fw-bold text-dark">{product.battery_mah} <span style={{fontSize: '0.7rem'}}>mAh</span></div>
+                                <div className="fw-bold text-body">{product.battery_mah} <span style={{fontSize: '0.7rem'}}>mAh</span></div>
                             </div>
                          </div>
                      )}

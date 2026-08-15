@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { LinkContainer } from 'react-router-bootstrap';
+import './Header.css';
 
 
 
@@ -17,7 +18,10 @@ function Header({ toggleTheme, theme }) {
   const [allProducts, setAllProducts] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const navigate = useNavigate();
+  // Deux barres de recherche (desktop + mobile) : il faut une ref par bloc,
+  // sinon la seconde ecrase la premiere et le clic-exterieur ferme a tort.
   const searchRef = useRef(null);
+  const searchMobileRef = useRef(null);
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -50,7 +54,9 @@ function Header({ toggleTheme, theme }) {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
+      const inDesktop = searchRef.current && searchRef.current.contains(e.target);
+      const inMobile = searchMobileRef.current && searchMobileRef.current.contains(e.target);
+      if (!inDesktop && !inMobile) {
         setShowSuggestions(false);
       }
     };
@@ -140,7 +146,7 @@ function Header({ toggleTheme, theme }) {
         </Navbar.Collapse>
 
         {/* Barre de recherche mobile */}
-        <div className="ct-search-mobile mt-2" ref={searchRef}>
+        <div className="ct-search-mobile mt-2" ref={searchMobileRef}>
           <Form onSubmit={handleSubmit}>
             <InputGroup>
               <Form.Control
@@ -157,7 +163,12 @@ function Header({ toggleTheme, theme }) {
           {showSuggestions && suggestions.length > 0 && (
             <ListGroup className="ct-search-dropdown">
               {suggestions.map((product) => (
-                <ListGroup.Item key={product._id} action onClick={() => handleSelect(product)}>
+                <ListGroup.Item
+                  key={product._id}
+                  action
+                  onClick={() => handleSelect(product)}
+                  className="ct-search-item"
+                >
                   <strong>{product.name}</strong> <small className="text-muted">({product.brand})</small>
                 </ListGroup.Item>
               ))}

@@ -19,14 +19,19 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  // Le conteneur racine tire ses couleurs des variables CSS : un style
+  // inline en dur bloquerait le theme clair (priorite non surchargeable).
   return (
-    <div className="d-flex flex-column min-vh-100" style={{ background: '#0f172a', color: '#f1f5f9' }}>
+    <div
+      className="d-flex flex-column min-vh-100"
+      style={{ background: 'var(--ct-bg)', color: 'var(--ct-text)' }}
+    >
       <Toaster
         position="top-center"
         toastOptions={{
           style: {
-            background: '#1e293b',
-            color: '#f1f5f9',
+            background: 'var(--ct-card)',
+            color: 'var(--ct-text)',
             border: '1px solid rgba(37, 99, 235, 0.2)',
           },
         }}

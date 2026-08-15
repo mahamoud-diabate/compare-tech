@@ -15,6 +15,8 @@ function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [stats, setStats] = useState({ cpus: 0, gpus: 0, laptops: 0, phones: 0 });
   const [loading, setLoading] = useState(true);
+  // Images dont le chargement a echoue : on bascule sur le visuel de repli.
+  const [failedImages, setFailedImages] = useState({});
 
   const categories = [
     { title: "Processeurs", link: "/cpus", desc: "Intel Core vs AMD Ryzen — Geekbench, cœurs, TDP", icon: "🧠", color: "primary" },
@@ -132,13 +134,20 @@ function HomePage() {
               {featuredProducts.map((product) => (
                 <Col key={product._id}>
                   <Card className="ct-featured-card h-100">
-                    {product.imageUrl && (
+                    {product.imageUrl && !failedImages[product._id] ? (
                       <div className="ct-featured-img-wrapper">
                         <Card.Img
                           variant="top"
                           src={product.imageUrl}
+                          alt={product.name}
+                          loading="lazy"
+                          onError={() => setFailedImages(prev => ({ ...prev, [product._id]: true }))}
                           className="ct-featured-img"
                         />
+                      </div>
+                    ) : (
+                      <div className="ct-featured-img-wrapper d-flex align-items-center justify-content-center">
+                        <span className="opacity-50" style={{ fontSize: '2.5rem' }}>📷</span>
                       </div>
                     )}
                     <Card.Body className="text-center">
