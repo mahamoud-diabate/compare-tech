@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: compare-tech-api
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: DB_URI
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
