@@ -1,4 +1,4 @@
-import { API_BASE } from '../api';
+import { API_BASE, adminFetch } from '../api';
 import React, { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -64,13 +64,14 @@ function AdminPage() {
   const handleDelete = async (id) => {
     if (!window.confirm("Es-tu sûr de vouloir supprimer ce produit ?")) return;
     try {
-      await fetch(`${API_BASE}/${productType}/${id}`, {
+      const response = await adminFetch(`${API_BASE}/${productType}/${id}`, {
         method: 'DELETE'
       });
+      if (!response.ok) throw new Error('Suppression refusée par le serveur.');
       toast.success('Produit supprimé !');
       fetchProducts();
     } catch (error) {
-      toast.error("Erreur lors de la suppression");
+      toast.error(error.message || "Erreur lors de la suppression");
     }
   };
 
@@ -100,13 +101,13 @@ function AdminPage() {
     try {
       let response;
       if (editingId) {
-        response = await fetch(`${API_BASE}/${productType}/${editingId}`, {
+        response = await adminFetch(`${API_BASE}/${productType}/${editingId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
       } else {
-        response = await fetch(`${API_BASE}/${productType}`, {
+        response = await adminFetch(`${API_BASE}/${productType}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify([payload]) 
@@ -124,7 +125,9 @@ function AdminPage() {
       }
     } catch (error) {
       console.error(error);
-      toast.error('Erreur serveur');
+      // adminFetch remonte un message precis (401 / 503 / 429) : l'afficher
+      // plutot qu'un "Erreur serveur" generique qui masque la cause.
+      toast.error(error.message || 'Erreur serveur');
     }
   };
 
