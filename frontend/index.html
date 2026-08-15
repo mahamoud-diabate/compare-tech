@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>CompareTech - Comparateur Hardware & High-Tech</title>
+    <meta name="description" content="Comparez les performances des CPUs, GPUs, Laptops et Téléphones. Scores exclusifs, benchmarks et spécifications détaillées." />
+
+    <!--
+      Applique le theme enregistre AVANT le premier rendu.
+      Sans ce script, la page s'affiche brievement avec le theme par defaut
+      puis bascule quand React monte : c'est le "flash" de theme incorrect.
+      Le script est volontairement synchrone et place dans le <head>.
+    -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          document.documentElement.setAttribute('data-bs-theme', t === 'light' ? 'light' : 'dark');
+        } catch (e) {
+          document.documentElement.setAttribute('data-bs-theme', 'dark');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
