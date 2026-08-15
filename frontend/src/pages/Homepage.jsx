@@ -1,5 +1,6 @@
 import { API_BASE } from '../api';
 import React, { useState, useEffect } from 'react';
+import { Cpu, MonitorPlay, Laptop, Smartphone, Trophy, Zap, ImageOff } from 'lucide-react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -19,10 +20,10 @@ function HomePage() {
   const [failedImages, setFailedImages] = useState({});
 
   const categories = [
-    { title: "Processeurs", link: "/cpus", desc: "Intel Core vs AMD Ryzen — Geekbench, cœurs, TDP", icon: "🧠", color: "primary" },
-    { title: "Cartes Graphiques", link: "/gpus", desc: "NVIDIA RTX vs AMD Radeon — 3DMark, VRAM", icon: "🎮", color: "success" },
-    { title: "Laptops", link: "/laptops", desc: "MacBook, Dell XPS, ThinkPad — perf, autonomie", icon: "💻", color: "info" },
-    { title: "Smartphones", link: "/telephones", desc: "iPhone vs Galaxy vs Pixel — AnTuTu, batterie", icon: "📱", color: "warning" },
+    { title: "Processeurs", link: "/cpus", desc: "Intel Core vs AMD Ryzen — Geekbench, cœurs, TDP", icon: Cpu, color: "primary" },
+    { title: "Cartes Graphiques", link: "/gpus", desc: "NVIDIA RTX vs AMD Radeon — 3DMark, VRAM", icon: MonitorPlay, color: "success" },
+    { title: "Laptops", link: "/laptops", desc: "MacBook, Dell XPS, ThinkPad — perf, autonomie", icon: Laptop, color: "info" },
+    { title: "Smartphones", link: "/telephones", desc: "iPhone vs Galaxy vs Pixel — AnTuTu, batterie", icon: Smartphone, color: "warning" },
   ];
 
   useEffect(() => {
@@ -59,7 +60,8 @@ function HomePage() {
       <section className="ct-hero">
         <Container className="text-center">
           <div className="ct-hero-badge mb-3">
-            ⚡ {totalProducts.toLocaleString()}+ produits analysés
+            <span className="ct-icon-inline"><Zap size={15} strokeWidth={2.5} />
+            <span className="ct-num">{totalProducts.toLocaleString()}</span>+ produits analysés</span>
           </div>
           <h1 className="ct-hero-title">
             Le comparateur hardware<br />
@@ -85,14 +87,14 @@ function HomePage() {
           {/* Quick Stats */}
           <Row className="ct-stats-row mt-5 g-3">
             {[
-              { label: 'Processeurs', value: stats.cpus, icon: '🧠' },
-              { label: 'GPUs', value: stats.gpus, icon: '🎮' },
-              { label: 'Laptops', value: stats.laptops, icon: '💻' },
-              { label: 'Smartphones', value: stats.phones, icon: '📱' },
+              { label: 'Processeurs', value: stats.cpus, icon: Cpu },
+              { label: 'GPUs', value: stats.gpus, icon: MonitorPlay },
+              { label: 'Laptops', value: stats.laptops, icon: Laptop },
+              { label: 'Smartphones', value: stats.phones, icon: Smartphone },
             ].map((stat) => (
               <Col xs={6} md={3} key={stat.label}>
                 <div className="ct-stat-card">
-                  <div className="ct-stat-icon">{stat.icon}</div>
+                  <div className="ct-stat-icon">{React.createElement(stat.icon, { size: 22, strokeWidth: 2 })}</div>
                   <div className="ct-stat-value">
                     {loading ? <span className="ct-skeleton d-inline-block" style={{width:40,height:28}} /> : stat.value}
                   </div>
@@ -115,7 +117,7 @@ function HomePage() {
               <LinkContainer to={cat.link} style={{ cursor: 'pointer' }}>
                 <Card className="ct-category-card h-100">
                   <Card.Body className="d-flex flex-column align-items-center text-center p-4">
-                    <div className="ct-category-icon">{cat.icon}</div>
+                    <div className="ct-category-icon">{React.createElement(cat.icon, { size: 24, strokeWidth: 2 })}</div>
                     <Card.Title className="fw-bold mt-3 mb-2">{cat.title}</Card.Title>
                     <Card.Text className="text-muted small">{cat.desc}</Card.Text>
                   </Card.Body>
@@ -128,7 +130,9 @@ function HomePage() {
         {/* FEATURED */}
         {featuredProducts.length > 0 && (
           <div className="my-5">
-            <h2 className="ct-section-title">🏆 Top Performers</h2>
+            <h2 className="ct-section-title ct-icon-inline justify-content-center">
+              <Trophy size={26} strokeWidth={2} /> Top Performers
+            </h2>
             <p className="ct-section-subtitle">Les meilleurs scores dans chaque catégorie</p>
             <Row xs={1} md={2} lg={4} className="g-4">
               {featuredProducts.map((product) => (
@@ -147,7 +151,7 @@ function HomePage() {
                       </div>
                     ) : (
                       <div className="ct-featured-img-wrapper d-flex align-items-center justify-content-center">
-                        <span className="opacity-50" style={{ fontSize: '2.5rem' }}>📷</span>
+                        <ImageOff size={34} strokeWidth={1.5} style={{ color: 'var(--ct-text-secondary)', opacity: 0.45 }} aria-label="Image indisponible" />
                       </div>
                     )}
                     <Card.Body className="text-center">

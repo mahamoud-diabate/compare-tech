@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
+import { ImageOff } from 'lucide-react';
 import './ProductList.css';
 // Import des fonctions de calcul corrigées
 import { getProductScore, getScoreColor } from '../utils/scores'; 
@@ -71,10 +72,10 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
           value={sortOption} 
           onChange={(e) => setSortOption(e.target.value)}
         >
-          <option value="score-desc">⚡ Score (Haut → Bas)</option>
-          <option value="score-asc">🐌 Score (Bas → Haut)</option>
-          <option value="name-asc">🔤 Nom (A → Z)</option>
-          <option value="name-desc">🔤 Nom (Z → A)</option>
+          <option value="score-desc">Score décroissant</option>
+          <option value="score-asc">Score croissant</option>
+          <option value="name-asc">Nom A → Z</option>
+          <option value="name-desc">Nom Z → A</option>
         </Form.Select>
       </div>
       
@@ -91,7 +92,7 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                 
                 {score > 0 && (
                   <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10 }}>
-                    <Badge bg={getScoreColor(score)} pill className="shadow border border-light py-2 px-3 fw-bold" style={{fontSize: '0.9rem'}}>
+                    <Badge bg={getScoreColor(score)} pill className="ct-score-badge shadow py-2 px-3" style={{fontSize: '0.9rem'}}>
                       {score}
                     </Badge>
                   </div>
@@ -107,8 +108,8 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                         style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
                       />
                    ) : (
-                      <div className="text-muted text-center opacity-50">
-                        <span style={{fontSize: '3rem'}}>📷</span>
+                      <div className="text-center" style={{ color: 'var(--ct-text-secondary)', opacity: 0.45 }}>
+                        <ImageOff size={40} strokeWidth={1.5} aria-label="Image indisponible" />
                       </div>
                    )}
                 </div>
@@ -145,13 +146,13 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                      {productType.includes('cpu') && (
                         <div className="d-flex justify-content-center align-items-center h-100">
                             <div className="text-center px-3">
-                                <div className="fw-bold fs-5 text-body">{product.cores}</div>
-                                <div className="text-muted" style={{fontSize: '0.7rem'}}>CŒURS</div>
+                                <div className="fw-bold fs-5 text-body ct-num">{product.cores}</div>
+                                <div className="ct-spec-label">cœurs</div>
                             </div>
                             <div className="ct-spec-divider"></div>
                             <div className="text-center px-3">
-                                <div className="fw-bold fs-5 text-body">{product.max_freq_ghz}</div>
-                                <div className="text-muted" style={{fontSize: '0.7rem'}}>GHZ</div>
+                                <div className="fw-bold fs-5 text-body ct-num">{product.max_freq_ghz}</div>
+                                <div className="ct-spec-label">GHz</div>
                             </div>
                         </div>
                      )}
@@ -159,15 +160,15 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                      {productType.includes('laptop') && (
                         <div className="d-flex flex-column justify-content-center align-items-center h-100 small">
                            <div className="fw-bold text-body text-truncate w-100 text-center">{product.cpu_name}</div>
-                           <div className="text-muted">{product.ram_gb} GB RAM</div>
+                           <div className="text-muted"><span className="ct-num">{product.ram_gb}</span> GB RAM</div>
                         </div>
                      )}
 
                      {productType.includes('gpu') && (
                          <div className="d-flex justify-content-center align-items-center h-100">
                              <div className="text-center px-3">
-                                 <div className="fw-bold fs-5 text-body">{product.memory_gb}</div>
-                                 <div className="text-muted" style={{fontSize: '0.7rem'}}>GB VRAM</div>
+                                 <div className="fw-bold fs-5 text-body ct-num">{product.memory_gb}</div>
+                                 <div className="ct-spec-label">GB VRAM</div>
                              </div>
                          </div>
                      )}
@@ -175,11 +176,11 @@ function ProductList({ cpus, compareList = [], onCompareToggle = () => {}, produ
                      {productType.includes('telephone') && (
                          <div className="d-flex justify-content-center align-items-center h-100">
                             <div className="text-center px-2">
-                                <div className="fw-bold text-body">{product.storage_gb} <span style={{fontSize: '0.7rem'}}>GB</span></div>
+                                <div className="fw-bold text-body"><span className="ct-num">{product.storage_gb}</span> <span className="ct-spec-label">GB</span></div>
                             </div>
                             <div className="ct-spec-divider-sm mx-2"></div>
                             <div className="text-center px-2">
-                                <div className="fw-bold text-body">{product.battery_mah} <span style={{fontSize: '0.7rem'}}>mAh</span></div>
+                                <div className="fw-bold text-body"><span className="ct-num">{product.battery_mah}</span> <span className="ct-spec-label">mAh</span></div>
                             </div>
                          </div>
                      )}

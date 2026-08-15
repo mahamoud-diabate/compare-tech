@@ -54,10 +54,10 @@ function Hero({ searchTerm = "", onSearchChange = () => {}, allProducts = [] }) 
   };
 
   return (
-    <div className="bg-primary text-white p-5 text-center position-relative">
+    <div className="ct-hero-band text-center position-relative">
       <Container>
-        <h2 className="display-4 fw-bold">Trouvez le meilleur matériel</h2>
-        <p className="lead mb-4">Comparez des milliers de produits en un clic.</p>
+        <h2 className="ct-hero-band-title">Trouvez le meilleur matériel</h2>
+        <p className="ct-hero-band-sub">Scores calculés depuis des benchmarks réels — Geekbench, 3DMark, AnTuTu.</p>
         
         <div className="d-flex justify-content-center position-relative">
           <div className="w-75 position-relative">
@@ -72,7 +72,7 @@ function Hero({ searchTerm = "", onSearchChange = () => {}, allProducts = [] }) 
                   className="shadow-sm border-0 p-3"
                   autoComplete="off"
                 />
-                <Button variant="dark" type="submit" className="px-4 fw-bold">
+                <Button variant="primary" type="submit" className="px-4 fw-bold">
                   Rechercher
                 </Button>
               </InputGroup>
@@ -94,7 +94,7 @@ function Hero({ searchTerm = "", onSearchChange = () => {}, allProducts = [] }) 
                       <strong>{product.name}</strong>
                       <small className="text-muted ms-2">({product.brand})</small>
                     </div>
-                    <span className="badge bg-light text-dark border">
+                    <span className="ct-search-badge">
                       {product.productType ? product.productType.toUpperCase() : 'PRODUIT'}
                     </span>
                   </ListGroup.Item>

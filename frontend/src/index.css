@@ -1,5 +1,5 @@
 /* ===== COMPARETECH — DESIGN SYSTEM 2025 ===== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
 
 /*
  * Les couleurs passent par des variables --ct-* redefinies selon le theme.
@@ -17,24 +17,24 @@
    nos variables en mode sombre. */
 :root {
     /* Accents : communs aux deux themes */
-    --ct-primary: #2563eb;
-    --ct-primary-light: #3b82f6;
-    --ct-primary-dark: #1d4ed8;
-    --ct-accent: #8b5cf6;
+    --ct-primary: #0891b2;
+    --ct-primary-light: #22d3ee;
+    --ct-primary-dark: #0e7490;
+    --ct-accent: #f59e0b;
     --ct-success: #10b981;
     --ct-warning: #f59e0b;
     --ct-danger: #ef4444;
 
     /* Surfaces */
-    --ct-bg: #0f172a;
-    --ct-card: #1e293b;
-    --ct-surface: #334155;
-    --ct-surface-hover: #475569;
+    --ct-bg: #0b1220;
+    --ct-card: #131c2b;
+    --ct-surface: #1e2a3d;
+    --ct-surface-hover: #2b3a52;
 
     /* Texte */
-    --ct-text: #f1f5f9;
-    --ct-text-secondary: #94a3b8;
-    --ct-heading: #f1f5f9;
+    --ct-text: #e8edf4;
+    --ct-text-secondary: #93a3b8;
+    --ct-heading: #f4f7fb;
 
     /* Bordures et ombres */
     --ct-border: rgba(255, 255, 255, 0.08);
@@ -43,13 +43,17 @@
     --ct-shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.4);
 
     /* Degrades */
-    --ct-navbar-grad: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    --ct-brand-grad: linear-gradient(135deg, #fff, #93c5fd);
-    --ct-title-grad: linear-gradient(135deg, #fff, #93c5fd);
-    --ct-skeleton-grad: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    --ct-navbar-grad: linear-gradient(180deg, #0d1524 0%, #0b1220 100%);
+    --ct-brand-grad: linear-gradient(135deg, #f4f7fb, #67e8f9);
+    --ct-title-grad: linear-gradient(135deg, #f4f7fb, #67e8f9);
+    --ct-skeleton-grad: linear-gradient(90deg, #131c2b 25%, #1e2a3d 50%, #131c2b 75%);
 
     /* Vignette produit : fond clair meme en sombre (PNG detoures sur blanc) */
-    --ct-media-bg: #e2e8f0;
+    --ct-media-bg: #dfe5ec;
+
+    --ct-font-display: 'Space Grotesk', 'Inter', sans-serif;
+    --ct-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --ct-font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
 
     --ct-radius: 12px;
     --ct-radius-sm: 8px;
@@ -59,49 +63,49 @@
 /* Bloc sombre autonome : indispensable pour revenir du clair au sombre,
    et pour surcharger les variables Bootstrap posees sur ce meme selecteur. */
 [data-bs-theme="dark"] {
-    --ct-bg: #0f172a;
-    --ct-card: #1e293b;
-    --ct-surface: #334155;
-    --ct-surface-hover: #475569;
+    --ct-bg: #0b1220;
+    --ct-card: #131c2b;
+    --ct-surface: #1e2a3d;
+    --ct-surface-hover: #2b3a52;
 
-    --ct-text: #f1f5f9;
-    --ct-text-secondary: #94a3b8;
-    --ct-heading: #f1f5f9;
+    --ct-text: #e8edf4;
+    --ct-text-secondary: #93a3b8;
+    --ct-heading: #f4f7fb;
 
     --ct-border: rgba(255, 255, 255, 0.08);
     --ct-border-strong: rgba(255, 255, 255, 0.15);
     --ct-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     --ct-shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.4);
 
-    --ct-navbar-grad: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    --ct-brand-grad: linear-gradient(135deg, #fff, #93c5fd);
-    --ct-title-grad: linear-gradient(135deg, #fff, #93c5fd);
-    --ct-skeleton-grad: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    --ct-navbar-grad: linear-gradient(180deg, #0d1524 0%, #0b1220 100%);
+    --ct-brand-grad: linear-gradient(135deg, #f4f7fb, #67e8f9);
+    --ct-title-grad: linear-gradient(135deg, #f4f7fb, #67e8f9);
+    --ct-skeleton-grad: linear-gradient(90deg, #131c2b 25%, #1e2a3d 50%, #131c2b 75%);
 
-    --ct-media-bg: #e2e8f0;
+    --ct-media-bg: #dfe5ec;
 }
 
 [data-bs-theme="light"] {
-    --ct-bg: #f8fafc;
+    --ct-bg: #f6f7f9;
     --ct-card: #ffffff;
     --ct-surface: #e2e8f0;
     --ct-surface-hover: #cbd5e1;
 
-    --ct-text: #0f172a;
+    --ct-text: #0b1220;
     --ct-text-secondary: #475569;
-    --ct-heading: #0f172a;
+    --ct-heading: #0b1220;
 
     --ct-border: rgba(15, 23, 42, 0.1);
     --ct-border-strong: rgba(15, 23, 42, 0.2);
     --ct-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
     --ct-shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
 
-    --ct-navbar-grad: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    --ct-brand-grad: linear-gradient(135deg, #fff, #bfdbfe);
-    --ct-title-grad: linear-gradient(135deg, #0f172a, #2563eb);
-    --ct-skeleton-grad: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    --ct-navbar-grad: linear-gradient(180deg, #0d1524 0%, #131c2b 100%);
+    --ct-brand-grad: linear-gradient(135deg, #f4f7fb, #67e8f9);
+    --ct-title-grad: none;
+    --ct-skeleton-grad: linear-gradient(90deg, #e6eaef 25%, #f2f4f7 50%, #e6eaef 75%);
 
-    --ct-media-bg: #f1f5f9;
+    --ct-media-bg: #eef1f5;
 }
 
 * {
@@ -111,7 +115,7 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--ct-font-body);
     background: var(--ct-bg);
     color: var(--ct-text);
     -webkit-font-smoothing: antialiased;
@@ -137,7 +141,7 @@ body {
 
 /* Selection */
 ::selection {
-    background: rgba(37, 99, 235, 0.3);
+    background: rgba(8, 145, 178, 0.3);
     color: var(--ct-text);
 }
 
@@ -151,7 +155,7 @@ body {
 }
 
 .card:hover {
-    border-color: rgba(37, 99, 235, 0.3) !important;
+    border-color: rgba(8, 145, 178, 0.3) !important;
     transform: translateY(-2px);
     box-shadow: var(--ct-shadow-lg);
 }
@@ -183,7 +187,7 @@ body {
 .btn-primary:hover {
     background: linear-gradient(135deg, var(--ct-primary-light), var(--ct-primary)) !important;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.4);
 }
 
 .btn-outline-primary {
@@ -215,7 +219,7 @@ body {
 
 .form-control:focus, .form-select:focus {
     border-color: var(--ct-primary) !important;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2) !important;
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2) !important;
 }
 
 /* Text */
@@ -224,9 +228,41 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
+    font-family: var(--ct-font-display);
     color: var(--ct-heading);
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
+
+/* Chiffres en chasse fixe : dans un comparateur, les valeurs doivent
+   s'aligner verticalement d'une carte a l'autre. */
+.ct-num {
+    font-family: var(--ct-font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.5px;
+}
+
+.ct-spec-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ct-text-secondary);
+    font-weight: 600;
+}
+
+.ct-score-badge {
+    font-family: var(--ct-font-mono);
+    font-variant-numeric: tabular-nums;
     font-weight: 700;
-    letter-spacing: -0.3px;
+    min-width: 2.6rem;
+    text-align: center;
+}
+
+.ct-icon-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    vertical-align: middle;
 }
 
 /* Links */
@@ -310,6 +346,216 @@ a:hover {
 
 /* Spinner */
 .spinner-border {
-    border-color: rgba(37, 99, 235, 0.2);
+    border-color: rgba(8, 145, 178, 0.2);
     border-right-color: var(--ct-primary);
+}
+
+/* ===== Bandeau de recherche =====
+   Remplace l'aplat bleu plein ecran (marqueur de template) par une surface
+   sombre texturee. Contraste du titre : ~3:1 avant, >12:1 maintenant. */
+.ct-hero-band {
+    padding: 3.5rem 1rem;
+    background:
+        radial-gradient(1200px 300px at 50% -50%, rgba(8, 145, 178, 0.18), transparent 70%),
+        linear-gradient(180deg, #0d1524 0%, #0b1220 100%);
+    border-bottom: 1px solid var(--ct-border);
+}
+
+.ct-hero-band-title {
+    font-family: var(--ct-font-display);
+    font-size: clamp(1.9rem, 4vw, 2.9rem);
+    font-weight: 600;
+    letter-spacing: -1px;
+    color: #f4f7fb;
+    margin-bottom: 0.5rem;
+}
+
+.ct-hero-band-sub {
+    color: #93a3b8;
+    font-size: 1rem;
+    margin-bottom: 1.75rem;
+}
+
+/* ===== HOMEPAGE =====
+   Classes utilisees dans Homepage.jsx sans avoir jamais ete definies :
+   la page retombait sur le style Bootstrap par defaut.
+
+   IMPORTANT : le JSX utilise <Row>/<Col> Bootstrap (systeme flex). Ne jamais
+   poser display:grid sur .ct-stats-row : deux systemes de mise en page en
+   concurrence ecrasent les colonnes. */
+
+.ct-hero {
+    padding: 4rem 0 2.5rem;
+    text-align: center;
+}
+
+.ct-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--ct-border-strong);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ct-primary) 12%, transparent);
+    color: var(--ct-primary-light);
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+}
+
+.ct-hero-title {
+    font-family: var(--ct-font-display);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    margin-bottom: 1rem;
+}
+
+.ct-hero-highlight { color: var(--ct-primary-light); }
+
+.ct-hero-subtitle {
+    color: var(--ct-text-secondary);
+    font-size: 1.05rem;
+    max-width: 620px;
+    margin: 0 auto 2rem;
+}
+
+.ct-hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.ct-hero-btn-primary,
+.ct-hero-btn-secondary {
+    padding: 0.7rem 1.5rem;
+    border-radius: var(--ct-radius-sm);
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--ct-transition);
+    border: 1px solid transparent;
+}
+
+.ct-hero-btn-primary { background: var(--ct-primary); color: #fff; }
+.ct-hero-btn-primary:hover { background: var(--ct-primary-dark); color: #fff; }
+.ct-hero-btn-secondary { border-color: var(--ct-border-strong); color: var(--ct-text); }
+.ct-hero-btn-secondary:hover { border-color: var(--ct-primary); color: var(--ct-primary-light); }
+
+/* --- Statistiques : espacement seulement, Bootstrap gere les colonnes --- */
+.ct-stats-row { margin-top: 2.5rem; }
+
+.ct-stat-card {
+    height: 100%;
+    text-align: center;
+    padding: 1.35rem 0.75rem;
+    border: 1px solid var(--ct-border);
+    border-radius: var(--ct-radius);
+    background: var(--ct-card);
+}
+
+.ct-stat-icon {
+    display: flex;
+    justify-content: center;
+    color: var(--ct-primary-light);
+    margin-bottom: 0.6rem;
+}
+
+.ct-stat-value {
+    font-family: var(--ct-font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--ct-heading);
+    line-height: 1.15;
+}
+
+.ct-stat-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ct-text-secondary);
+    margin-top: 0.3rem;
+}
+
+/* --- Cartes de categorie : appliquees sur un <Card> Bootstrap.
+       Pas de padding/bordure/fond ici, .card et Card.Body s'en chargent. --- */
+.ct-category-card {
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: var(--ct-transition);
+}
+
+.ct-category-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--ct-primary) 14%, transparent);
+    color: var(--ct-primary-light);
+}
+
+/* --- Top performers --- */
+.ct-featured-card { height: 100%; overflow: hidden; }
+
+.ct-featured-img-wrapper {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ct-media-bg);
+    border-bottom: 1px solid var(--ct-border);
+}
+
+.ct-featured-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 0.75rem;
+}
+
+/* --- Section "pourquoi" --- */
+.ct-why-section { margin: 3.5rem 0; }
+
+.ct-feature-list { list-style: none; padding: 0; margin: 0; }
+
+.ct-feature-list li {
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    position: relative;
+    color: var(--ct-text-secondary);
+}
+
+.ct-feature-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1.05rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ct-primary);
+}
+
+.ct-why-visual,
+.ct-why-chart-placeholder {
+    border: 1px solid var(--ct-border);
+    border-radius: var(--ct-radius);
+    background: var(--ct-card);
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ct-text-secondary);
+}
+
+/* --- Marque du header --- */
+.ct-brand-icon {
+    display: inline-flex;
+    align-items: center;
+    color: var(--ct-primary-light);
 }

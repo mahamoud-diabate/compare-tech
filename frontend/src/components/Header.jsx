@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { LinkContainer } from 'react-router-bootstrap';
+import { Search, Moon, Sun, Zap } from 'lucide-react';
 import './Header.css';
 
 
@@ -83,7 +84,7 @@ function Header({ toggleTheme, theme }) {
       <Container>
         <LinkContainer to="/">
           <Navbar.Brand className="ct-brand">
-            <span className="ct-brand-icon">⚡</span>
+            <span className="ct-brand-icon"><Zap size={20} strokeWidth={2.5} /></span>
             <span className="ct-brand-text">Compare<span className="text-primary">Tech</span></span>
           </Navbar.Brand>
         </LinkContainer>
@@ -91,7 +92,7 @@ function Header({ toggleTheme, theme }) {
         <div className="ct-search-desktop" ref={searchRef}>
           <Form onSubmit={handleSubmit}>
             <InputGroup className="ct-search-group">
-              <InputGroup.Text className="ct-search-icon">🔍</InputGroup.Text>
+              <InputGroup.Text className="ct-search-icon"><Search size={16} strokeWidth={2} /></InputGroup.Text>
               <Form.Control
                 type="search"
                 placeholder="Rechercher un produit..."
@@ -140,7 +141,7 @@ function Header({ toggleTheme, theme }) {
               onClick={toggleTheme}
               title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
             >
-              {theme === 'dark' ? '☀️' : '🌙'}
+              {theme === 'dark' ? <Sun size={17} strokeWidth={2} /> : <Moon size={17} strokeWidth={2} />}
             </button>
           </Nav>
         </Navbar.Collapse>
