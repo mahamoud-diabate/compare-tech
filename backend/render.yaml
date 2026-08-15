@@ -12,10 +12,16 @@ services:
       # jamais dans ce fichier (qui est versionne).
       - key: DB_URI
         sync: false
-      - key: ADMIN_KEY
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: JWT_SECRET
         sync: false
       - key: GEMINI_API_KEY
         sync: false
+      - key: GEMINI_MODEL
+        value: gemini-1.5-flash
       - key: CORS_ORIGINS
         sync: false
       - key: NODE_ENV

@@ -2,13 +2,14 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const crypto = require('crypto');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const Cpu = require('./models/Cpu');
 const Gpu = require('./models/Gpu');
 const Laptop = require('./models/Laptop');
 const Telephone = require('./models/Telephone');
+const User = require('./models/User');
+const { hashPassword, verifyPassword, signToken, verifyToken } = require('./auth');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -23,7 +24,9 @@ app.set('trust proxy', 1);
  * ------------------------------------------------------------------ */
 
 const DB_URI = process.env.DB_URI;
-const ADMIN_KEY = process.env.ADMIN_KEY;
+const JWT_SECRET = process.env.JWT_SECRET;
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const IS_PROD = process.env.NODE_ENV === 'production';
 
@@ -32,12 +35,16 @@ if (!DB_URI) {
   process.exit(1);
 }
 
-// Sans ADMIN_KEY, les routes d'ecriture sont desactivees plutot qu'ouvertes.
-// Un oubli de configuration ne doit jamais aboutir a une API sans protection.
-if (!ADMIN_KEY) {
-  console.warn('ADMIN_KEY absente : les routes POST/PUT/DELETE seront refusees (503).');
-} else if (ADMIN_KEY.length < 24) {
-  console.warn('ADMIN_KEY courte : utilise au moins 24 caracteres aleatoires.');
+// Sans mot de passe admin ni secret JWT, les routes d'écriture sont désactivées
+// plutôt qu'ouvertes : un oubli de configuration ne doit jamais aboutir à une
+// API sans protection.
+if (!ADMIN_PASSWORD) {
+  console.warn('ADMIN_PASSWORD absente : connexion admin désactivée, écritures refusées (503).');
+} else if (ADMIN_PASSWORD.length < 10) {
+  console.warn('ADMIN_PASSWORD courte : utilise au moins 10 caractères.');
+}
+if (!JWT_SECRET || JWT_SECRET.length < 32) {
+  console.warn('JWT_SECRET absente ou trop courte : génère-en une (48+ caractères hex) et définis-la.');
 }
 
 const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
@@ -77,7 +84,7 @@ app.use(cors({
     return callback(new Error(`Origine non autorisee : ${origin}`));
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'x-admin-key']
+  allowedHeaders: ['Content-Type', 'authorization']
 }));
 
 // Limite la taille du corps : evite qu'un POST enorme sature la memoire.
@@ -87,23 +94,19 @@ app.use(express.json({ limit: '100kb' }));
  * Middlewares de securite
  * ------------------------------------------------------------------ */
 
-// Comparaison a temps constant : une comparaison naive (===) fuit de
-// l'information par le temps de reponse et permet de deviner la cle.
-function safeEqual(a, b) {
-  const bufA = Buffer.from(String(a));
-  const bufB = Buffer.from(String(b));
-  if (bufA.length !== bufB.length) return false;
-  return crypto.timingSafeEqual(bufA, bufB);
-}
-
-function requireAdmin(req, res, next) {
-  if (!ADMIN_KEY) {
-    return res.status(503).json({ error: 'Ecritures desactivees : ADMIN_KEY non configuree.' });
+// Middleware d'authentification JWT : exige un en-tête
+// "Authorization: Bearer <jeton>" valide pour toute route protégée.
+function requireAuth(req, res, next) {
+  if (!JWT_SECRET || !ADMIN_PASSWORD) {
+    return res.status(503).json({ error: 'Authentification non configurée.' });
   }
-  const provided = req.get('x-admin-key');
-  if (!provided || !safeEqual(provided, ADMIN_KEY)) {
-    return res.status(401).json({ error: 'Non autorise.' });
+  const header = req.get('authorization') || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : '';
+  const payload = token ? verifyToken(token, JWT_SECRET) : null;
+  if (!payload) {
+    return res.status(401).json({ error: 'Jeton invalide ou expiré.' });
   }
+  req.auth = payload;
   next();
 }
 
@@ -141,7 +144,6 @@ function rateLimit({ windowMs, max, message }) {
   };
 }
 
-// Purge periodique pour eviter que la Map grossisse indefiniment.
 const aiLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 20,
@@ -151,6 +153,11 @@ const writeLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   message: "Trop d'ecritures. Reessaie plus tard."
+});
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: 'Trop de tentatives de connexion. Reessaie plus tard.'
 });
 
 // Empeche l'injection d'operateurs Mongo ($gt, $ne...) via le corps JSON.
@@ -202,6 +209,29 @@ app.get('/api/health', (_req, res) => {
     status: mongoose.connection.readyState === 1 ? 'ok' : 'degraded',
     db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   });
+});
+
+// Connexion admin : vérifie le couple nom d'utilisateur / mot de passe et
+// renvoie un JWT à durée limitée. Le compte admin est créé automatiquement
+// au démarrage à partir de ADMIN_USERNAME / ADMIN_PASSWORD.
+app.post('/api/auth/login', loginLimiter, async (req, res) => {
+  if (!JWT_SECRET || !ADMIN_PASSWORD) {
+    return res.status(503).json({ error: 'Authentification non configurée.' });
+  }
+  const { username, password } = req.body || {};
+  if (typeof username !== 'string' || typeof password !== 'string' || !username || !password) {
+    return res.status(400).json({ error: "Nom d'utilisateur et mot de passe requis." });
+  }
+  try {
+    const user = await User.findOne({ username });
+    if (!user || !(await verifyPassword(password, user.passwordHash))) {
+      return res.status(401).json({ error: 'Identifiants invalides.' });
+    }
+    const token = signToken({ sub: user._id.toString(), username: user.username }, JWT_SECRET);
+    res.json({ token });
+  } catch (err) {
+    fail(res, 500, 'Erreur lors de la connexion.', err);
+  }
 });
 
 app.get('/api/featured', async (_req, res) => {
@@ -272,7 +302,7 @@ for (const [segment, Model] of Object.entries(MODELS)) {
 
   /* ---------------- Routes protegees (ecriture) ---------------- */
 
-  app.post(`/api/${segment}`, writeLimiter, requireAdmin, async (req, res) => {
+  app.post(`/api/${segment}`, writeLimiter, requireAuth, async (req, res) => {
     try {
       if (Array.isArray(req.body)) {
         if (req.body.length > 500) {
@@ -286,7 +316,7 @@ for (const [segment, Model] of Object.entries(MODELS)) {
     }
   });
 
-  app.put(`/api/${segment}/:id`, writeLimiter, requireAdmin, async (req, res) => {
+  app.put(`/api/${segment}/:id`, writeLimiter, requireAuth, async (req, res) => {
     if (!isValidId(req.params.id)) {
       return res.status(400).json({ error: 'Identifiant invalide.' });
     }
@@ -302,7 +332,7 @@ for (const [segment, Model] of Object.entries(MODELS)) {
     }
   });
 
-  app.delete(`/api/${segment}/:id`, writeLimiter, requireAdmin, async (req, res) => {
+  app.delete(`/api/${segment}/:id`, writeLimiter, requireAuth, async (req, res) => {
     if (!isValidId(req.params.id)) {
       return res.status(400).json({ error: 'Identifiant invalide.' });
     }
@@ -383,8 +413,25 @@ app.use((err, _req, res, _next) => {
 });
 
 mongoose.connect(DB_URI)
-  .then(() => {
+  .then(async () => {
     console.log('Connecte a MongoDB.');
+
+    // Crée (ou met à jour) le compte admin à partir des variables
+    // d'environnement : le mot de passe est haché (scrypt) avant stockage.
+    if (ADMIN_USERNAME && ADMIN_PASSWORD) {
+      try {
+        const passwordHash = await hashPassword(ADMIN_PASSWORD);
+        await User.findOneAndUpdate(
+          { username: ADMIN_USERNAME },
+          { username: ADMIN_USERNAME, passwordHash },
+          { upsert: true, new: true }
+        );
+        console.log(`Compte admin "${ADMIN_USERNAME}" pret.`);
+      } catch (err) {
+        console.error('Initialisation du compte admin impossible :', err.message);
+      }
+    }
+
     app.listen(port, () => {
       console.log(`Serveur demarre sur http://localhost:${port}`);
       console.log(`Origines autorisees : ${allowedOrigins.join(', ') || '(aucune)'}`);
