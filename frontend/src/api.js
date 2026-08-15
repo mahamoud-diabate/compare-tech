@@ -5,41 +5,70 @@ export const API_ROOT = (import.meta.env.VITE_API_BASE || 'https://mahamoud-comp
 export const API_BASE = `${API_ROOT}/api`;
 
 /*
- * Clé admin pour les routes POST / PUT / DELETE.
+ * Authentification par JWT.
  *
- * ATTENTION — limite à connaître : une variable VITE_* est intégrée au bundle
- * JavaScript envoyé au navigateur. Elle n'est donc PAS secrète : quiconque
- * inspecte les sources du site peut la lire.
- *
- * Ce niveau de protection empêche les scripts automatisés et les requêtes
- * opportunistes de modifier la base — ce qui était le vrai risque ici, l'API
- * étant auparavant totalement ouverte. Il n'empêche pas quelqu'un de motivé
- * qui lit le bundle.
- *
- * Pour une protection réelle, il faudrait un login avec mot de passe côté
- * serveur (JWT) : la clé ne transiterait alors jamais dans le code client.
- * C'est l'évolution naturelle si ce projet doit gérer de vraies données.
+ * La connexion (page /login) échange le nom d'utilisateur + mot de passe contre
+ * un jeton signé côté serveur. Le jeton est ensuite envoyé dans l'en-tête
+ * "Authorization: Bearer …" sur chaque écriture. Le mot de passe ne transite
+ * jamais dans le bundle : seule une preuve à durée limitée (le jeton) y est
+ * stockée, dans le localStorage du navigateur.
  */
-const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY || '';
+const TOKEN_KEY = 'ct_admin_token';
 
-// En-têtes pour une requête authentifiée.
-export function adminHeaders(extra = {}) {
-  return ADMIN_KEY ? { ...extra, 'x-admin-key': ADMIN_KEY } : { ...extra };
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY) || '';
 }
 
-// Wrapper pour les appels d'écriture : ajoute la clé et remonte
+export function setToken(token) {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function clearToken() {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+export function isAuthenticated() {
+  return Boolean(getToken());
+}
+
+// Connexion : appelle /api/auth/login et stocke le jeton reçu.
+export async function login(username, password) {
+  const response = await fetch(`${API_BASE}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || 'Connexion impossible.');
+  }
+  if (!data.token) {
+    throw new Error('Réponse du serveur invalide.');
+  }
+  setToken(data.token);
+  return data.token;
+}
+
+function authHeaders(extra = {}) {
+  const token = getToken();
+  return token ? { ...extra, Authorization: `Bearer ${token}` } : { ...extra };
+}
+
+// Wrapper pour les appels d'écriture : ajoute le Bearer token et remonte
 // un message d'erreur exploitable plutôt qu'un échec silencieux.
 export async function adminFetch(url, options = {}) {
   const response = await fetch(url, {
     ...options,
-    headers: adminHeaders(options.headers || {})
+    headers: authHeaders(options.headers || {})
   });
 
   if (response.status === 401) {
-    throw new Error("Non autorisé : clé admin absente ou invalide (VITE_ADMIN_KEY).");
+    clearToken();
+    window.location.href = '/login';
+    throw new Error('Session expirée : reconnecte-toi.');
   }
   if (response.status === 503) {
-    throw new Error("Écritures désactivées côté serveur (ADMIN_KEY non configurée).");
+    throw new Error('Écritures désactivées côté serveur (authentification non configurée).');
   }
   if (response.status === 429) {
     throw new Error('Trop de requêtes. Réessaie dans quelques minutes.');

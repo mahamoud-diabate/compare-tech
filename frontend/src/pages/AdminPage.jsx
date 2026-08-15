@@ -1,4 +1,4 @@
-import { API_BASE, adminFetch } from '../api';
+import { API_BASE, adminFetch, clearToken } from '../api';
 import React, { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -134,7 +134,7 @@ function AdminPage() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-  localStorage.removeItem('isAdmin');
+  clearToken();
   toast.success('Déconnecté !');
   navigate('/login');
 };
