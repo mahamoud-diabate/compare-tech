@@ -1,6 +1,6 @@
 # CompareTech Analytics Platform (React Frontend)
 
-> **Partie d'un projet fullstack.** Frontend : [compare-tech-frontend](https://github.com/KING2MO123/compare-tech-frontend) · Backend : [compare-tech-backend](https://github.com/KING2MO123/compare-tech-backend) · Démo : [compare-tech-frontend.vercel.app](https://compare-tech-frontend.vercel.app)
+> **Partie d'un projet fullstack.** Frontend : [compare-tech-frontend](https://github.com/mahamoud-diabate/compare-tech-frontend) · Backend : [compare-tech-backend](https://github.com/mahamoud-diabate/compare-tech-backend) · Démo : [compare-tech-frontend.vercel.app](https://compare-tech-frontend.vercel.app)
 
 ![Performance Visualization](Animation.gif)
 
@@ -31,8 +31,8 @@ Instead of raw numbers, I integrated **Chart.js** to visualize performance bench
 
 ## 📁 Repository Structure
 This is the frontend component of a decoupled MERN stack architecture.
-*   **Frontend Repo:** [Compare-Tech-Frontend](https://github.com/KING2MO123/Compare-Tech-Frontend)
-*   **Backend Repo:** [compare-tech-backend](https://github.com/KING2MO123/compare-tech-backend)
+*   **Frontend Repo:** [Compare-Tech-Frontend](https://github.com/mahamoud-diabate/Compare-Tech-Frontend)
+*   **Backend Repo:** [compare-tech-backend](https://github.com/mahamoud-diabate/compare-tech-backend)
 
 ## 🛠️ Local Installation
 
