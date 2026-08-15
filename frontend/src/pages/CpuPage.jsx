@@ -1,3 +1,4 @@
+import { API_BASE } from '../api';
 import React, { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -54,7 +55,7 @@ function CpuPage() {
 
   useEffect(() => {
     setLoading(true);
-    fetch('https://mahamoud-compare-tech-api.onrender.com/api/cpus')
+    fetch(`${API_BASE}/cpus`)
       .then(response => response.json())
       .then(data => {
         setCpus(data);

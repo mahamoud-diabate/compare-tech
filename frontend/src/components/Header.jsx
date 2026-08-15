@@ -1,3 +1,4 @@
+import { API_BASE } from '../api';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
@@ -8,7 +9,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { LinkContainer } from 'react-router-bootstrap';
 
-const API_BASE = 'https://mahamoud-compare-tech-api.onrender.com/api';
+
 
 function Header({ toggleTheme, theme }) {
   const [searchTerm, setSearchTerm] = useState('');

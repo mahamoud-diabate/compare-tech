@@ -1,3 +1,4 @@
+import { API_BASE } from '../api';
 import React, { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -60,7 +61,7 @@ function TelephonePage() {
 
   useEffect(() => {
     setLoading(true);
-    fetch('https://mahamoud-compare-tech-api.onrender.com/api/telephones')
+    fetch(`${API_BASE}/telephones`)
       .then(response => response.json())
       .then(data => {
         setTelephones(data);

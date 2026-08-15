@@ -1,3 +1,4 @@
+import { API_BASE } from '../api';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
@@ -10,7 +11,7 @@ function SimilarProducts({ currentId, category }) {
 
   useEffect(() => {
    
-    fetch(`https://mahamoud-compare-tech-api.onrender.com/api/${category}`)
+    fetch(`${API_BASE}/${category}`)
       .then(res => res.json())
       .then(data => {
       

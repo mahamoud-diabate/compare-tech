@@ -1,3 +1,4 @@
+import { API_BASE } from '../api';
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Bar, Radar } from 'react-chartjs-2';
@@ -37,7 +38,7 @@ function ComparePage() {
       setLoading(true);
       const idsArray = idsString.split(',');
       const collectionName = productType.endsWith('s') ? productType : `${productType}s`;
-      const apiUrl = `https://mahamoud-compare-tech-api.onrender.com/api/${collectionName}/compare`;
+      const apiUrl = `${API_BASE}/${collectionName}/compare`;
 
       fetch(apiUrl, {
         method: 'POST',

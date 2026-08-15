@@ -1,3 +1,4 @@
+import { API_BASE } from '../api';
 import React, { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -8,7 +9,7 @@ import Badge from 'react-bootstrap/Badge';
 import { LinkContainer } from 'react-router-bootstrap';
 import AnimatedPage from '../components/AnimatedPage';
 
-const API_BASE = 'https://mahamoud-compare-tech-api.onrender.com/api';
+
 
 function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([]);

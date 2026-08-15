@@ -1,3 +1,4 @@
+import { API_BASE } from '../api';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
@@ -24,7 +25,7 @@ function LaptopDetailPage() {
   const [isExpertMode, setIsExpertMode] = useState(false);
 
   useEffect(() => {
-    fetch(`https://mahamoud-compare-tech-api.onrender.com/api/laptops/${id}`)
+    fetch(`${API_BASE}/laptops/${id}`)
       .then(response => {
         if (!response.ok) throw new Error('Produit non trouvé');
         return response.json();

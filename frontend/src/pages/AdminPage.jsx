@@ -1,3 +1,4 @@
+import { API_BASE } from '../api';
 import React, { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -31,7 +32,7 @@ function AdminPage() {
   const [formData, setFormData] = useState(initialFormState);
 
   const fetchProducts = () => {
-    fetch(`https://mahamoud-compare-tech-api.onrender.com/api/${productType}`)
+    fetch(`${API_BASE}/${productType}`)
       .then(res => res.json())
       .then(data => setExistingProducts(data))
       .catch(err => console.error(err));
@@ -63,7 +64,7 @@ function AdminPage() {
   const handleDelete = async (id) => {
     if (!window.confirm("Es-tu sûr de vouloir supprimer ce produit ?")) return;
     try {
-      await fetch(`https://mahamoud-compare-tech-api.onrender.com/api/${productType}/${id}`, {
+      await fetch(`${API_BASE}/${productType}/${id}`, {
         method: 'DELETE'
       });
       toast.success('Produit supprimé !');
@@ -99,13 +100,13 @@ function AdminPage() {
     try {
       let response;
       if (editingId) {
-        response = await fetch(`https://mahamoud-compare-tech-api.onrender.com/api/${productType}/${editingId}`, {
+        response = await fetch(`${API_BASE}/${productType}/${editingId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
       } else {
-        response = await fetch(`https://mahamoud-compare-tech-api.onrender.com/api/${productType}`, {
+        response = await fetch(`${API_BASE}/${productType}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify([payload]) 

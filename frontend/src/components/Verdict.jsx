@@ -1,3 +1,4 @@
+import { API_ROOT } from '../api';
 import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import Badge from 'react-bootstrap/Badge';
@@ -19,7 +20,7 @@ function Verdict({ products, productType }) {
     try {
       const apiBase = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'http://localhost:3001'
-        : 'https://mahamoud-compare-tech-api.onrender.com';
+        : API_ROOT;
       const response = await fetch(`${apiBase}/api/ai/verdict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
