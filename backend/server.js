@@ -13,6 +13,11 @@ const Telephone = require('./models/Telephone');
 const app = express();
 const port = process.env.PORT || 3001;
 
+// Derrière le proxy Render, req.ip vaut sinon l'IP du proxy et non celle du
+// client : le rate limiting deviendrait global (tous les visiteurs partageraient
+// le même quota). On fait confiance au premier saut (en-tête X-Forwarded-For).
+app.set('trust proxy', 1);
+
 /* ------------------------------------------------------------------ *
  * Configuration et garde-fous au demarrage
  * ------------------------------------------------------------------ */
@@ -36,7 +41,11 @@ if (!ADMIN_KEY) {
 }
 
 const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
-const aiModel = genAI ? genAI.getGenerativeModel({ model: 'gemini-1.5-flash' }) : null;
+// Modèle configurable : gemini-1.5-flash est déprécié chez Google ; si la route
+// IA renvoie des erreurs de modèle, passe GEMINI_MODEL à une valeur plus récente
+// (ex. gemini-2.0-flash ou gemini-2.5-flash) dans l'environnement.
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+const aiModel = genAI ? genAI.getGenerativeModel({ model: GEMINI_MODEL }) : null;
 if (!aiModel) {
   console.warn('GEMINI_API_KEY absente : la route /api/ai/verdict renverra 503.');
 }
@@ -98,10 +107,21 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-// Limiteur de debit en memoire (suffisant pour une instance unique ;
-// passer a Redis si l'API est repliquee un jour).
+// Limiteur de débit en mémoire (suffisant pour une instance unique ;
+// passer à Redis si l'API est répliquée un jour).
 function rateLimit({ windowMs, max, message }) {
   const hits = new Map();
+
+  // Purge périodique des entrées expirées : sans cela, la Map grossirait
+  // indéfiniment (une entrée par IP, jamais supprimée).
+  const purgeTimer = setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of hits) {
+      if (now > entry.reset) hits.delete(key);
+    }
+  }, windowMs);
+  if (typeof purgeTimer.unref === 'function') purgeTimer.unref();
+
   return (req, res, next) => {
     const key = req.ip;
     const now = Date.now();
