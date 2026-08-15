@@ -46,7 +46,11 @@ app.post('/api/ai/verdict', async (req, res) => {
   }
 });
 
-const dbURI = process.env.DB_URI || "mongodb+srv://KING2MO:104766Dia-@king2mocomparetechclust.go2fdac.mongodb.net/?appName=KING2MOCOMPARETECHCLUSTER";
+const dbURI = process.env.DB_URI;
+if (!dbURI) {
+  console.error("DB_URI (variable d'environnement) manquante.");
+  process.exit(1);
+}
 mongoose.connect(dbURI)
   .then((result) => {
     console.log('Connecté avec succès à MongoDB:');
