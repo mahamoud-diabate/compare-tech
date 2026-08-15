@@ -31,15 +31,15 @@ Instead of raw numbers, I integrated **Chart.js** to visualize performance bench
 
 ## 📁 Repository Structure
 This is the frontend component of a decoupled MERN stack architecture.
-*   **Frontend Repo:** [Compare-Tech-Frontend](https://github.com/mahamoud-diabate/Compare-Tech-Frontend)
+*   **Frontend Repo:** [compare-tech-frontend](https://github.com/mahamoud-diabate/compare-tech-frontend)
 *   **Backend Repo:** [compare-tech-backend](https://github.com/mahamoud-diabate/compare-tech-backend)
 
 ## 🛠️ Local Installation
 
 1. **Clone the repository.**
 2. **Install dependencies:** `npm install`
-3. **Connect Backend:** By default, the app looks for a local API on `http://localhost:3001`.
+3. **Connect Backend:** The app connects to the deployed API at `https://mahamoud-compare-tech-api.onrender.com` by default. To use another backend, set `VITE_API_BASE` in a `.env` file (root URL, **without** `/api` — see `.env.example`).
 4. **Development Mode:** `npm run dev`
 
 ---
-*Developed by KING2MO - Engineering High-Performance User Experiences.*
+*Developed by Mahamoud Diabate - Engineering High-Performance User Experiences.*
