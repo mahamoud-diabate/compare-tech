@@ -1,5 +1,7 @@
 # CompareTech Analytics API (MERN Backend)
 
+> **Partie d'un projet fullstack.** Frontend : [compare-tech-frontend](https://github.com/KING2MO123/compare-tech-frontend) · Backend : [compare-tech-backend](https://github.com/KING2MO123/compare-tech-backend) · Démo : [compare-tech-frontend.vercel.app](https://compare-tech-frontend.vercel.app)
+
 ## 🚀 Overview
 This is a high-performance RESTful API built to power the **CompareTech** hardware analytics platform. It manages a complex dataset of CPUs, GPUs, Laptops, and Smartphones, serving as the bridge between a MongoDB Atlas cloud database and a React-based frontend.
 
